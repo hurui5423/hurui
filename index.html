@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>多源破解应用库 · 虚拟滚动版</title>
+  <title>多源破解应用库 · 全局搜索</title>
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="多源库">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-      /* 原有所有样式保持不变，额外添加虚拟滚动相关 */
       * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
       body {
           background: linear-gradient(145deg, #f5f7fc 0%, #eef2f6 100%);
@@ -177,17 +176,13 @@
       }
       .source-banner i { margin-right: 8px; color: #f59e0b; }
       
-      /* 虚拟滚动容器样式 */
-      .virtual-scroll-container {
-          position: relative;
-          min-height: 200px;
-      }
-      .virtual-scroll-content {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          will-change: transform;
+      /* 性能优化核心 */
+      .apps-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 4px;
+          contain: layout style paint;
       }
       .app-card {
           background: rgba(250, 250, 245, 0.98);
@@ -196,7 +191,8 @@
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           box-shadow: 0 2px 6px rgba(0,0,0,0.08);
           border: 1px solid rgba(200,200,180,0.3);
-          margin-bottom: 10px;
+          content-visibility: auto;
+          contain-intrinsic-size: 130px;
           will-change: transform;
       }
       .app-card:hover { transform: translateY(-2px); box-shadow: 0 10px 18px -10px rgba(0,0,0,0.15); background: #fffdf8; }
@@ -232,6 +228,7 @@
           .btn { padding: 3px 10px; font-size: 0.65rem; }
           .sub { font-size: 0.9rem; padding: 8px 12px; }
           .info-badge { font-size: 0.6rem; padding: 2px 8px; }
+          .app-card { contain-intrinsic-size: 120px; }
       }
   </style>
 </head>
@@ -262,7 +259,7 @@
     <div id="sourceBanner" class="source-banner">
         <i class="fas fa-info-circle"></i> 欢迎使用本合集，请选择上方数据源
     </div>
-    <div id="appsContainer" class="virtual-scroll-container loading-state">
+    <div id="appsContainer" class="apps-grid loading-state">
         <div class="spinner"></div>
         <p>加载中...</p>
     </div>
@@ -290,16 +287,6 @@
     let lastSearchKeyword = '';
     let appCacheLoaded = false;
 
-    // 虚拟滚动相关变量
-    let currentData = [];           // 当前显示的完整数据列表
-    let renderWindow = null;        // 渲染窗口函数
-    let scrollContainer = null;
-    let scrollListener = null;
-    let resizeObserver = null;
-    let itemHeightCache = new Map(); // 缓存每个卡片高度 (但卡片高度不定，我们使用动态测量)
-    let currentScrollTop = 0;
-    let rafId = null;
-
     const container = document.getElementById('appsContainer');
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
@@ -309,7 +296,6 @@
     const sourceBar = document.getElementById('sourceBar');
     const sourceBanner = document.getElementById('sourceBanner');
 
-    // 工具函数
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
     function formatSize(bytes) {
         if (!bytes || bytes === '0') return '?';
@@ -363,143 +349,6 @@
         }
     }
 
-    // 生成单个卡片 HTML (用于虚拟滚动)
-    function renderCard(app, isSearchResult, sourceNameForAll) {
-        let iconHtml = (app.iconURL && app.iconURL.startsWith('http'))
-            ? `<img class="app-icon" src="${escapeHtml(app.iconURL)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display='none';this.parentNode.insertBefore(this.nextSibling,this);this.nextSibling.className='icon-placeholder';this.nextSibling.innerHTML='<i class=\'fas fa-mobile-alt\'></i>';" />`
-            : `<div class="icon-placeholder"><i class="fas fa-mobile-alt"></i></div>`;
-        let lockBadge = app.lock === '1' ? `<span class="lock-badge"><i class="fas fa-lock"></i> 锁</span>` : '';
-        let typeValue = app.type;
-        let typeTag = '';
-        if (typeValue == 10 || typeValue === '10') typeTag = '破解版';
-        else if (typeValue == 2 || typeValue === '2') typeTag = '应用';
-        else if (typeValue == 5 || typeValue === '5') typeTag = '会员';
-        else typeTag = '其他';
-        let rawDesc = app.versionDescription || '暂无描述';
-        let safeDesc = escapeHtml(rawDesc).replace(/\\r\\n|\\n|\\r/g, '<br>').replace(/\r\n|\n|\r/g, '<br>');
-        let versionText = app.version === '1' ? 'v1' : app.version;
-        let sourceTagHtml = '';
-        if (isSearchResult && app.sourceName) {
-            sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(app.sourceName)}</span>`;
-        } else if (!isSearchResult && sourceNameForAll) {
-            sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(sourceNameForAll)}</span>`;
-        }
-        let sizeStr = formatSize(app.size);
-        let dateStr = formatDate(app.versionDate);
-        return `
-            <div class="app-card" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}">
-                <div class="card-inner">
-                    ${iconHtml}
-                    <div class="app-info">
-                        <div class="app-header">
-                            <span class="app-name">${escapeHtml(app.name)} ${lockBadge}</span>
-                            <span class="app-version">${escapeHtml(versionText)}</span>
-                            <span style="font-size:0.65rem; background:#e9eef3; border-radius:20px; padding:2px 10px; font-weight:500;">${typeTag}</span>
-                            ${sourceTagHtml}
-                        </div>
-                        <div class="desc">${safeDesc || '✨'}</div>
-                        <div class="meta-info">
-                            <span class="info-badge"><i class="fas fa-hdd"></i> ${sizeStr}</span>
-                            <span class="info-badge"><i class="far fa-calendar-alt"></i> ${dateStr}</span>
-                        </div>
-                        <div class="button-group">
-                            <button class="btn btn-download"><i class="fas fa-download"></i> 下载</button>
-                            <button class="btn btn-copy"><i class="fas fa-copy"></i> 复制</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // 虚拟滚动核心：根据当前滚动位置渲染可见卡片
-    function updateVirtualList() {
-        if (!scrollContainer || !currentData.length) return;
-        const scrollTop = scrollContainer.scrollTop;
-        const containerHeight = scrollContainer.clientHeight;
-        // 估算每个卡片高度 (由于卡片高度不一，使用缓存平均高度动态更新)
-        let avgHeight = 0;
-        if (itemHeightCache.size > 0) {
-            let sum = 0;
-            for (let h of itemHeightCache.values()) sum += h;
-            avgHeight = sum / itemHeightCache.size;
-        } else {
-            avgHeight = 130; // 初始估算
-        }
-        const startIndex = Math.max(0, Math.floor(scrollTop / avgHeight) - 5);
-        const endIndex = Math.min(currentData.length, Math.ceil((scrollTop + containerHeight) / avgHeight) + 5);
-        
-        // 生成 HTML
-        let html = '';
-        for (let i = startIndex; i < endIndex; i++) {
-            const item = currentData[i];
-            html += renderCard(item, isGlobalSearchMode, isGlobalSearchMode ? null : dataSources[currentSourceIndex].name);
-        }
-        const content = document.getElementById('virtualContent');
-        if (content) {
-            content.innerHTML = html;
-            content.style.top = `${startIndex * avgHeight}px`;
-            // 重新绑定按钮事件
-            document.querySelectorAll('.btn-download').forEach(btn => {
-                const card = btn.closest('.app-card');
-                const url = card?.getAttribute('data-url');
-                const name = card?.getAttribute('data-name');
-                btn.addEventListener('click', (e) => { e.stopPropagation(); downloadApp(url, name); });
-            });
-            document.querySelectorAll('.btn-copy').forEach(btn => {
-                const card = btn.closest('.app-card');
-                const url = card?.getAttribute('data-url');
-                const name = card?.getAttribute('data-name');
-                btn.addEventListener('click', (e) => { e.stopPropagation(); copyUrl(url, name); });
-            });
-            // 更新高度缓存（简单测量每个卡片，但为了性能，只测量可见的）
-            const cards = content.querySelectorAll('.app-card');
-            cards.forEach((card, idx) => {
-                const h = card.offsetHeight;
-                const globalIdx = startIndex + idx;
-                if (h > 0 && (!itemHeightCache.has(globalIdx) || Math.abs(itemHeightCache.get(globalIdx) - h) > 5)) {
-                    itemHeightCache.set(globalIdx, h);
-                }
-            });
-        }
-    }
-
-    // 设置虚拟滚动容器
-    function setupVirtualScroll(data, isSearchResult, sourceNameForAll) {
-        if (!container) return;
-        // 保存当前数据
-        currentData = data;
-        isGlobalSearchMode = isSearchResult;
-        // 清空高度缓存
-        itemHeightCache.clear();
-        // 构建滚动容器结构
-        container.innerHTML = '';
-        container.classList.remove('loading-state');
-        container.classList.add('virtual-scroll-container');
-        const totalHeight = data.length * 130; // 预估总高度，实际会动态调整
-        container.style.position = 'relative';
-        container.style.minHeight = '200px';
-        container.innerHTML = `
-            <div id="virtualContent" class="virtual-scroll-content" style="position: absolute; top: 0; left: 0; width: 100%;"></div>
-            <div style="height: ${totalHeight}px; pointer-events: none;"></div>
-        `;
-        scrollContainer = container;
-        // 监听滚动
-        if (scrollListener) scrollContainer.removeEventListener('scroll', scrollListener);
-        scrollListener = () => {
-            if (rafId) cancelAnimationFrame(rafId);
-            rafId = requestAnimationFrame(updateVirtualList);
-        };
-        scrollContainer.addEventListener('scroll', scrollListener, { passive: true });
-        // 初次渲染
-        updateVirtualList();
-        // 监听窗口大小变化重新计算
-        if (resizeObserver) resizeObserver.disconnect();
-        resizeObserver = new ResizeObserver(() => updateVirtualList());
-        resizeObserver.observe(container);
-    }
-
-    // 传统渲染（当数据量很小时可用，但虚拟滚动统一使用）
     function renderApps(appsToRender, isSearchResult = false, sourceNameForAll = null) {
         if (!appsToRender || appsToRender.length === 0) {
             container.innerHTML = `<div class="error-state"><i class="fas fa-folder-open"></i><p>未找到相关应用</p></div>`;
@@ -507,15 +356,80 @@
             appCountBadge.innerHTML = isSearchResult ? `搜索结果 <span class="highlight">0</span> 个应用` : `本源已更新 <span class="highlight">${total}</span> 个应用`;
             return;
         }
-        // 使用虚拟滚动
-        setupVirtualScroll(appsToRender, isSearchResult, sourceNameForAll);
-        appCountBadge.innerHTML = isSearchResult ? `搜索结果 <span class="highlight">${appsToRender.length}</span> 个应用` : `本源已更新 <span class="highlight">${appsToRender.length}</span> 个应用`;
+
+        // 可选：限制最大显示数量，避免 DOM 过多（取消注释即可启用）
+        // const MAX_VISIBLE = 300;
+        // if (appsToRender.length > MAX_VISIBLE) {
+        //     appsToRender = appsToRender.slice(0, MAX_VISIBLE);
+        //     if (isSearchResult) showToast(`⚠️ 结果过多，仅显示前 ${MAX_VISIBLE} 条，请细化关键词`);
+        // }
+
+        let html = '';
+        for (let app of appsToRender) {
+            let iconHtml = (app.iconURL && app.iconURL.startsWith('http'))
+                ? `<img class="app-icon" src="${escapeHtml(app.iconURL)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display='none';this.parentNode.insertBefore(this.nextSibling,this);this.nextSibling.className='icon-placeholder';this.nextSibling.innerHTML='<i class=\'fas fa-mobile-alt\'></i>';" />`
+                : `<div class="icon-placeholder"><i class="fas fa-mobile-alt"></i></div>`;
+            let lockBadge = app.lock === '1' ? `<span class="lock-badge"><i class="fas fa-lock"></i> 锁</span>` : '';
+            let typeValue = app.type;
+            let typeTag = '';
+            if (typeValue == 10 || typeValue === '10') typeTag = '破解版';
+            else if (typeValue == 2 || typeValue === '2') typeTag = '应用';
+            else if (typeValue == 5 || typeValue === '5') typeTag = '会员';
+            else typeTag = '其他';
+            let rawDesc = app.versionDescription || '暂无描述';
+            let safeDesc = escapeHtml(rawDesc).replace(/\\r\\n|\\n|\\r/g, '<br>').replace(/\r\n|\n|\r/g, '<br>');
+            let versionText = app.version === '1' ? 'v1' : app.version;
+            let sourceTagHtml = '';
+            if (isSearchResult && app.sourceName) {
+                sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(app.sourceName)}</span>`;
+            } else if (!isSearchResult && sourceNameForAll) {
+                sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(sourceNameForAll)}</span>`;
+            }
+            let sizeStr = formatSize(app.size);
+            let dateStr = formatDate(app.versionDate);
+            html += `
+                <div class="app-card">
+                    <div class="card-inner">
+                        ${iconHtml}
+                        <div class="app-info">
+                            <div class="app-header">
+                                <span class="app-name">${escapeHtml(app.name)} ${lockBadge}</span>
+                                <span class="app-version">${escapeHtml(versionText)}</span>
+                                <span style="font-size:0.65rem; background:#e9eef3; border-radius:20px; padding:2px 10px; font-weight:500;">${typeTag}</span>
+                                ${sourceTagHtml}
+                            </div>
+                            <div class="desc">${safeDesc || '✨'}</div>
+                            <div class="meta-info">
+                                <span class="info-badge"><i class="fas fa-hdd"></i> ${sizeStr}</span>
+                                <span class="info-badge"><i class="far fa-calendar-alt"></i> ${dateStr}</span>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn btn-download" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}"><i class="fas fa-download"></i> 下载</button>
+                                <button class="btn btn-copy" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}"><i class="fas fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+        document.querySelectorAll('.btn-download').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let url = btn.getAttribute('data-url');
+                let name = btn.getAttribute('data-name');
+                downloadApp(url, name);
+            });
+        });
+        document.querySelectorAll('.btn-copy').forEach(btn => {
+            btn.addEventListener('click', () => copyUrl(btn.getAttribute('data-url'), btn.getAttribute('data-name')));
+        });
     }
 
     function showCurrentSourceApps() {
         if (!allSourcesApps[currentSourceIndex]) return;
         const currentApps = allSourcesApps[currentSourceIndex].apps;
         renderApps(currentApps, false, dataSources[currentSourceIndex].name);
+        appCountBadge.innerHTML = `本源已更新 <span class="highlight">${currentApps.length}</span> 个应用`;
         isGlobalSearchMode = false;
         lastSearchKeyword = '';
     }
@@ -542,6 +456,7 @@
             }
         }
         renderApps(uniqueResults, true);
+        appCountBadge.innerHTML = `搜索结果 <span class="highlight">${uniqueResults.length}</span> 个应用`;
         isGlobalSearchMode = true;
         lastSearchKeyword = keyword;
     }
@@ -652,7 +567,7 @@
     init();
 </script>
 
-<!-- 弹窗结构（不变） -->
+<!-- 弹窗 -->
 <div id="customModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
