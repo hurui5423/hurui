@@ -1,6 +1,6 @@
 {
   "name": "多破解源集合库",
-  "short_name": "应用库",
+  "short_name": "多源库",
   "description": "多源破解应用合集，支持全局搜索和切换源",
   "start_url": ".",
   "display": "standalone",
