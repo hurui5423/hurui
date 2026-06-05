@@ -16,57 +16,42 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             background: linear-gradient(145deg, #f5f7fc 0%, #eef2f6 100%);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            padding: 0.6rem;
+            padding: 0.5rem;
             color: #1e293b;
             font-size: 14px;
-            padding-top: env(safe-area-inset-top, 16px);
+            padding-top: env(safe-area-inset-top, 12px);
         }
-
-        body,
-        button,
-        a,
-        .app-card,
-        input,
-        textarea {
-            touch-action: manipulation;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        body, button, a, .app-card, input, textarea { touch-action: manipulation; }
+        .container { max-width: 1200px; margin: 0 auto; }
 
         /* 头部 */
         .app-header {
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
-
         .app-header h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
             background: linear-gradient(135deg, #1e2b3c, #2c4c6e);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
-
         .app-sub {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #5a6e8a;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255,255,255,0.6);
             backdrop-filter: blur(4px);
             display: inline-block;
-            padding: 4px 16px;
-            border-radius: 40px;
+            padding: 2px 12px;
+            border-radius: 30px;
         }
 
-        /* 悬浮导航栏 - 更小更透明 */
+        /* 导航栏 - 更大，更透明 */
         .global-nav {
             position: sticky;
             top: env(safe-area-inset-top, 0);
@@ -74,93 +59,62 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border-radius: 60px;
+            padding: 8px 16px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             transition: opacity 0.2s;
         }
-
         .global-nav.transparent {
             opacity: 0.3;
             pointer-events: none;
         }
-
         .nav-btn {
             background: #1e2f47;
             border: none;
-            border-radius: 36px;
-            padding: 6px 12px;
+            border-radius: 40px;
+            padding: 10px 18px;
             color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
+        .nav-btn:active { transform: scale(0.96); }
+        .nav-btn.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+        .refresh-btn { background: #f59e0b; }
+        .back-btn, .forward-btn { background: #2c3e66; width: 48px; justify-content: center; padding: 10px 0; }
 
-        .nav-btn:active {
-            transform: scale(0.96);
-        }
-
-        .nav-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .refresh-btn {
-            background: #f59e0b;
-        }
-
-        .back-btn,
-        .forward-btn {
-            background: #2c3e66;
-            width: 38px;
-            justify-content: center;
-        }
-
-        /* 源卡片倒三角布局：第一排4个，第二排3个，第三排2个，整体居中 */
+        /* 源卡片 - 3列，更大气 */
         .source-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-            margin: 16px 0 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 20px 0;
         }
-
         .source-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(135deg, #ffffff 0%, #fef9e6 100%);
             border-radius: 60px;
-            padding: 6px 12px;
+            padding: 12px 8px;
             text-align: center;
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 800;
             color: #1e2f47;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 215, 150, 0.5);
-            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,215,150,0.6);
+            backdrop-filter: blur(2px);
         }
+        .source-card:hover { transform: translateY(-3px); background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
 
-        /* 控制每行数量 */
-        .source-grid .source-card {
-            flex: 0 0 auto;
-            width: calc(25% - 12px);
-            /* 默认4个一行 */
-        }
-
-        /* 第二行3个：利用flex换行后，通过JS动态添加样式，也可用CSS nth-child，但更稳妥用JS */
-        /* 简单起见，我们直接用flex布局，通过修改子元素宽度来实现倒三角，后面用JS控制 */
-        /* 为了确保倒三角，我们将在渲染时动态设置不同行元素的宽度 */
-
-        /* 最近更新板块 - 卡片缩小，网格4x2 */
+        /* 最近更新区域 */
         .recent-header {
             display: flex;
             justify-content: space-between;
@@ -168,80 +122,76 @@
             margin: 16px 0 12px;
             flex-wrap: wrap;
         }
-
         .recent-title {
             font-size: 1.2rem;
             font-weight: 800;
             border-left: 4px solid #f59e0b;
             padding-left: 10px;
         }
-
         .recent-stats {
             font-size: 0.7rem;
             color: #5a6e8a;
         }
-
         .recent-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin-bottom: 16px;
         }
-
         .recent-card {
             background: white;
             border-radius: 20px;
             padding: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
             transition: 0.2s;
         }
-
         .recent-card .app-icon {
             width: 100%;
-            aspect-ratio: 1;
+            height: 80px;
             object-fit: cover;
-            border-radius: 14px;
+            border-radius: 16px;
             background: #f1f5f9;
             margin-bottom: 6px;
         }
-
         .recent-card .app-name {
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        .recent-card .app-meta {
+        .recent-card .app-desc {
             font-size: 0.65rem;
             color: #5a6e8a;
             margin-top: 4px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .recent-card .app-meta {
+            font-size: 0.6rem;
+            color: #5a6e8a;
+            margin-top: 6px;
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
         }
-
-        .recent-card .source-name {
-            color: #f59e0b;
-            font-weight: 600;
-        }
-
+        .recent-card .source-name { color: #f59e0b; font-weight: 600; }
         .recent-card .type-tag {
             background: #e9eef3;
             border-radius: 20px;
-            padding: 0px 6px;
-            font-size: 0.6rem;
+            padding: 0px 5px;
+            font-size: 0.55rem;
             font-weight: 600;
             color: #1e2f47;
         }
-
         .recent-card .btn-group {
             margin-top: 8px;
             display: flex;
             gap: 6px;
         }
-
         .recent-card .btn {
             flex: 1;
             background: #1e2f47;
@@ -249,17 +199,16 @@
             border: none;
             border-radius: 30px;
             padding: 4px;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             cursor: pointer;
         }
-
         .recent-card .btn-copy {
             background: white;
             color: #1e2f47;
             border: 1px solid #cbd5e1;
         }
 
-        /* 分页控件 */
+        /* 分页 */
         .pagination {
             display: flex;
             flex-wrap: wrap;
@@ -267,9 +216,7 @@
             gap: 6px;
             margin: 16px 0;
         }
-
-        .pagination button,
-        .pagination .page-number {
+        .pagination button, .pagination .page-number {
             background: white;
             border: none;
             border-radius: 30px;
@@ -277,78 +224,93 @@
             font-size: 0.7rem;
             cursor: pointer;
         }
+        .pagination .active-page { background: #1e2f47; color: white; }
+        .pagination .goto-input { width: 50px; text-align: center; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 0.7rem; }
 
-        .pagination .active-page {
-            background: #1e2f47;
-            color: white;
-        }
-
-        .pagination .goto-input {
-            width: 50px;
-            text-align: center;
-            border-radius: 30px;
-            border: 1px solid #cbd5e1;
-            font-size: 0.7rem;
-        }
-
-        /* 源详情页 */
+        /* 源详情页 - 新版布局 */
         .detail-nav {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 16px;
-            padding: 6px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50px;
+            padding: 8px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 60px;
             justify-content: center;
         }
-
         .detail-nav-btn {
             background: white;
             border: none;
             border-radius: 40px;
-            padding: 4px 12px;
-            font-size: 0.75rem;
+            padding: 6px 14px;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #1e2f47;
             cursor: pointer;
+            transition: 0.1s;
         }
-
+        .detail-nav-btn.disabled-source {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: default;
+            opacity: 0.7;
+        }
         .detail-nav-btn.home-highlight {
             background: #f59e0b;
             color: white;
         }
-
-        .source-banner-area {
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
+        /* 源名称区域美化 */
         .source-name-area {
             text-align: center;
-            margin-bottom: 12px;
+            margin: 12px 0 4px;
+            position: relative;
         }
-
         .source-name-area h2 {
-            font-size: 1.3rem;
+            font-size: 1.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, #1e2b3c, #2c4c6e);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             display: inline-block;
-            padding: 0 16px;
+            padding: 0 12px;
+            letter-spacing: 1px;
+        }
+        /* 应用数量悬浮标签 */
+        .app-count-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
             border-radius: 60px;
-            background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(4px);
+            padding: 4px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #f59e0b;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin: 8px auto 0 auto;
+            width: fit-content;
+            border: 1px solid rgba(255,215,150,0.6);
+        }
+        .source-banner-area {
+            text-align: center;
+            margin: 8px 0 16px;
+            font-size: 0.85rem;
+            color: #b45309;
+            background: rgba(255,248,225,0.7);
+            padding: 6px 12px;
+            border-radius: 40px;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
         }
 
+        /* 源内紧凑卡片 */
         .source-apps-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-
         .compact-card {
             display: flex;
             gap: 10px;
@@ -357,24 +319,18 @@
             padding: 8px 10px;
             border: 1px solid #e2e8f0;
         }
-
         .compact-card .app-icon {
-            width: 52px;
-            height: 52px;
+            width: 48px;
+            height: 48px;
             border-radius: 14px;
             object-fit: cover;
             flex-shrink: 0;
         }
-
-        .compact-card .app-info {
-            flex: 1;
-        }
-
+        .compact-card .app-info { flex: 1; }
         .compact-card .app-name {
             font-weight: 800;
             font-size: 0.9rem;
         }
-
         .compact-card .type-tag {
             background: #e9eef3;
             border-radius: 20px;
@@ -385,15 +341,13 @@
             display: inline-block;
             margin-left: 6px;
         }
-
         .compact-card .desc {
             font-size: 0.7rem;
-            font-weight: 600;
+            font-weight: 500;
             color: #b45309;
             margin: 4px 0;
             line-height: 1.3;
         }
-
         .compact-card .meta {
             font-size: 0.6rem;
             color: #475569;
@@ -401,13 +355,11 @@
             gap: 10px;
             margin-top: 4px;
         }
-
         .compact-card .btn-group {
             margin-top: 6px;
             display: flex;
             gap: 8px;
         }
-
         .compact-card .btn {
             background: #1e2f47;
             color: white;
@@ -417,13 +369,11 @@
             font-size: 0.65rem;
             cursor: pointer;
         }
-
         .compact-card .btn-copy {
             background: white;
             color: #1e2f47;
             border: 1px solid #cbd5e1;
         }
-
         footer {
             margin-top: 20px;
             text-align: center;
@@ -432,31 +382,22 @@
         }
 
         @media (max-width: 640px) {
-            .recent-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .source-card {
-                font-size: 0.75rem;
-                padding: 4px 8px;
-            }
-
-            .compact-card .app-icon {
-                width: 44px;
-                height: 44px;
-            }
+            .recent-grid { grid-template-columns: repeat(2, 1fr); }
+            .source-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .source-card { font-size: 0.9rem; padding: 8px 4px; }
+            .compact-card .app-icon { width: 42px; height: 42px; }
+            .detail-nav-btn { padding: 4px 10px; font-size: 0.7rem; }
+            .source-name-area h2 { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- 顶部标题 -->
     <div class="app-header">
         <h1><i class="fas fa-database"></i> 多源破解应用库</h1>
         <div class="app-sub">全局搜索 · 最新更新 · 独立源展示</div>
     </div>
 
-    <!-- 悬浮导航栏 -->
     <div class="global-nav" id="globalNav">
         <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
         <button id="refreshBtn" class="nav-btn refresh-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
@@ -493,38 +434,29 @@
     const refreshBtn = document.getElementById('refreshBtn');
     const globalNav = document.getElementById('globalNav');
 
-    // ======================== 工具函数 ========================
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
-    }
-
+    // 工具函数
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
     function formatSize(bytes) {
-        if (!bytes || bytes === '0') return '?';
-        let num = parseInt(bytes, 10);
-        if (isNaN(num)) return '~';
-        if (num < 1024 * 1024) return (num / 1024).toFixed(0) + 'KB';
-        if (num < 1024 * 1024 * 1024) return (num / (1024 * 1024)).toFixed(1) + 'MB';
-        return (num / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
+        if (!bytes || bytes==='0') return '?';
+        let num = parseInt(bytes,10);
+        if(isNaN(num)) return '~';
+        if(num<1024*1024) return (num/1024).toFixed(0)+'KB';
+        if(num<1024*1024*1024) return (num/(1024*1024)).toFixed(1)+'MB';
+        return (num/(1024*1024*1024)).toFixed(1)+'GB';
     }
-
     function formatDate(dateStr) {
-        if (!dateStr) return '未知';
-        if (dateStr === '最新版') return '最新';
-        try {
-            let d = new Date(dateStr);
-            if (isNaN(d.getTime())) {
-                let m = dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
-                if (m) return m[1];
-                return dateStr.split('T')[0] || dateStr;
+        if(!dateStr) return '未知';
+        if(dateStr==='最新版') return '最新';
+        try{
+            let d=new Date(dateStr);
+            if(isNaN(d.getTime())){
+                let m=dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
+                if(m) return m[1];
+                return dateStr.split('T')[0]||dateStr;
             }
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        } catch (e) {
-            return dateStr;
-        }
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }catch(e){ return dateStr; }
     }
-
-    // 应用类型标签映射（高亮）
     function getTypeTag(typeVal) {
         let t = parseInt(typeVal);
         if (t === 10) return '<span class="type-tag">⚡破解版</span>';
@@ -532,35 +464,26 @@
         if (t === 5) return '<span class="type-tag">🔓会员</span>';
         return '<span class="type-tag">✨其他</span>';
     }
-
     function showToast(msg) {
-        let toast = document.createElement('div');
-        toast.innerText = msg;
-        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:6px 16px;border-radius:40px;font-size:0.7rem;z-index:10001;';
+        let toast=document.createElement('div');
+        toast.innerText=msg;
+        toast.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:6px 16px;border-radius:40px;font-size:0.7rem;z-index:10001;';
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 1800);
+        setTimeout(()=>toast.remove(),1800);
     }
-
-    function downloadApp(url, name) {
-        if (!url) {
-            showToast(`⚠️ 无链接`);
-            return;
-        }
-        window.open(url, '_blank');
+    function downloadApp(url,name){
+        if(!url){ showToast(`⚠️ 无链接`); return; }
+        window.open(url,'_blank');
         showToast(`⬇️ 下载 ${name}`);
     }
-
-    async function copyUrl(url, name) {
-        if (!url) {
-            showToast(`❌ 无链接`);
-            return;
-        }
-        try {
+    async function copyUrl(url,name){
+        if(!url){ showToast(`❌ 无链接`); return; }
+        try{
             await navigator.clipboard.writeText(url);
             showToast(`✅ 已复制 ${name}`);
-        } catch {
-            let ta = document.createElement('textarea');
-            ta.value = url;
+        }catch{
+            let ta=document.createElement('textarea');
+            ta.value=url;
             document.body.appendChild(ta);
             ta.select();
             document.execCommand('copy');
@@ -569,16 +492,16 @@
         }
     }
 
-    // ======================== 数据加载 ========================
+    // 加载数据
     async function loadAllData() {
-        if (isDataLoaded) return;
+        if(isDataLoaded) return;
         const promises = dataSources.map(async (source, idx) => {
-            try {
+            try{
                 let resp = await fetch(source.url);
-                if (!resp.ok) throw new Error();
+                if(!resp.ok) throw new Error();
                 let json = await resp.json();
-                let appsRaw = json.apps || (Array.isArray(json) ? json : null);
-                if (!appsRaw) return { sourceName: source.name, sourceIndex: idx, apps: [] };
+                let appsRaw = json.apps || (Array.isArray(json)?json:null);
+                if(!appsRaw) return { sourceName: source.name, sourceIndex: idx, apps: [] };
                 let apps = appsRaw.map(app => ({
                     name: app.name || '未命名',
                     iconURL: app.iconURL || '',
@@ -591,7 +514,7 @@
                     type: app.type || 0
                 })).filter(app => app.downloadURL);
                 return { sourceName: source.name, sourceIndex: idx, apps: apps };
-            } catch (e) {
+            }catch(e){
                 console.error(`加载源 ${source.name} 失败`);
                 return { sourceName: source.name, sourceIndex: idx, apps: [] };
             }
@@ -600,11 +523,11 @@
         isDataLoaded = true;
     }
 
-    // 获取最近更新（每个源取20个，全局排序，用于分页）
-    function getRecentApps(page = 1, perPage = 8) {
+    // 获取最近更新（每个源前20，全局排序）
+    function getRecentApps(page=1, perPage=8) {
         let allRecent = [];
-        for (let source of allSourcesData) {
-            let sorted = [...source.apps].sort((a, b) => {
+        for(let source of allSourcesData){
+            let sorted = [...source.apps].sort((a,b)=>{
                 let da = a.versionDate ? new Date(a.versionDate).getTime() : 0;
                 let db = b.versionDate ? new Date(b.versionDate).getTime() : 0;
                 return db - da;
@@ -614,73 +537,65 @@
                 allRecent.push({
                     ...app,
                     sourceName: source.sourceName,
-                    typeTag: getTypeTag(app.type)
+                    typeTag: getTypeTag(app.type),
+                    desc: app.versionDescription || '暂无介绍'
                 });
             });
         }
-        allRecent.sort((a, b) => {
+        allRecent.sort((a,b)=>{
             let da = a.versionDate ? new Date(a.versionDate).getTime() : 0;
             let db = b.versionDate ? new Date(b.versionDate).getTime() : 0;
             return db - da;
         });
         const total = allRecent.length;
-        const start = (page - 1) * perPage;
-        const pageData = allRecent.slice(start, start + perPage);
-        return { total, pageData, totalPages: Math.ceil(total / perPage) };
+        const start = (page-1)*perPage;
+        const pageData = allRecent.slice(start, start+perPage);
+        return { total, pageData, totalPages: Math.ceil(total/perPage) };
     }
 
-    // ======================== 分页组件 ========================
+    // 分页组件
     function renderPagination(container, currentPage, totalPages, onPageChange) {
-        if (totalPages <= 1) {
-            container.innerHTML = '';
-            return;
-        }
+        if(totalPages<=1){ container.innerHTML=''; return; }
         let html = '';
-        html += `<button class="first-page" ${currentPage === 1 ? 'disabled' : ''}>1</button>`;
-        html += `<button class="prev-page" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
-        let start = Math.max(1, currentPage - 2);
-        let end = Math.min(totalPages, currentPage + 2);
-        for (let i = start; i <= end; i++) {
-            html += `<span class="page-number ${i === currentPage ? 'active-page' : ''}" data-page="${i}">${i}</span>`;
+        html += `<button class="first-page" ${currentPage===1?'disabled':''}>1</button>`;
+        html += `<button class="prev-page" ${currentPage===1?'disabled':''}>‹</button>`;
+        let start = Math.max(1, currentPage-2);
+        let end = Math.min(totalPages, currentPage+2);
+        for(let i=start;i<=end;i++){
+            html += `<span class="page-number ${i===currentPage?'active-page':''}" data-page="${i}">${i}</span>`;
         }
-        html += `<button class="next-page" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
-        html += `<button class="last-page" ${currentPage === totalPages ? 'disabled' : ''}>${totalPages}</button>`;
+        html += `<button class="next-page" ${currentPage===totalPages?'disabled':''}>›</button>`;
+        html += `<button class="last-page" ${currentPage===totalPages?'disabled':''}>${totalPages}</button>`;
         html += `<input type="number" class="goto-input" placeholder="页" min="1" max="${totalPages}"><button class="goto-btn">跳转</button>`;
         container.innerHTML = html;
-
-        const goToPage = (p) => {
-            if (p >= 1 && p <= totalPages) onPageChange(p);
-        };
-        container.querySelector('.first-page')?.addEventListener('click', () => goToPage(1));
-        container.querySelector('.prev-page')?.addEventListener('click', () => goToPage(currentPage - 1));
-        container.querySelector('.next-page')?.addEventListener('click', () => goToPage(currentPage + 1));
-        container.querySelector('.last-page')?.addEventListener('click', () => goToPage(totalPages));
-        container.querySelectorAll('.page-number').forEach(el => {
-            el.addEventListener('click', () => goToPage(parseInt(el.dataset.page)));
+        const goToPage = (p)=>{ if(p>=1 && p<=totalPages) onPageChange(p); };
+        container.querySelector('.first-page')?.addEventListener('click',()=>goToPage(1));
+        container.querySelector('.prev-page')?.addEventListener('click',()=>goToPage(currentPage-1));
+        container.querySelector('.next-page')?.addEventListener('click',()=>goToPage(currentPage+1));
+        container.querySelector('.last-page')?.addEventListener('click',()=>goToPage(totalPages));
+        container.querySelectorAll('.page-number').forEach(el=>{
+            el.addEventListener('click',()=>goToPage(parseInt(el.dataset.page)));
         });
         const gotoBtn = container.querySelector('.goto-btn');
         const gotoInput = container.querySelector('.goto-input');
-        if (gotoBtn && gotoInput) {
-            gotoBtn.addEventListener('click', () => {
+        if(gotoBtn && gotoInput){
+            gotoBtn.addEventListener('click',()=>{
                 let p = parseInt(gotoInput.value);
-                if (!isNaN(p) && p >= 1 && p <= totalPages) goToPage(p);
+                if(!isNaN(p) && p>=1 && p<=totalPages) goToPage(p);
                 else showToast(`请输入1-${totalPages}之间的页码`);
-                gotoInput.value = '';
+                gotoInput.value='';
             });
         }
     }
 
-    // ======================== 首页渲染 ========================
-    function renderHome(recentPage = 1) {
+    // 首页渲染
+    function renderHome(recentPage=1) {
         const { total, pageData, totalPages } = getRecentApps(recentPage, 8);
-        // 生成源卡片（倒三角：4-3-2）
-        let sourceHtml = `<div class="source-grid" id="sourceGrid">`;
-        dataSources.forEach((s, idx) => {
+        let sourceHtml = `<div class="source-grid">`;
+        dataSources.forEach((s,idx)=>{
             sourceHtml += `<div class="source-card" data-idx="${idx}">${escapeHtml(s.name)}</div>`;
         });
         sourceHtml += `</div>`;
-        // 动态调整倒三角布局：第一行4个，第二行3个，第三行2个，使用flex + 宽度控制
-        // 利用JS添加类
         let recentHtml = `
             <div class="recent-header">
                 <div class="recent-title"><i class="fas fa-clock"></i> 最近更新 · 聚合最新应用</div>
@@ -691,6 +606,7 @@
                     <div class="recent-card">
                         <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">
                         <div class="app-name">${escapeHtml(app.name)}</div>
+                        <div class="app-desc">${escapeHtml(app.desc).substring(0,60)}...</div>
                         <div class="app-meta">
                             <span class="source-name">${escapeHtml(app.sourceName)}</span>
                             <span>📅 ${formatDate(app.versionDate)}</span>
@@ -707,77 +623,65 @@
             <div class="pagination" id="recentPagination"></div>
         `;
         mainContent.innerHTML = sourceHtml + recentHtml;
-
-        // 倒三角布局：通过设置不同行的宽度实现
-        const sourceCards = document.querySelectorAll('.source-card');
-        if (sourceCards.length === 9) {
-            // 第一行4个：宽度25% ，第二行3个：宽度33.33%，第三行2个：宽度50%
-            // 更精确：在flex父容器中，通过动态设置不同索引的元素的宽度
-            sourceCards.forEach((card, idx) => {
-                if (idx < 4) card.style.width = 'calc(25% - 12px)';
-                else if (idx < 7) card.style.width = 'calc(33.33% - 12px)';
-                else card.style.width = 'calc(50% - 12px)';
-                card.style.flex = '0 0 auto';
-            });
-            // 使整体居中: 父容器 text-align center，子元素inline-block已经可以，但flex下需要调整
-            const grid = document.getElementById('sourceGrid');
-            grid.style.justifyContent = 'center';
-        }
-
         // 绑定源卡片点击
-        document.querySelectorAll('.source-card').forEach(card => {
-            card.addEventListener('click', () => {
+        document.querySelectorAll('.source-card').forEach(card=>{
+            card.addEventListener('click',()=>{
                 let idx = parseInt(card.getAttribute('data-idx'));
                 navigateToSource(idx, 1);
             });
         });
-        // 绑定最近更新卡片按钮
-        document.querySelectorAll('.recent-card .btn-download').forEach(btn => {
-            btn.addEventListener('click', () => {
+        // 绑定最近更新按钮
+        document.querySelectorAll('.recent-card .btn-download').forEach(btn=>{
+            btn.addEventListener('click',()=>{
                 let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                downloadApp(url, name);
+                downloadApp(url,name);
             });
         });
-        document.querySelectorAll('.recent-card .btn-copy').forEach(btn => {
-            btn.addEventListener('click', () => {
+        document.querySelectorAll('.recent-card .btn-copy').forEach(btn=>{
+            btn.addEventListener('click',()=>{
                 let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                copyUrl(url, name);
+                copyUrl(url,name);
             });
         });
         const paginationDiv = document.getElementById('recentPagination');
-        if (paginationDiv && totalPages > 1) {
-            renderPagination(paginationDiv, recentPage, totalPages, (newPage) => {
+        if(paginationDiv && totalPages>1){
+            renderPagination(paginationDiv, recentPage, totalPages, (newPage)=>{
                 renderHome(newPage);
                 pushState({ type: 'home', recentPage: newPage });
             });
         }
-        // 如果没有分页，清空
-        if (totalPages <= 1 && paginationDiv) paginationDiv.innerHTML = '';
     }
 
-    // ======================== 源详情页 ========================
-    function renderSourceDetail(sourceIndex, page = 1) {
+    // 源详情页 - 新布局：导航包含所有源，当前源置灰；名称在上，数量悬浮，banner在下
+    function renderSourceDetail(sourceIndex, page=1) {
         const source = allSourcesData[sourceIndex];
-        if (!source) return;
+        if(!source) return;
         const apps = source.apps;
         const perPage = 24;
         const totalPages = Math.ceil(apps.length / perPage);
-        const start = (page - 1) * perPage;
-        const pageApps = apps.slice(start, start + perPage);
-
+        const start = (page-1)*perPage;
+        const pageApps = apps.slice(start, start+perPage);
+        // 导航栏：首页 + 所有源（当前源置灰不可点）
         let navHtml = `<div class="detail-nav">`;
         navHtml += `<button class="detail-nav-btn home-highlight" data-action="home">🏠 首页</button>`;
-        for (let i = 0; i < dataSources.length; i++) {
-            if (i === sourceIndex) continue;
-            navHtml += `<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(dataSources[i].name)}</button>`;
+        for(let i=0; i<dataSources.length; i++){
+            if(i === sourceIndex){
+                navHtml += `<button class="detail-nav-btn disabled-source" disabled>${escapeHtml(dataSources[i].name)}</button>`;
+            } else {
+                navHtml += `<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(dataSources[i].name)}</button>`;
+            }
         }
         navHtml += `</div>`;
-
+        // 源名称区域（美化）
+        let nameHtml = `<div class="source-name-area">
+                            <h2>${escapeHtml(dataSources[sourceIndex].name)}</h2>
+                            <div class="app-count-badge"><i class="fas fa-layer-group"></i> 共 ${apps.length} 款应用</div>
+                        </div>`;
+        // 横幅
         let bannerHtml = `<div class="source-banner-area"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[sourceIndex].bannerText)}</div>`;
-        let nameHtml = `<div class="source-name-area"><h2>${escapeHtml(dataSources[sourceIndex].name)} <span style="font-size:0.8rem;">共 ${apps.length} 款应用</span></h2></div>`;
-
+        // 应用列表
         let appsHtml = `<div class="source-apps-list">`;
-        for (let app of pageApps) {
+        for(let app of pageApps){
             let iconHtml = `<img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">`;
             let desc = app.versionDescription || '暂无描述';
             let typeTag = getTypeTag(app.type);
@@ -787,7 +691,7 @@
                     ${iconHtml}
                     <div class="app-info">
                         <div class="app-name">${escapeHtml(app.name)} ${lockBadge} ${typeTag}</div>
-                        <div class="desc">${escapeHtml(desc).substring(0, 100)}</div>
+                        <div class="desc">${escapeHtml(desc).substring(0,100)}</div>
                         <div class="meta">
                             <span>版本 ${escapeHtml(app.version)}</span>
                             <span>📅 ${formatDate(app.versionDate)}</span>
@@ -803,38 +707,39 @@
         }
         appsHtml += `</div>`;
         let paginationHtml = `<div class="pagination" id="sourcePagination"></div>`;
-        mainContent.innerHTML = navHtml + bannerHtml + nameHtml + appsHtml + paginationHtml;
+        mainContent.innerHTML = navHtml + nameHtml + bannerHtml + appsHtml + paginationHtml;
 
-        // 绑定按钮
-        document.querySelectorAll('.compact-card .btn-download').forEach(btn => {
-            btn.addEventListener('click', () => {
+        // 绑定事件
+        document.querySelectorAll('.compact-card .btn-download').forEach(btn=>{
+            btn.addEventListener('click',()=>{
                 let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                downloadApp(url, name);
+                downloadApp(url,name);
             });
         });
-        document.querySelectorAll('.compact-card .btn-copy').forEach(btn => {
-            btn.addEventListener('click', () => {
+        document.querySelectorAll('.compact-card .btn-copy').forEach(btn=>{
+            btn.addEventListener('click',()=>{
                 let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                copyUrl(url, name);
+                copyUrl(url,name);
             });
         });
-        document.querySelectorAll('.detail-nav-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (btn.dataset.action === 'home') navigateToHome();
-                else if (btn.dataset.idx) navigateToSource(parseInt(btn.dataset.idx), 1);
-            });
+        document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(btn=>{
+            if(btn.dataset.action === 'home') {
+                btn.addEventListener('click',()=> navigateToHome());
+            } else if(btn.dataset.idx) {
+                btn.addEventListener('click',()=> navigateToSource(parseInt(btn.dataset.idx), 1));
+            }
         });
         const paginationDiv = document.getElementById('sourcePagination');
-        if (paginationDiv && totalPages > 1) {
-            renderPagination(paginationDiv, page, totalPages, (newPage) => {
+        if(paginationDiv && totalPages>1){
+            renderPagination(paginationDiv, page, totalPages, (newPage)=>{
                 navigateToSource(sourceIndex, newPage);
             });
         }
     }
 
-    // ======================== 历史管理 ========================
-    function pushState(state) {
-        historyStack = historyStack.slice(0, currentStateIndex + 1);
+    // 历史管理
+    function pushState(state){
+        historyStack = historyStack.slice(0, currentStateIndex+1);
         historyStack.push(state);
         currentStateIndex++;
         updateNavButtons();
@@ -843,52 +748,44 @@
         url.searchParams.set('state', JSON.stringify(state));
         window.history.pushState(state, '', url);
     }
-
-    function applyState(state) {
-        if (state.type === 'home') {
+    function applyState(state){
+        if(state.type === 'home'){
             renderHome(state.recentPage || 1);
             showModalIfNeeded('home');
-        } else if (state.type === 'source') {
+        }else if(state.type === 'source'){
             renderSourceDetail(state.sourceIndex, state.page);
         }
     }
-
-    function updateNavButtons() {
+    function updateNavButtons(){
         backBtn.disabled = (currentStateIndex <= 0);
-        forwardBtn.disabled = (currentStateIndex >= historyStack.length - 1);
+        forwardBtn.disabled = (currentStateIndex >= historyStack.length-1);
         backBtn.classList.toggle('disabled', backBtn.disabled);
         forwardBtn.classList.toggle('disabled', forwardBtn.disabled);
     }
+    function navigateToHome(){ pushState({ type: 'home', recentPage: 1 }); }
+    function navigateToSource(sourceIndex, page=1){ pushState({ type: 'source', sourceIndex, page }); }
 
-    function navigateToHome() {
-        pushState({ type: 'home', recentPage: 1 });
-    }
-
-    function navigateToSource(sourceIndex, page = 1) {
-        pushState({ type: 'source', sourceIndex, page });
-    }
-
-    // ======================== 悬浮导航栏透明逻辑 ========================
+    // 导航栏透明逻辑
     let navTimeout;
-    function setNavTransparent(transparent) {
-        if (transparent) globalNav.classList.add('transparent');
+    function setNavTransparent(transparent){
+        if(transparent) globalNav.classList.add('transparent');
         else globalNav.classList.remove('transparent');
     }
-    function resetNavTimer() {
+    function resetNavTimer(){
         clearTimeout(navTimeout);
         setNavTransparent(false);
-        navTimeout = setTimeout(() => setNavTransparent(true), 3000);
+        navTimeout = setTimeout(()=> setNavTransparent(true), 3000);
     }
     window.addEventListener('scroll', resetNavTimer);
     window.addEventListener('touchstart', resetNavTimer);
     window.addEventListener('mousemove', resetNavTimer);
     resetNavTimer();
 
-    // ======================== 弹窗控制（每次进首页弹出）================
-    function showModalIfNeeded(triggerType) {
-        if (triggerType === 'home') {
+    // 弹窗
+    function showModalIfNeeded(triggerType){
+        if(triggerType === 'home'){
             const modal = document.getElementById('customModal');
-            if (modal && !modal.classList.contains('show')) {
+            if(modal && !modal.classList.contains('show')){
                 let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 document.body.classList.add('modal-open');
                 document.body.style.top = `-${scrollTop}px`;
@@ -902,62 +799,57 @@
                     document.body.removeEventListener('touchmove', preventTouch);
                     window.scrollTo(0, scrollTop);
                 };
-                if (confirmBtn) confirmBtn.onclick = (e) => { e.preventDefault(); hideModal(); };
-                function preventTouch(e) { if (modal.classList.contains('show')) e.preventDefault(); }
+                if(confirmBtn) confirmBtn.onclick = (e)=>{ e.preventDefault(); hideModal(); };
+                function preventTouch(e){ if(modal.classList.contains('show')) e.preventDefault(); }
             }
         }
     }
 
-    // ======================== 刷新功能 ========================
-    async function refreshData() {
+    async function refreshData(){
         showToast("刷新数据中...");
         isDataLoaded = false;
         allSourcesData = [];
         await loadAllData();
-        if (currentStateIndex >= 0) {
+        if(currentStateIndex>=0){
             let state = historyStack[currentStateIndex];
             applyState(state);
         }
         showToast("刷新完成");
     }
 
-    // ======================== 初始化 ========================
-    async function init() {
+    async function init(){
         await loadAllData();
         let initState = { type: 'home', recentPage: 1 };
         historyStack = [initState];
         currentStateIndex = 0;
         applyState(initState);
         updateNavButtons();
-
-        window.addEventListener('popstate', (event) => {
-            if (event.state) {
+        window.addEventListener('popstate', (event)=>{
+            if(event.state){
                 let state = event.state;
-                let idx = historyStack.findIndex(s => JSON.stringify(s) === JSON.stringify(state));
-                if (idx !== -1) {
+                let idx = historyStack.findIndex(s=>JSON.stringify(s)===JSON.stringify(state));
+                if(idx!==-1){
                     currentStateIndex = idx;
                     applyState(state);
                     updateNavButtons();
-                } else {
+                }else{
                     historyStack.push(state);
-                    currentStateIndex = historyStack.length - 1;
+                    currentStateIndex = historyStack.length-1;
                     applyState(state);
                     updateNavButtons();
                 }
-            } else {
-                navigateToHome();
-            }
+            }else{ navigateToHome(); }
         });
-        backBtn.addEventListener('click', () => {
-            if (currentStateIndex > 0) {
+        backBtn.addEventListener('click', ()=>{
+            if(currentStateIndex>0){
                 currentStateIndex--;
                 applyState(historyStack[currentStateIndex]);
                 updateNavButtons();
                 window.history.back();
             }
         });
-        forwardBtn.addEventListener('click', () => {
-            if (currentStateIndex < historyStack.length - 1) {
+        forwardBtn.addEventListener('click', ()=>{
+            if(currentStateIndex < historyStack.length-1){
                 currentStateIndex++;
                 applyState(historyStack[currentStateIndex]);
                 updateNavButtons();
@@ -966,7 +858,6 @@
         });
         refreshBtn.addEventListener('click', refreshData);
     }
-
     init();
 </script>
 
@@ -984,97 +875,35 @@
         </div>
     </div>
 </div>
-
 <style>
     .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(12px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        visibility: hidden;
-        opacity: 0;
-        transition: 0.2s;
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background-color: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 9999; visibility: hidden; opacity: 0; transition: 0.2s;
     }
-
-    .modal-overlay.show {
-        visibility: visible;
-        opacity: 1;
-    }
-
+    .modal-overlay.show { visibility: visible; opacity: 1; }
     .modal-container {
-        background: rgba(255, 255, 255, 0.98);
-        border-radius: 48px;
-        max-width: 420px;
-        width: 85%;
-        padding: 24px 20px 28px;
+        background: rgba(255,255,255,0.98); border-radius: 48px;
+        max-width: 420px; width: 85%; padding: 24px 20px 28px;
         text-align: center;
     }
-
-    .modal-header i {
-        font-size: 2.5rem;
-        background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-    }
-
-    .modal-header h3 {
-        font-size: 1.5rem;
-        margin-top: 6px;
-    }
-
-    .modal-body p {
-        font-size: 0.85rem;
-        line-height: 1.4;
-        margin-bottom: 10px;
-    }
-
-    .modal-btn {
-        background: #1e2f47;
-        color: white;
-        border: none;
-        border-radius: 60px;
-        padding: 10px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        width: 80%;
-        margin-top: 16px;
-    }
-
-    @media (max-width:480px) {
-        .modal-container {
-            width: 90%;
-            padding: 20px;
-        }
-
-        .modal-header h3 {
-            font-size: 1.3rem;
-        }
-    }
+    .modal-header i { font-size: 2.5rem; background: linear-gradient(135deg,#fbbf24,#f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .modal-header h3 { font-size: 1.5rem; margin-top: 6px; }
+    .modal-body p { font-size: 0.85rem; line-height: 1.4; margin-bottom: 10px; }
+    .modal-btn { background: #1e2f47; color: white; border: none; border-radius: 60px; padding: 10px 20px; font-size: 1rem; cursor: pointer; width: 80%; margin-top: 16px; }
+    @media (max-width:480px){ .modal-container{ width:90%; padding:20px; } .modal-header h3{ font-size:1.3rem; } }
 </style>
-
-<!-- 禁止双击缩放 -->
 <script>
     let lastTouchTime = 0;
     document.addEventListener('touchend', function(e) {
         const now = Date.now();
         if (now - lastTouchTime < 300 && e.touches.length === 0) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
+            e.preventDefault(); e.stopPropagation(); return false;
         }
         lastTouchTime = now;
     }, { passive: false });
-    document.addEventListener('dblclick', function(e) {
-        e.preventDefault();
-    });
+    document.addEventListener('dblclick', function(e) { e.preventDefault(); });
 </script>
 </body>
 </html>
