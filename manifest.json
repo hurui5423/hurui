@@ -1,0 +1,21 @@
+{
+  "name": "多破解源集合库",
+  "short_name": "应用库",
+  "description": "多源破解应用合集，支持全局搜索和切换源",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1e2f47",
+  "background_color": "#f5f7fc",
+  "orientation": "portrait",
+  "icons": [
+  { "src": "icons/icon-128×128.png", "sizes": "128x128", "type": "image/png" },
+  { "src": "icons/icon-144×144.png", "sizes": "144×144", "type": "image/png" },
+  { "src": "icons/icon-152×152.png", "sizes": "152×152", "type": "image/png" },
+  { "src": "icons/icon-192×192.png", "sizes": "192×192", "type": "image/png" },
+  { "src": "icons/icon-256×256.png", "sizes": "256×256", "type": "image/png" },
+  { "src": "icons/icon-384×384.png", "sizes": "384×384", "type": "image/png" },
+  { "src": "icons/icon-48×48.png", "sizes": "48×48", "type": "image/png" },
+  { "src": "icons/icon-512×512.png", "sizes": "512×512", "type": "image/png" },
+  { "src": "icons/icon-72×72.png", "sizes": "72×72", "type": "image/png" }
+  { "src": "icons/icon-96×96.png", "sizes": "96×96", "type": "image/png" }
+  ]
