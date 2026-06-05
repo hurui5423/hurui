@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>多源破解应用库 · 全局搜索</title>
+  <title>多源破解应用库 · 分页跳页</title>
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,6 +16,7 @@
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           padding: 0.8rem;
           color: #1e293b;
+          font-size: 14px; /* 整体缩放效果 */
       }
       body, button, a, .app-card, input, textarea { touch-action: manipulation; }
       body.modal-open { overflow: hidden; position: fixed; width: 100%; height: 100%; }
@@ -105,22 +106,8 @@
           box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       }
       .app-count span.highlight { color: #f59e0b; font-size: 1.2rem; font-weight: 800; margin: 0 4px; }
-      .stats-refresh-btn {
-          background: white;
-          border: none;
-          border-radius: 40px;
-          width: 38px;
-          height: 38px;
-          cursor: pointer;
-          font-size: 1rem;
-          color: #3b82f6;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-          transition: 0.2s;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-      }
-      .stats-refresh-btn:hover { transform: rotate(20deg); background: #eef2ff; }
+      /* 无刷新按钮，所以 stats-bar 右侧为空 */
+      
       .search-container {
           display: flex;
           flex-direction: column;
@@ -176,7 +163,7 @@
       }
       .source-banner i { margin-right: 8px; color: #f59e0b; }
       
-      /* 性能优化核心 */
+      /* 卡片样式 + content-visibility 优化 */
       .apps-grid {
           display: flex;
           flex-direction: column;
@@ -218,6 +205,45 @@
       .loading-state, .error-state { text-align: center; padding: 30px 20px; background: white; border-radius: 24px; }
       .spinner { width: 28px; height: 28px; border: 3px solid #e2e8f0; border-top: 3px solid #2c6e9e; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px; }
       @keyframes spin { to { transform: rotate(360deg); } }
+      
+      /* 分页控件样式 */
+      .pagination {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          margin: 20px 0 10px;
+          padding: 12px;
+          background: rgba(255,255,255,0.7);
+          backdrop-filter: blur(4px);
+          border-radius: 60px;
+      }
+      .pagination button, .pagination .page-number {
+          background: white;
+          border: none;
+          border-radius: 40px;
+          padding: 6px 14px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #1e2f47;
+          cursor: pointer;
+          transition: 0.2s;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      }
+      .pagination button:hover, .pagination .page-number:hover { background: #eef2ff; transform: translateY(-1px); }
+      .pagination .active-page { background: #1e2f47; color: white; cursor: default; }
+      .pagination .page-number.disabled, .pagination button:disabled { opacity: 0.5; cursor: not-allowed; background: #e2e8f0; }
+      .pagination .goto-input {
+          width: 60px;
+          padding: 6px;
+          border-radius: 40px;
+          border: 1px solid #cbd5e1;
+          text-align: center;
+          font-size: 0.8rem;
+      }
+      .pagination .goto-btn { padding: 6px 12px; background: #1e2f47; color: white; }
+      
       footer { margin-top: 20px; text-align: center; font-size: 0.6rem; color: #6f88a4; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
       @media (max-width: 640px) {
           .source-btn { min-width: 120px; font-size: 0.85rem; padding: 6px 12px; }
@@ -229,6 +255,7 @@
           .sub { font-size: 0.9rem; padding: 8px 12px; }
           .info-badge { font-size: 0.6rem; padding: 2px 8px; }
           .app-card { contain-intrinsic-size: 120px; }
+          .pagination button, .pagination .page-number { padding: 4px 10px; font-size: 0.7rem; }
       }
   </style>
 </head>
@@ -244,7 +271,7 @@
     <div class="source-bar" id="sourceBar"></div>
     <div class="stats-bar">
         <div class="app-count" id="appCountBadge">加载中...</div>
-        <button class="stats-refresh-btn" id="refreshBtn" title="刷新当前数据源"><i class="fas fa-sync-alt"></i></button>
+        <!-- 刷新按钮已移除 -->
     </div>
     <div class="search-container">
         <div class="search-box">
@@ -263,11 +290,13 @@
         <div class="spinner"></div>
         <p>加载中...</p>
     </div>
-    <footer>点击下载跳转 Safari · 复制链接 · 全局搜索无需切换源</footer>
+    <div id="paginationContainer" class="pagination" style="display: none;"></div>
+    <footer>点击下载跳转 Safari · 复制链接 · 每页30条，支持跳页</footer>
 </div>
 
 <script>
-    // ======================== 数据源配置 ========================
+    // ======================== 配置 ========================
+    const PAGE_SIZE = 30;  // 每页30条
     const dataSources = [
         { name: "💦 兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", bannerText: "🎉 兮兮源专属：内含 9000+ 破解应用，每日更新，点击下载请使用 Safari 打开 🎉" },
         { name: "👶 弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", bannerText: "🍭 弟弟源 · 年轻人最喜欢的游戏合集，破解付费软件一网打尽 🍭" },
@@ -287,15 +316,21 @@
     let lastSearchKeyword = '';
     let appCacheLoaded = false;
 
+    // 当前显示的数据全集
+    let currentFullData = [];
+    let currentPage = 1;      // 页码从1开始
+    let totalPages = 1;
+
     const container = document.getElementById('appsContainer');
+    const paginationDiv = document.getElementById('paginationContainer');
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const clearBtn = document.getElementById('clearBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
     const appCountBadge = document.getElementById('appCountBadge');
     const sourceBar = document.getElementById('sourceBar');
     const sourceBanner = document.getElementById('sourceBanner');
 
+    // 工具函数
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
     function formatSize(bytes) {
         if (!bytes || bytes === '0') return '?';
@@ -349,23 +384,24 @@
         }
     }
 
-    function renderApps(appsToRender, isSearchResult = false, sourceNameForAll = null) {
-        if (!appsToRender || appsToRender.length === 0) {
+    // 渲染当前页卡片
+    function renderCurrentPage() {
+        if (!currentFullData.length) {
             container.innerHTML = `<div class="error-state"><i class="fas fa-folder-open"></i><p>未找到相关应用</p></div>`;
-            let total = isSearchResult ? 0 : (allSourcesApps[currentSourceIndex]?.apps.length || 0);
-            appCountBadge.innerHTML = isSearchResult ? `搜索结果 <span class="highlight">0</span> 个应用` : `本源已更新 <span class="highlight">${total}</span> 个应用`;
+            paginationDiv.style.display = 'none';
             return;
         }
-
-        // 可选：限制最大显示数量，避免 DOM 过多（取消注释即可启用）
-        // const MAX_VISIBLE = 300;
-        // if (appsToRender.length > MAX_VISIBLE) {
-        //     appsToRender = appsToRender.slice(0, MAX_VISIBLE);
-        //     if (isSearchResult) showToast(`⚠️ 结果过多，仅显示前 ${MAX_VISIBLE} 条，请细化关键词`);
-        // }
-
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        const pageData = currentFullData.slice(start, end);
+        if (!pageData.length && currentPage > 1) {
+            // 如果当前页无数据但总页数可能变化，跳到最后一页
+            currentPage = totalPages;
+            renderCurrentPage();
+            return;
+        }
         let html = '';
-        for (let app of appsToRender) {
+        for (let app of pageData) {
             let iconHtml = (app.iconURL && app.iconURL.startsWith('http'))
                 ? `<img class="app-icon" src="${escapeHtml(app.iconURL)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display='none';this.parentNode.insertBefore(this.nextSibling,this);this.nextSibling.className='icon-placeholder';this.nextSibling.innerHTML='<i class=\'fas fa-mobile-alt\'></i>';" />`
                 : `<div class="icon-placeholder"><i class="fas fa-mobile-alt"></i></div>`;
@@ -380,10 +416,10 @@
             let safeDesc = escapeHtml(rawDesc).replace(/\\r\\n|\\n|\\r/g, '<br>').replace(/\r\n|\n|\r/g, '<br>');
             let versionText = app.version === '1' ? 'v1' : app.version;
             let sourceTagHtml = '';
-            if (isSearchResult && app.sourceName) {
+            if (isGlobalSearchMode && app.sourceName) {
                 sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(app.sourceName)}</span>`;
-            } else if (!isSearchResult && sourceNameForAll) {
-                sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(sourceNameForAll)}</span>`;
+            } else if (!isGlobalSearchMode) {
+                sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(dataSources[currentSourceIndex].name)}</span>`;
             }
             let sizeStr = formatSize(app.size);
             let dateStr = formatDate(app.versionDate);
@@ -413,6 +449,7 @@
             `;
         }
         container.innerHTML = html;
+        // 绑定按钮事件
         document.querySelectorAll('.btn-download').forEach(btn => {
             btn.addEventListener('click', () => {
                 let url = btn.getAttribute('data-url');
@@ -423,15 +460,91 @@
         document.querySelectorAll('.btn-copy').forEach(btn => {
             btn.addEventListener('click', () => copyUrl(btn.getAttribute('data-url'), btn.getAttribute('data-name')));
         });
+        // 更新分页控件
+        renderPagination();
+    }
+
+    // 分页控件渲染（首页、数字页码、末页、跳转）
+    function renderPagination() {
+        if (!currentFullData.length || totalPages <= 1) {
+            paginationDiv.style.display = 'none';
+            return;
+        }
+        paginationDiv.style.display = 'flex';
+        let html = '';
+
+        // 首页
+        html += `<button class="page-first" ${currentPage === 1 ? 'disabled' : ''} data-page="1">首页</button>`;
+        // 上一页
+        html += `<button class="page-prev" ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage-1}">‹</button>`;
+
+        // 页码显示逻辑：显示当前页前后共7个页码
+        let startPage = Math.max(1, currentPage - 3);
+        let endPage = Math.min(totalPages, currentPage + 3);
+        if (endPage - startPage < 6) {
+            if (startPage === 1) endPage = Math.min(totalPages, startPage + 6);
+            else if (endPage === totalPages) startPage = Math.max(1, endPage - 6);
+        }
+        for (let i = startPage; i <= endPage; i++) {
+            html += `<span class="page-number ${i === currentPage ? 'active-page' : ''}" data-page="${i}">${i}</span>`;
+        }
+
+        // 下一页
+        html += `<button class="page-next" ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage+1}">›</button>`;
+        // 末页
+        html += `<button class="page-last" ${currentPage === totalPages ? 'disabled' : ''} data-page="${totalPages}">末页</button>`;
+
+        // 跳转输入框
+        html += `<input type="number" id="gotoPageInput" class="goto-input" min="1" max="${totalPages}" placeholder="页码">`;
+        html += `<button id="gotoPageBtn" class="goto-btn">跳转</button>`;
+
+        paginationDiv.innerHTML = html;
+
+        // 绑定页码点击事件
+        paginationDiv.querySelectorAll('.page-number, .page-first, .page-prev, .page-next, .page-last').forEach(el => {
+            if (el.hasAttribute('disabled')) return;
+            el.addEventListener('click', (e) => {
+                let page = parseInt(el.getAttribute('data-page'));
+                if (!isNaN(page) && page >= 1 && page <= totalPages) {
+                    currentPage = page;
+                    renderCurrentPage();
+                }
+            });
+        });
+        const gotoBtn = document.getElementById('gotoPageBtn');
+        const gotoInput = document.getElementById('gotoPageInput');
+        if (gotoBtn) {
+            gotoBtn.addEventListener('click', () => {
+                let page = parseInt(gotoInput.value);
+                if (!isNaN(page) && page >= 1 && page <= totalPages) {
+                    currentPage = page;
+                    renderCurrentPage();
+                } else {
+                    showToast(`请输入 1-${totalPages} 之间的页码`);
+                }
+                gotoInput.value = '';
+            });
+        }
+    }
+
+    // 设置新数据（切换源或搜索后调用）
+    function setNewData(newData) {
+        currentFullData = newData;
+        totalPages = Math.ceil(currentFullData.length / PAGE_SIZE);
+        if (totalPages === 0) totalPages = 1;
+        currentPage = 1;
+        renderCurrentPage();
+        const total = newData.length;
+        appCountBadge.innerHTML = isGlobalSearchMode ? `搜索结果 <span class="highlight">${total}</span> 个应用` : `本源已更新 <span class="highlight">${total}</span> 个应用`;
     }
 
     function showCurrentSourceApps() {
         if (!allSourcesApps[currentSourceIndex]) return;
         const currentApps = allSourcesApps[currentSourceIndex].apps;
-        renderApps(currentApps, false, dataSources[currentSourceIndex].name);
-        appCountBadge.innerHTML = `本源已更新 <span class="highlight">${currentApps.length}</span> 个应用`;
         isGlobalSearchMode = false;
         lastSearchKeyword = '';
+        setNewData(currentApps);
+        updateBanner();
     }
 
     function globalSearch(keyword) {
@@ -455,10 +568,9 @@
                 uniqueResults.push(app);
             }
         }
-        renderApps(uniqueResults, true);
-        appCountBadge.innerHTML = `搜索结果 <span class="highlight">${uniqueResults.length}</span> 个应用`;
         isGlobalSearchMode = true;
         lastSearchKeyword = keyword;
+        setNewData(uniqueResults);
     }
 
     function clearSearch() {
@@ -496,33 +608,6 @@
         allSourcesApps = results;
         appCacheLoaded = true;
         showCurrentSourceApps();
-        updateBanner();
-    }
-
-    async function refreshCurrentSource() {
-        const idx = currentSourceIndex;
-        const source = dataSources[idx];
-        try {
-            let resp = await fetch(source.url);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            let json = await resp.json();
-            let appsRaw = json.apps || (Array.isArray(json) ? json : null);
-            let apps = appsRaw ? appsRaw.map(app => ({
-                name: app.name || '未命名',
-                iconURL: app.iconURL || '',
-                version: app.version || '最新',
-                versionDescription: app.versionDescription || '',
-                downloadURL: app.downloadURL || '',
-                size: app.size || '0',
-                versionDate: app.versionDate || '',
-                lock: app.lock === undefined ? '0' : String(app.lock),
-                type: app.type || 0
-            })).filter(app => app.downloadURL) : [];
-            allSourcesApps[idx] = { sourceName: source.name, sourceIndex: idx, apps: apps };
-            if (!isGlobalSearchMode) { showCurrentSourceApps(); }
-            else { if (lastSearchKeyword) globalSearch(lastSearchKeyword); }
-            showToast(`✅ 已刷新「${source.name}」`);
-        } catch (err) { showToast(`❌ 刷新失败: ${err.message}`); }
     }
 
     function updateBanner() {
@@ -562,84 +647,145 @@
         else showToast("请输入要搜索的应用名称或描述");
     });
     clearBtn.addEventListener('click', clearSearch);
-    refreshBtn.addEventListener('click', () => refreshCurrentSource());
 
     init();
 </script>
 
-<!-- 弹窗 -->
+<!-- 弹窗（更大，按钮更大，每个标签页会话只弹出一次） -->
 <div id="customModal" class="modal-overlay">
     <div class="modal-container">
-        <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
+        <div class="modal-header">
+            <i class="fas fa-gem"></i>
+            <h3>💡 温馨提醒</h3>
+        </div>
         <div class="modal-body">
             <p>破解应用为 <strong>.ipa</strong> 格式，仅支持越狱 iOS、iPad、Mac 自签安装和巨魔用户安装，插件可用注入工具自行注入。</p>
             <p>💾 各种破解源集合已有 <strong>9000+</strong> 资源，平均三天持续更新：<br>🎮 破解游戏 · ⚙️ 巨魔应用 · 📱 破解应用及工具 · 🔧 破解插件 · ❤️ 福利软件 · 🥰 绅士游戏</p>
-            <p style="margin-top:12px;font-size:0.7rem;color:#b91c1c;">⚠️ 用户须仔细甄别下载，使用过程中产生的一切后果由用户自行负责 ⚠️</p>
+            <p style="margin-top:12px;font-size:0.75rem;color:#b91c1c;">⚠️ 用户须仔细甄别下载，使用过程中产生的一切后果由用户自行负责 ⚠️</p>
         </div>
-        <div class="modal-buttons"><button id="modalConfirmBtn" class="modal-btn modal-btn-primary" style="width:100%;background-color:#aaa;cursor:not-allowed;" disabled><i class="fas fa-hourglass-half"></i> 等待 2 秒...</button></div>
+        <div class="modal-buttons">
+            <button id="modalConfirmBtn" class="modal-btn modal-btn-primary">已明白，开始探索</button>
+        </div>
     </div>
 </div>
 
 <style>
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; visibility: hidden; opacity: 0; transition: visibility 0.2s, opacity 0.2s; }
-    .modal-overlay.show { visibility: visible; opacity: 1; }
-    .modal-container { background: rgba(255,255,255,0.98); border-radius: 40px; max-width: 360px; width: 88%; padding: 24px 20px 28px; box-shadow: 0 30px 40px -20px rgba(0,0,0,0.4); text-align: center; transform: scale(0.9); transition: transform 0.2s ease; border: 1px solid rgba(255,255,255,0.6); }
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.2s, opacity 0.2s;
+    }
+    .modal-overlay.show {
+        visibility: visible;
+        opacity: 1;
+    }
+    .modal-container {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 48px;
+        max-width: 420px;
+        width: 85%;
+        padding: 32px 28px 36px;
+        box-shadow: 0 30px 40px -20px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        transform: scale(0.9);
+        transition: transform 0.2s ease;
+        border: 1px solid rgba(255,255,255,0.6);
+    }
     .modal-overlay.show .modal-container { transform: scale(1); }
-    .modal-header { margin-bottom: 14px; }
-    .modal-header i { font-size: 2.2rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
-    .modal-header h3 { font-size: 1.4rem; font-weight: 700; margin-top: 6px; color: #1e2f47; }
-    .modal-body p { font-size: 0.8rem; line-height: 1.45; color: #2d3e5a; margin-bottom: 10px; }
-    .modal-buttons { margin-top: 18px; display: flex; justify-content: center; }
-    .modal-btn { border: none; padding: 10px 0; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; width: 80%; max-width: 260px; }
-    .modal-btn-primary { background: #1e2f47; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .modal-btn-primary:enabled:hover { background: #0f2840; transform: translateY(-2px); }
-    @media (max-width:480px) { .modal-container { width: 92%; padding: 18px 14px 22px; } .modal-header h3 { font-size: 1.2rem; } .modal-body p { font-size: 0.7rem; } .modal-btn { font-size: 0.8rem; padding: 8px 0; width: 90%; } }
+    .modal-header { margin-bottom: 20px; }
+    .modal-header i { font-size: 3rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .modal-header h3 { font-size: 1.8rem; font-weight: 700; margin-top: 8px; color: #1e2f47; }
+    .modal-body p { font-size: 1rem; line-height: 1.5; color: #2d3e5a; margin-bottom: 14px; }
+    .modal-buttons { margin-top: 24px; display: flex; justify-content: center; }
+    .modal-btn {
+        border: none;
+        padding: 14px 0;
+        border-radius: 60px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: 0.2s;
+        width: 80%;
+        max-width: 280px;
+        background: #1e2f47;
+        color: white;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+    .modal-btn:hover { background: #0f2840; transform: translateY(-2px); }
+    @media (max-width: 480px) {
+        .modal-container { width: 90%; padding: 24px 20px 28px; }
+        .modal-header i { font-size: 2.5rem; }
+        .modal-header h3 { font-size: 1.4rem; }
+        .modal-body p { font-size: 0.85rem; }
+        .modal-btn { font-size: 1rem; padding: 12px 0; }
+    }
 </style>
 
 <script>
     (function() {
-        const modal = document.getElementById('customModal');
-        const confirmBtn = document.getElementById('modalConfirmBtn');
-        let btnTimer = null, scrollTop = 0;
-        function preventTouchMove(e) { if (modal.classList.contains('show')) e.preventDefault(); }
-        function showModal() {
-            scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            document.body.classList.add('modal-open');
-            document.body.style.top = `-${scrollTop}px`;
-            document.body.addEventListener('touchmove', preventTouchMove, { passive: false });
-            modal.classList.add('show');
-            confirmBtn.disabled = true;
-            confirmBtn.style.backgroundColor = '#aaa';
-            confirmBtn.style.cursor = 'not-allowed';
-            confirmBtn.innerHTML = '<i class="fas fa-hourglass-half"></i> 等待 2 秒...';
-            if (btnTimer) clearTimeout(btnTimer);
-            btnTimer = setTimeout(() => {
-                confirmBtn.disabled = false;
-                confirmBtn.style.backgroundColor = '#1e2f47';
-                confirmBtn.style.cursor = 'pointer';
-                confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> 已明白，开始探索';
-            }, 2000);
+        // 弹窗：每个标签页会话只弹出一次（关闭标签页重新打开会再次弹出）
+        if (!sessionStorage.getItem('modalShown')) {
+            const modal = document.getElementById('customModal');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            let scrollTop = 0;
+            function preventTouchMove(e) { if (modal.classList.contains('show')) e.preventDefault(); }
+            function showModal() {
+                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                document.body.classList.add('modal-open');
+                document.body.style.top = `-${scrollTop}px`;
+                document.body.addEventListener('touchmove', preventTouchMove, { passive: false });
+                modal.classList.add('show');
+            }
+            function hideModal() {
+                modal.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                document.body.style.top = '';
+                document.body.removeEventListener('touchmove', preventTouchMove);
+                window.scrollTo(0, scrollTop);
+            }
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    hideModal();
+                });
+            }
+            showModal();
+            sessionStorage.setItem('modalShown', 'true');
         }
-        function hideModal() {
-            modal.classList.remove('show');
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            document.body.removeEventListener('touchmove', preventTouchMove);
-            window.scrollTo(0, scrollTop);
-            if (btnTimer) clearTimeout(btnTimer);
-        }
-        if (confirmBtn) confirmBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if (!confirmBtn.disabled) hideModal(); });
-        window.addEventListener('load', () => setTimeout(showModal, 400));
     })();
 </script>
+
+<!-- 禁止双击缩放 -->
 <script>
     let lastTouchTime = 0;
     document.addEventListener('touchend', function(e) {
         const now = Date.now();
-        if (now - lastTouchTime < 300 && e.touches.length === 0) { e.preventDefault(); e.stopPropagation(); return false; }
+        if (now - lastTouchTime < 300 && e.touches.length === 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
         lastTouchTime = now;
     }, { passive: false });
-    document.addEventListener('dblclick', function(e) { e.preventDefault(); });
+    document.addEventListener('dblclick', function(e) {
+        e.preventDefault();
+    });
 </script>
 </body>
 </html>
