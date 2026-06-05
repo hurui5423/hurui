@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>多源破解应用库 · 全局搜索</title>
-  <!-- PWA 配置（无离线缓存） -->
+  <title>多源破解应用库 · 虚拟滚动版</title>
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="多源库">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+      /* 原有所有样式保持不变，额外添加虚拟滚动相关 */
       * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
       body {
           background: linear-gradient(145deg, #f5f7fc 0%, #eef2f6 100%);
@@ -18,16 +18,8 @@
           padding: 0.8rem;
           color: #1e293b;
       }
-      /* 禁止双击缩放，保留捏合 */
-      body, button, a, .app-card, input, textarea {
-          touch-action: manipulation;
-      }
-      body.modal-open {
-          overflow: hidden;
-          position: fixed;
-          width: 100%;
-          height: 100%;
-      }
+      body, button, a, .app-card, input, textarea { touch-action: manipulation; }
+      body.modal-open { overflow: hidden; position: fixed; width: 100%; height: 100%; }
       .container { max-width: 1200px; margin: 0 auto; }
       .header { margin-bottom: 1rem; text-align: center; }
       .header h1 {
@@ -59,8 +51,6 @@
           border-radius: 80px;
           box-shadow: 0 4px 10px rgba(0,0,0,0.06);
       }
-
-      /* 数据源切换栏 */
       .source-bar {
           display: flex;
           flex-wrap: wrap;
@@ -68,7 +58,7 @@
           justify-content: center;
           gap: 14px;
           margin: 6px 0 16px;
-          background: rgba(255, 255, 255, 0.6);
+          background: rgba(255,255,255,0.6);
           backdrop-filter: blur(8px);
           padding: 14px 18px;
           border-radius: 60px;
@@ -93,18 +83,8 @@
           flex: 0 0 auto;
       }
       .source-btn i { font-size: 0.9rem; }
-      .source-btn:hover {
-          background: white;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 16px -8px rgba(0,0,0,0.15);
-      }
-      .source-btn.active {
-          background: #1e2f47;
-          color: white;
-          box-shadow: 0 6px 12px -6px rgba(0,0,0,0.3);
-      }
-
-      /* 统计信息 + 刷新按钮 */
+      .source-btn:hover { background: white; transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgba(0,0,0,0.15); }
+      .source-btn.active { background: #1e2f47; color: white; box-shadow: 0 6px 12px -6px rgba(0,0,0,0.3); }
       .stats-bar {
           display: flex;
           justify-content: space-between;
@@ -125,12 +105,7 @@
           color: #1e2f47;
           box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       }
-      .app-count span.highlight {
-          color: #f59e0b;
-          font-size: 1.2rem;
-          font-weight: 800;
-          margin: 0 4px;
-      }
+      .app-count span.highlight { color: #f59e0b; font-size: 1.2rem; font-weight: 800; margin: 0 4px; }
       .stats-refresh-btn {
           background: white;
           border: none;
@@ -146,12 +121,7 @@
           align-items: center;
           justify-content: center;
       }
-      .stats-refresh-btn:hover {
-          transform: rotate(20deg);
-          background: #eef2ff;
-      }
-
-      /* 搜索栏：输入框 + 下方并排两个大按钮 */
+      .stats-refresh-btn:hover { transform: rotate(20deg); background: #eef2ff; }
       .search-container {
           display: flex;
           flex-direction: column;
@@ -171,23 +141,9 @@
           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
           transition: all 0.2s;
       }
-      .search-box:focus-within {
-          box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-          transform: scale(1.01);
-      }
-      .search-box input {
-          border: none;
-          outline: none;
-          padding: 8px 0;
-          width: 100%;
-          font-size: 1rem;
-          background: transparent;
-      }
-      .search-buttons {
-          display: flex;
-          gap: 20px;
-          justify-content: center;
-      }
+      .search-box:focus-within { box-shadow: 0 4px 16px rgba(0,0,0,0.12); transform: scale(1.01); }
+      .search-box input { border: none; outline: none; padding: 8px 0; width: 100%; font-size: 1rem; background: transparent; }
+      .search-buttons { display: flex; gap: 20px; justify-content: center; }
       .search-action-btn {
           background: #1e2f47;
           border: none;
@@ -203,19 +159,9 @@
           transition: 0.2s;
           box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       }
-      .search-action-btn:hover {
-          background: #0f2840;
-          transform: translateY(-2px);
-      }
-      .clear-btn {
-          background: #e2e8f0;
-          color: #1e293b;
-      }
-      .clear-btn:hover {
-          background: #cbd5e1;
-      }
-
-      /* 源横幅 */
+      .search-action-btn:hover { background: #0f2840; transform: translateY(-2px); }
+      .clear-btn { background: #e2e8f0; color: #1e293b; }
+      .clear-btn:hover { background: #cbd5e1; }
       .source-banner {
           margin: 12px 0 16px;
           padding: 12px 20px;
@@ -230,14 +176,18 @@
           backdrop-filter: blur(2px);
       }
       .source-banner i { margin-right: 8px; color: #f59e0b; }
-
-      /* 应用网格 — 单列，性能优化 */
-      .apps-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          margin-top: 4px;
-          contain: layout style paint; /* 优化重绘 */
+      
+      /* 虚拟滚动容器样式 */
+      .virtual-scroll-container {
+          position: relative;
+          min-height: 200px;
+      }
+      .virtual-scroll-content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          will-change: transform;
       }
       .app-card {
           background: rgba(250, 250, 245, 0.98);
@@ -246,157 +196,33 @@
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           box-shadow: 0 2px 6px rgba(0,0,0,0.08);
           border: 1px solid rgba(200,200,180,0.3);
-          /* 关键性能优化：延迟渲染不可见卡片 */
-          content-visibility: auto;
-          contain-intrinsic-size: 130px; /* 预估卡片高度，防止滚动跳动 */
+          margin-bottom: 10px;
           will-change: transform;
       }
-      .app-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 18px -10px rgba(0,0,0,0.15);
-          background: #fffdf8;
-      }
-      .card-inner {
-          padding: 8px 12px;
-          display: flex;
-          flex-direction: row;
-          gap: 10px;
-          align-items: center;
-      }
-      .app-icon {
-          width: 44px;
-          height: 44px;
-          border-radius: 14px;
-          object-fit: cover;
-          background: #f1f5f9;
-          flex-shrink: 0;
-      }
-      .icon-placeholder {
-          width: 44px;
-          height: 44px;
-          border-radius: 14px;
-          background: linear-gradient(145deg, #e2e8f0, #cbd5e1);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 20px;
-          color: #4b5563;
-      }
-      .app-info {
-          flex: 1;
-          min-width: 0;
-      }
-      .app-header {
-          display: flex;
-          align-items: baseline;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-bottom: 2px;
-      }
-      .app-name {
-          font-size: 0.9rem;
-          font-weight: 700;
-          color: #0f172a;
-      }
-      .app-version {
-          font-size: 0.55rem;
-          background: #eef2ff;
-          display: inline-block;
-          padding: 1px 6px;
-          border-radius: 16px;
-          color: #2563eb;
-      }
-      .lock-badge {
-          background: #fee2e2;
-          color: #dc2626;
-          font-size: 0.5rem;
-          padding: 1px 5px;
-          border-radius: 16px;
-      }
-      .source-tag {
-          font-size: 0.55rem;
-          background: #e9eef3;
-          border-radius: 16px;
-          padding: 1px 8px;
-          color: #475569;
-          display: inline-block;
-      }
-      .desc {
-          background: #fef9e6;
-          padding: 4px 8px;
-          border-radius: 12px;
-          margin: 2px 0 4px;
-          font-size: 0.65rem;
-          line-height: 1.3;
-          border-left: 3px solid #f59e0b;
-          white-space: pre-wrap;
-          word-break: break-word;
-      }
-      .meta-info {
-          display: flex;
-          gap: 16px;
-          margin-bottom: 6px;
-          margin-top: 2px;
-      }
-      .info-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: #e9eef3;
-          padding: 3px 10px;
-          border-radius: 30px;
-          font-size: 0.7rem;
-          font-weight: 600;
-          color: #1e2f47;
-          box-shadow: inset 0 1px 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.05);
-      }
+      .app-card:hover { transform: translateY(-2px); box-shadow: 0 10px 18px -10px rgba(0,0,0,0.15); background: #fffdf8; }
+      .card-inner { padding: 8px 12px; display: flex; flex-direction: row; gap: 10px; align-items: center; }
+      .app-icon { width: 44px; height: 44px; border-radius: 14px; object-fit: cover; background: #f1f5f9; flex-shrink: 0; }
+      .icon-placeholder { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(145deg, #e2e8f0, #cbd5e1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: #4b5563; }
+      .app-info { flex: 1; min-width: 0; }
+      .app-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 2px; }
+      .app-name { font-size: 0.9rem; font-weight: 700; color: #0f172a; }
+      .app-version { font-size: 0.55rem; background: #eef2ff; display: inline-block; padding: 1px 6px; border-radius: 16px; color: #2563eb; }
+      .lock-badge { background: #fee2e2; color: #dc2626; font-size: 0.5rem; padding: 1px 5px; border-radius: 16px; }
+      .source-tag { font-size: 0.55rem; background: #e9eef3; border-radius: 16px; padding: 1px 8px; color: #475569; display: inline-block; }
+      .desc { background: #fef9e6; padding: 4px 8px; border-radius: 12px; margin: 2px 0 4px; font-size: 0.65rem; line-height: 1.3; border-left: 3px solid #f59e0b; white-space: pre-wrap; word-break: break-word; }
+      .meta-info { display: flex; gap: 16px; margin-bottom: 6px; margin-top: 2px; }
+      .info-badge { display: inline-flex; align-items: center; gap: 6px; background: #e9eef3; padding: 3px 10px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; color: #1e2f47; box-shadow: inset 0 1px 1px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.05); }
       .info-badge i { font-size: 0.65rem; color: #f59e0b; }
-      .button-group {
-          display: flex;
-          gap: 8px;
-          margin-top: 2px;
-      }
-      .btn {
-          border: none;
-          padding: 4px 12px;
-          border-radius: 28px;
-          font-weight: 600;
-          font-size: 0.7rem;
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          transition: 0.1s;
-      }
+      .button-group { display: flex; gap: 8px; margin-top: 2px; }
+      .btn { border: none; padding: 4px 12px; border-radius: 28px; font-weight: 600; font-size: 0.7rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: 0.1s; }
       .btn-download { background: #1e2f47; color: white; }
       .btn-download:hover { background: #0f2840; transform: scale(0.98); }
       .btn-copy { background: white; border: 1px solid #b9ccf0; color: #2c5f8a; }
       .btn-copy:hover { background: #f0f6ff; }
-      .loading-state, .error-state {
-          text-align: center;
-          padding: 30px 20px;
-          background: white;
-          border-radius: 24px;
-      }
-      .spinner {
-          width: 28px;
-          height: 28px;
-          border: 3px solid #e2e8f0;
-          border-top: 3px solid #2c6e9e;
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-          margin: 0 auto 10px;
-      }
+      .loading-state, .error-state { text-align: center; padding: 30px 20px; background: white; border-radius: 24px; }
+      .spinner { width: 28px; height: 28px; border: 3px solid #e2e8f0; border-top: 3px solid #2c6e9e; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px; }
       @keyframes spin { to { transform: rotate(360deg); } }
-      footer {
-          margin-top: 20px;
-          text-align: center;
-          font-size: 0.6rem;
-          color: #6f88a4;
-          padding-top: 10px;
-          border-top: 1px solid rgba(0,0,0,0.05);
-      }
-
+      footer { margin-top: 20px; text-align: center; font-size: 0.6rem; color: #6f88a4; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
       @media (max-width: 640px) {
           .source-btn { min-width: 120px; font-size: 0.85rem; padding: 6px 12px; }
           .card-inner { padding: 6px 10px; gap: 8px; }
@@ -406,7 +232,6 @@
           .btn { padding: 3px 10px; font-size: 0.65rem; }
           .sub { font-size: 0.9rem; padding: 8px 12px; }
           .info-badge { font-size: 0.6rem; padding: 2px 8px; }
-          .app-card { contain-intrinsic-size: 120px; }
       }
   </style>
 </head>
@@ -419,17 +244,11 @@
             👇 点击下方按钮切换不同数据源 · 分类各有特色 👇
         </div>
     </div>
-
-    <!-- 数据源切换按钮区 -->
     <div class="source-bar" id="sourceBar"></div>
-
-    <!-- 统计信息 + 刷新按钮 -->
     <div class="stats-bar">
         <div class="app-count" id="appCountBadge">加载中...</div>
         <button class="stats-refresh-btn" id="refreshBtn" title="刷新当前数据源"><i class="fas fa-sync-alt"></i></button>
     </div>
-
-    <!-- 搜索栏 -->
     <div class="search-container">
         <div class="search-box">
             <i class="fas fa-search"></i>
@@ -440,24 +259,18 @@
             <button id="clearBtn" class="search-action-btn clear-btn"><i class="fas fa-times"></i> 清除</button>
         </div>
     </div>
-
-    <!-- 源专属横幅 -->
     <div id="sourceBanner" class="source-banner">
         <i class="fas fa-info-circle"></i> 欢迎使用本合集，请选择上方数据源
     </div>
-
-    <div id="appsContainer" class="apps-grid loading-state">
+    <div id="appsContainer" class="virtual-scroll-container loading-state">
         <div class="spinner"></div>
         <p>加载中...</p>
     </div>
-
     <footer>点击下载跳转 Safari · 复制链接 · 全局搜索无需切换源</footer>
 </div>
 
 <script>
-    // ========================
-    // 配置多个数据源 (名称 + URL + 专属横幅内容)
-    // ========================
+    // ======================== 数据源配置 ========================
     const dataSources = [
         { name: "💦 兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", bannerText: "🎉 兮兮源专属：内含 9000+ 破解应用，每日更新，点击下载请使用 Safari 打开 🎉" },
         { name: "👶 弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", bannerText: "🍭 弟弟源 · 年轻人最喜欢的游戏合集，破解付费软件一网打尽 🍭" },
@@ -471,12 +284,21 @@
         { name: "🔧 工具源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/tools.json", bannerText: "🔧 工具源 · 实用系统工具、效率神器、破解插件 🔧" }
     ];
 
-    // 全局变量
     let currentSourceIndex = 0;
     let allSourcesApps = [];
     let isGlobalSearchMode = false;
     let lastSearchKeyword = '';
     let appCacheLoaded = false;
+
+    // 虚拟滚动相关变量
+    let currentData = [];           // 当前显示的完整数据列表
+    let renderWindow = null;        // 渲染窗口函数
+    let scrollContainer = null;
+    let scrollListener = null;
+    let resizeObserver = null;
+    let itemHeightCache = new Map(); // 缓存每个卡片高度 (但卡片高度不定，我们使用动态测量)
+    let currentScrollTop = 0;
+    let rafId = null;
 
     const container = document.getElementById('appsContainer');
     const searchInput = document.getElementById('searchInput');
@@ -487,11 +309,8 @@
     const sourceBar = document.getElementById('sourceBar');
     const sourceBanner = document.getElementById('sourceBanner');
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
-    }
-
+    // 工具函数
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
     function formatSize(bytes) {
         if (!bytes || bytes === '0') return '?';
         let num = parseInt(bytes, 10);
@@ -500,7 +319,6 @@
         if (num < 1024 * 1024 * 1024) return (num / (1024 * 1024)).toFixed(1) + 'MB';
         return (num / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
     }
-
     function formatDate(dateStr) {
         if (!dateStr) return '未知日期';
         if (dateStr === '最新版') return '最新版';
@@ -517,7 +335,6 @@
             return `${year}-${month}-${day}`;
         } catch(e) { return dateStr; }
     }
-
     function showToast(msg) {
         let toast = document.createElement('div');
         toast.innerText = msg;
@@ -525,13 +342,11 @@
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 1800);
     }
-
     function downloadApp(url, name) {
         if (!url) { showToast(`⚠️ 无链接`); return; }
         window.open(url, '_blank');
         showToast(`⬇️ 下载 ${name}`);
     }
-
     async function copyUrl(url, name) {
         if (!url) { showToast(`❌ 无链接`); return; }
         try {
@@ -548,6 +363,143 @@
         }
     }
 
+    // 生成单个卡片 HTML (用于虚拟滚动)
+    function renderCard(app, isSearchResult, sourceNameForAll) {
+        let iconHtml = (app.iconURL && app.iconURL.startsWith('http'))
+            ? `<img class="app-icon" src="${escapeHtml(app.iconURL)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display='none';this.parentNode.insertBefore(this.nextSibling,this);this.nextSibling.className='icon-placeholder';this.nextSibling.innerHTML='<i class=\'fas fa-mobile-alt\'></i>';" />`
+            : `<div class="icon-placeholder"><i class="fas fa-mobile-alt"></i></div>`;
+        let lockBadge = app.lock === '1' ? `<span class="lock-badge"><i class="fas fa-lock"></i> 锁</span>` : '';
+        let typeValue = app.type;
+        let typeTag = '';
+        if (typeValue == 10 || typeValue === '10') typeTag = '破解版';
+        else if (typeValue == 2 || typeValue === '2') typeTag = '应用';
+        else if (typeValue == 5 || typeValue === '5') typeTag = '会员';
+        else typeTag = '其他';
+        let rawDesc = app.versionDescription || '暂无描述';
+        let safeDesc = escapeHtml(rawDesc).replace(/\\r\\n|\\n|\\r/g, '<br>').replace(/\r\n|\n|\r/g, '<br>');
+        let versionText = app.version === '1' ? 'v1' : app.version;
+        let sourceTagHtml = '';
+        if (isSearchResult && app.sourceName) {
+            sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(app.sourceName)}</span>`;
+        } else if (!isSearchResult && sourceNameForAll) {
+            sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(sourceNameForAll)}</span>`;
+        }
+        let sizeStr = formatSize(app.size);
+        let dateStr = formatDate(app.versionDate);
+        return `
+            <div class="app-card" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}">
+                <div class="card-inner">
+                    ${iconHtml}
+                    <div class="app-info">
+                        <div class="app-header">
+                            <span class="app-name">${escapeHtml(app.name)} ${lockBadge}</span>
+                            <span class="app-version">${escapeHtml(versionText)}</span>
+                            <span style="font-size:0.65rem; background:#e9eef3; border-radius:20px; padding:2px 10px; font-weight:500;">${typeTag}</span>
+                            ${sourceTagHtml}
+                        </div>
+                        <div class="desc">${safeDesc || '✨'}</div>
+                        <div class="meta-info">
+                            <span class="info-badge"><i class="fas fa-hdd"></i> ${sizeStr}</span>
+                            <span class="info-badge"><i class="far fa-calendar-alt"></i> ${dateStr}</span>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-download"><i class="fas fa-download"></i> 下载</button>
+                            <button class="btn btn-copy"><i class="fas fa-copy"></i> 复制</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // 虚拟滚动核心：根据当前滚动位置渲染可见卡片
+    function updateVirtualList() {
+        if (!scrollContainer || !currentData.length) return;
+        const scrollTop = scrollContainer.scrollTop;
+        const containerHeight = scrollContainer.clientHeight;
+        // 估算每个卡片高度 (由于卡片高度不一，使用缓存平均高度动态更新)
+        let avgHeight = 0;
+        if (itemHeightCache.size > 0) {
+            let sum = 0;
+            for (let h of itemHeightCache.values()) sum += h;
+            avgHeight = sum / itemHeightCache.size;
+        } else {
+            avgHeight = 130; // 初始估算
+        }
+        const startIndex = Math.max(0, Math.floor(scrollTop / avgHeight) - 5);
+        const endIndex = Math.min(currentData.length, Math.ceil((scrollTop + containerHeight) / avgHeight) + 5);
+        
+        // 生成 HTML
+        let html = '';
+        for (let i = startIndex; i < endIndex; i++) {
+            const item = currentData[i];
+            html += renderCard(item, isGlobalSearchMode, isGlobalSearchMode ? null : dataSources[currentSourceIndex].name);
+        }
+        const content = document.getElementById('virtualContent');
+        if (content) {
+            content.innerHTML = html;
+            content.style.top = `${startIndex * avgHeight}px`;
+            // 重新绑定按钮事件
+            document.querySelectorAll('.btn-download').forEach(btn => {
+                const card = btn.closest('.app-card');
+                const url = card?.getAttribute('data-url');
+                const name = card?.getAttribute('data-name');
+                btn.addEventListener('click', (e) => { e.stopPropagation(); downloadApp(url, name); });
+            });
+            document.querySelectorAll('.btn-copy').forEach(btn => {
+                const card = btn.closest('.app-card');
+                const url = card?.getAttribute('data-url');
+                const name = card?.getAttribute('data-name');
+                btn.addEventListener('click', (e) => { e.stopPropagation(); copyUrl(url, name); });
+            });
+            // 更新高度缓存（简单测量每个卡片，但为了性能，只测量可见的）
+            const cards = content.querySelectorAll('.app-card');
+            cards.forEach((card, idx) => {
+                const h = card.offsetHeight;
+                const globalIdx = startIndex + idx;
+                if (h > 0 && (!itemHeightCache.has(globalIdx) || Math.abs(itemHeightCache.get(globalIdx) - h) > 5)) {
+                    itemHeightCache.set(globalIdx, h);
+                }
+            });
+        }
+    }
+
+    // 设置虚拟滚动容器
+    function setupVirtualScroll(data, isSearchResult, sourceNameForAll) {
+        if (!container) return;
+        // 保存当前数据
+        currentData = data;
+        isGlobalSearchMode = isSearchResult;
+        // 清空高度缓存
+        itemHeightCache.clear();
+        // 构建滚动容器结构
+        container.innerHTML = '';
+        container.classList.remove('loading-state');
+        container.classList.add('virtual-scroll-container');
+        const totalHeight = data.length * 130; // 预估总高度，实际会动态调整
+        container.style.position = 'relative';
+        container.style.minHeight = '200px';
+        container.innerHTML = `
+            <div id="virtualContent" class="virtual-scroll-content" style="position: absolute; top: 0; left: 0; width: 100%;"></div>
+            <div style="height: ${totalHeight}px; pointer-events: none;"></div>
+        `;
+        scrollContainer = container;
+        // 监听滚动
+        if (scrollListener) scrollContainer.removeEventListener('scroll', scrollListener);
+        scrollListener = () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(updateVirtualList);
+        };
+        scrollContainer.addEventListener('scroll', scrollListener, { passive: true });
+        // 初次渲染
+        updateVirtualList();
+        // 监听窗口大小变化重新计算
+        if (resizeObserver) resizeObserver.disconnect();
+        resizeObserver = new ResizeObserver(() => updateVirtualList());
+        resizeObserver.observe(container);
+    }
+
+    // 传统渲染（当数据量很小时可用，但虚拟滚动统一使用）
     function renderApps(appsToRender, isSearchResult = false, sourceNameForAll = null) {
         if (!appsToRender || appsToRender.length === 0) {
             container.innerHTML = `<div class="error-state"><i class="fas fa-folder-open"></i><p>未找到相关应用</p></div>`;
@@ -555,98 +507,22 @@
             appCountBadge.innerHTML = isSearchResult ? `搜索结果 <span class="highlight">0</span> 个应用` : `本源已更新 <span class="highlight">${total}</span> 个应用`;
             return;
         }
-
-        // 性能优化：限制单次渲染最大数量，避免DOM节点过多（您可以根据需要取消注释）
-        // const MAX_VISIBLE = 200;
-        // if (appsToRender.length > MAX_VISIBLE) {
-        //     appsToRender = appsToRender.slice(0, MAX_VISIBLE);
-        //     if (isSearchResult) showToast(`⚠️ 结果过多，仅显示前 ${MAX_VISIBLE} 条，请细化关键词`);
-        // }
-
-        let html = '';
-        for (let app of appsToRender) {
-            let iconHtml = (app.iconURL && app.iconURL.startsWith('http'))
-                ? `<img class="app-icon" src="${escapeHtml(app.iconURL)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display='none';this.parentNode.insertBefore(this.nextSibling,this);this.nextSibling.className='icon-placeholder';this.nextSibling.innerHTML='<i class=\'fas fa-mobile-alt\'></i>';" />`
-                : `<div class="icon-placeholder"><i class="fas fa-mobile-alt"></i></div>`;
-            let lockBadge = app.lock === '1' ? `<span class="lock-badge"><i class="fas fa-lock"></i> 锁</span>` : '';
-            let typeValue = app.type;
-            let typeTag = '';
-            if (typeValue == 10 || typeValue === '10') typeTag = '破解版';
-            else if (typeValue == 2 || typeValue === '2') typeTag = '应用';
-            else if (typeValue == 5 || typeValue === '5') typeTag = '会员';
-            else typeTag = '其他';
-
-            let rawDesc = app.versionDescription || '暂无描述';
-            let safeDesc = escapeHtml(rawDesc).replace(/\\r\\n|\\n|\\r/g, '<br>').replace(/\r\n|\n|\r/g, '<br>');
-            let versionText = app.version === '1' ? 'v1' : app.version;
-
-            let sourceTagHtml = '';
-            if (isSearchResult && app.sourceName) {
-                sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(app.sourceName)}</span>`;
-            } else if (!isSearchResult && sourceNameForAll) {
-                sourceTagHtml = `<span class="source-tag"><i class="fas fa-tag"></i> ${escapeHtml(sourceNameForAll)}</span>`;
-            }
-
-            let sizeStr = formatSize(app.size);
-            let dateStr = formatDate(app.versionDate);
-
-            html += `
-                <div class="app-card">
-                    <div class="card-inner">
-                        ${iconHtml}
-                        <div class="app-info">
-                            <div class="app-header">
-                                <span class="app-name">${escapeHtml(app.name)} ${lockBadge}</span>
-                                <span class="app-version">${escapeHtml(versionText)}</span>
-                                <span style="font-size:0.65rem; background:#e9eef3; border-radius:20px; padding:2px 10px; font-weight:500;">${typeTag}</span>
-                                ${sourceTagHtml}
-                            </div>
-                            <div class="desc">${safeDesc || '✨'}</div>
-                            <div class="meta-info">
-                                <span class="info-badge"><i class="fas fa-hdd"></i> ${sizeStr}</span>
-                                <span class="info-badge"><i class="far fa-calendar-alt"></i> ${dateStr}</span>
-                            </div>
-                            <div class="button-group">
-                                <button class="btn btn-download" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}"><i class="fas fa-download"></i> 下载</button>
-                                <button class="btn btn-copy" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}"><i class="fas fa-copy"></i> 复制</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        container.innerHTML = html;
-        // 事件委托已在全局绑定，但动态添加的按钮需要重新绑定（或者使用委托，为保险重新绑定）
-        document.querySelectorAll('.btn-download').forEach(btn => {
-            btn.addEventListener('click', () => {
-                let url = btn.getAttribute('data-url');
-                let name = btn.getAttribute('data-name');
-                downloadApp(url, name);
-            });
-        });
-        document.querySelectorAll('.btn-copy').forEach(btn => {
-            btn.addEventListener('click', () => copyUrl(btn.getAttribute('data-url'), btn.getAttribute('data-name')));
-        });
+        // 使用虚拟滚动
+        setupVirtualScroll(appsToRender, isSearchResult, sourceNameForAll);
+        appCountBadge.innerHTML = isSearchResult ? `搜索结果 <span class="highlight">${appsToRender.length}</span> 个应用` : `本源已更新 <span class="highlight">${appsToRender.length}</span> 个应用`;
     }
 
     function showCurrentSourceApps() {
         if (!allSourcesApps[currentSourceIndex]) return;
         const currentApps = allSourcesApps[currentSourceIndex].apps;
         renderApps(currentApps, false, dataSources[currentSourceIndex].name);
-        appCountBadge.innerHTML = `本源已更新 <span class="highlight">${currentApps.length}</span> 个应用`;
         isGlobalSearchMode = false;
         lastSearchKeyword = '';
     }
 
     function globalSearch(keyword) {
-        if (!keyword.trim()) {
-            showToast("请输入搜索关键词");
-            return;
-        }
-        if (!appCacheLoaded) {
-            showToast("数据加载中，请稍后再试");
-            return;
-        }
+        if (!keyword.trim()) { showToast("请输入搜索关键词"); return; }
+        if (!appCacheLoaded) { showToast("数据加载中，请稍后再试"); return; }
         const kw = keyword.trim().toLowerCase();
         let results = [];
         for (let source of allSourcesApps) {
@@ -666,18 +542,14 @@
             }
         }
         renderApps(uniqueResults, true);
-        appCountBadge.innerHTML = `搜索结果 <span class="highlight">${uniqueResults.length}</span> 个应用`;
         isGlobalSearchMode = true;
         lastSearchKeyword = keyword;
     }
 
     function clearSearch() {
         searchInput.value = '';
-        if (appCacheLoaded) {
-            showCurrentSourceApps();
-        } else {
-            setTimeout(() => showCurrentSourceApps(), 500);
-        }
+        if (appCacheLoaded) { showCurrentSourceApps(); }
+        else { setTimeout(() => showCurrentSourceApps(), 500); }
     }
 
     async function loadAllSources() {
@@ -732,15 +604,10 @@
                 type: app.type || 0
             })).filter(app => app.downloadURL) : [];
             allSourcesApps[idx] = { sourceName: source.name, sourceIndex: idx, apps: apps };
-            if (!isGlobalSearchMode) {
-                showCurrentSourceApps();
-            } else {
-                if (lastSearchKeyword) globalSearch(lastSearchKeyword);
-            }
+            if (!isGlobalSearchMode) { showCurrentSourceApps(); }
+            else { if (lastSearchKeyword) globalSearch(lastSearchKeyword); }
             showToast(`✅ 已刷新「${source.name}」`);
-        } catch (err) {
-            showToast(`❌ 刷新失败: ${err.message}`);
-        }
+        } catch (err) { showToast(`❌ 刷新失败: ${err.message}`); }
     }
 
     function updateBanner() {
@@ -757,10 +624,7 @@
             btn.addEventListener('click', () => {
                 if (currentSourceIndex === idx) return;
                 currentSourceIndex = idx;
-                document.querySelectorAll('.source-btn').forEach((b, i) => {
-                    if (i === idx) b.classList.add('active');
-                    else b.classList.remove('active');
-                });
+                document.querySelectorAll('.source-btn').forEach((b, i) => { if (i === idx) b.classList.add('active'); else b.classList.remove('active'); });
                 isGlobalSearchMode = false;
                 searchInput.value = '';
                 lastSearchKeyword = '';
@@ -788,60 +652,23 @@
     init();
 </script>
 
-<!-- 弹窗结构 -->
+<!-- 弹窗结构（不变） -->
 <div id="customModal" class="modal-overlay">
     <div class="modal-container">
-        <div class="modal-header">
-            <i class="fas fa-gem"></i>
-            <h3>💡 温馨提醒</h3>
-        </div>
+        <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
         <div class="modal-body">
             <p>破解应用为 <strong>.ipa</strong> 格式，仅支持越狱 iOS、iPad、Mac 自签安装和巨魔用户安装，插件可用注入工具自行注入。</p>
-            <p>💾 各种破解源集合已有 <strong>9000+</strong> 资源，平均三天持续更新：<br>
-            🎮 破解游戏 · ⚙️ 巨魔应用 · 📱 破解应用及工具 · 🔧 破解插件 · ❤️ 福利软件 · 🥰 绅士游戏</p>
-            <p style="margin-top: 12px; font-size: 0.7rem; color: #b91c1c;">⚠️ 用户须仔细甄别下载，使用过程中产生的一切后果由用户自行负责 ⚠️</p>
+            <p>💾 各种破解源集合已有 <strong>9000+</strong> 资源，平均三天持续更新：<br>🎮 破解游戏 · ⚙️ 巨魔应用 · 📱 破解应用及工具 · 🔧 破解插件 · ❤️ 福利软件 · 🥰 绅士游戏</p>
+            <p style="margin-top:12px;font-size:0.7rem;color:#b91c1c;">⚠️ 用户须仔细甄别下载，使用过程中产生的一切后果由用户自行负责 ⚠️</p>
         </div>
-        <div class="modal-buttons">
-            <button id="modalConfirmBtn" class="modal-btn modal-btn-primary" style="width: 100%; background-color: #aaa; cursor: not-allowed;" disabled>
-                <i class="fas fa-hourglass-half"></i> 等待 2 秒...
-            </button>
-        </div>
+        <div class="modal-buttons"><button id="modalConfirmBtn" class="modal-btn modal-btn-primary" style="width:100%;background-color:#aaa;cursor:not-allowed;" disabled><i class="fas fa-hourglass-half"></i> 等待 2 秒...</button></div>
     </div>
 </div>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(8px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        visibility: hidden;
-        opacity: 0;
-        transition: visibility 0.2s, opacity 0.2s;
-    }
-    .modal-overlay.show {
-        visibility: visible;
-        opacity: 1;
-    }
-    .modal-container {
-        background: rgba(255, 255, 255, 0.98);
-        border-radius: 40px;
-        max-width: 360px;
-        width: 88%;
-        padding: 24px 20px 28px;
-        box-shadow: 0 30px 40px -20px rgba(0, 0, 0, 0.4);
-        text-align: center;
-        transform: scale(0.9);
-        transition: transform 0.2s ease;
-        border: 1px solid rgba(255,255,255,0.6);
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; visibility: hidden; opacity: 0; transition: visibility 0.2s, opacity 0.2s; }
+    .modal-overlay.show { visibility: visible; opacity: 1; }
+    .modal-container { background: rgba(255,255,255,0.98); border-radius: 40px; max-width: 360px; width: 88%; padding: 24px 20px 28px; box-shadow: 0 30px 40px -20px rgba(0,0,0,0.4); text-align: center; transform: scale(0.9); transition: transform 0.2s ease; border: 1px solid rgba(255,255,255,0.6); }
     .modal-overlay.show .modal-container { transform: scale(1); }
     .modal-header { margin-bottom: 14px; }
     .modal-header i { font-size: 2.2rem; background: linear-gradient(135deg, #fbbf24, #f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
@@ -851,27 +678,15 @@
     .modal-btn { border: none; padding: 10px 0; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; width: 80%; max-width: 260px; }
     .modal-btn-primary { background: #1e2f47; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .modal-btn-primary:enabled:hover { background: #0f2840; transform: translateY(-2px); }
-    @media (max-width: 480px) {
-        .modal-container { width: 92%; padding: 18px 14px 22px; }
-        .modal-header h3 { font-size: 1.2rem; }
-        .modal-body p { font-size: 0.7rem; }
-        .modal-btn { font-size: 0.8rem; padding: 8px 0; width: 90%; }
-    }
+    @media (max-width:480px) { .modal-container { width: 92%; padding: 18px 14px 22px; } .modal-header h3 { font-size: 1.2rem; } .modal-body p { font-size: 0.7rem; } .modal-btn { font-size: 0.8rem; padding: 8px 0; width: 90%; } }
 </style>
 
 <script>
     (function() {
         const modal = document.getElementById('customModal');
         const confirmBtn = document.getElementById('modalConfirmBtn');
-        let btnTimer = null;
-        let scrollTop = 0;
-
-        function preventTouchMove(e) {
-            if (modal.classList.contains('show')) {
-                e.preventDefault();
-            }
-        }
-
+        let btnTimer = null, scrollTop = 0;
+        function preventTouchMove(e) { if (modal.classList.contains('show')) e.preventDefault(); }
         function showModal() {
             scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             document.body.classList.add('modal-open');
@@ -890,7 +705,6 @@
                 confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> 已明白，开始探索';
             }, 2000);
         }
-        
         function hideModal() {
             modal.classList.remove('show');
             document.body.classList.remove('modal-open');
@@ -899,37 +713,18 @@
             window.scrollTo(0, scrollTop);
             if (btnTimer) clearTimeout(btnTimer);
         }
-        
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (!confirmBtn.disabled) {
-                    hideModal();
-                }
-            });
-        }
-        window.addEventListener('load', function() {
-            setTimeout(showModal, 400);
-        });
+        if (confirmBtn) confirmBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if (!confirmBtn.disabled) hideModal(); });
+        window.addEventListener('load', () => setTimeout(showModal, 400));
     })();
 </script>
-
-<!-- 禁止双击缩放 -->
 <script>
     let lastTouchTime = 0;
     document.addEventListener('touchend', function(e) {
         const now = Date.now();
-        if (now - lastTouchTime < 300 && e.touches.length === 0) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
+        if (now - lastTouchTime < 300 && e.touches.length === 0) { e.preventDefault(); e.stopPropagation(); return false; }
         lastTouchTime = now;
     }, { passive: false });
-    document.addEventListener('dblclick', function(e) {
-        e.preventDefault();
-    });
+    document.addEventListener('dblclick', function(e) { e.preventDefault(); });
 </script>
 </body>
 </html>
