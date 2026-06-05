@@ -51,7 +51,7 @@
             border-radius: 30px;
         }
 
-        /* 导航栏 - 更大，更透明 */
+        /* 导航栏 */
         .global-nav {
             position: sticky;
             top: env(safe-area-inset-top, 0);
@@ -91,7 +91,7 @@
         .refresh-btn { background: #f59e0b; }
         .back-btn, .forward-btn { background: #2c3e66; width: 48px; justify-content: center; padding: 10px 0; }
 
-        /* 源卡片 - 3列，更大气 */
+        /* 源卡片 - 3列 */
         .source-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -110,9 +110,47 @@
             transition: all 0.2s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             border: 1px solid rgba(255,215,150,0.6);
-            backdrop-filter: blur(2px);
         }
         .source-card:hover { transform: translateY(-3px); background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+
+        /* 搜索栏 */
+        .search-section {
+            margin: 16px 0;
+            background: rgba(255,255,255,0.7);
+            border-radius: 60px;
+            padding: 12px 16px;
+            backdrop-filter: blur(8px);
+        }
+        .search-input-wrapper {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .search-input-wrapper input {
+            flex: 1;
+            border: none;
+            background: white;
+            border-radius: 60px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .search-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .search-btn, .clear-btn {
+            background: #1e2f47;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .clear-btn { background: #64748b; }
 
         /* 最近更新区域 */
         .recent-header {
@@ -143,7 +181,6 @@
             border-radius: 20px;
             padding: 8px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            transition: 0.2s;
         }
         .recent-card .app-icon {
             width: 100%;
@@ -227,7 +264,7 @@
         .pagination .active-page { background: #1e2f47; color: white; }
         .pagination .goto-input { width: 50px; text-align: center; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 0.7rem; }
 
-        /* 源详情页 - 新版布局 */
+        /* 源详情页 */
         .detail-nav {
             display: flex;
             flex-wrap: wrap;
@@ -247,7 +284,6 @@
             font-weight: 600;
             color: #1e2f47;
             cursor: pointer;
-            transition: 0.1s;
         }
         .detail-nav-btn.disabled-source {
             background: #e2e8f0;
@@ -255,15 +291,10 @@
             cursor: default;
             opacity: 0.7;
         }
-        .detail-nav-btn.home-highlight {
-            background: #f59e0b;
-            color: white;
-        }
-        /* 源名称区域美化 */
+        .detail-nav-btn.home-highlight { background: #f59e0b; color: white; }
         .source-name-area {
             text-align: center;
             margin: 12px 0 4px;
-            position: relative;
         }
         .source-name-area h2 {
             font-size: 1.8rem;
@@ -274,9 +305,7 @@
             color: transparent;
             display: inline-block;
             padding: 0 12px;
-            letter-spacing: 1px;
         }
-        /* 应用数量悬浮标签 */
         .app-count-badge {
             display: inline-block;
             background: rgba(255,255,255,0.9);
@@ -304,8 +333,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
-        /* 源内紧凑卡片 */
         .source-apps-list {
             display: flex;
             flex-direction: column;
@@ -386,8 +413,6 @@
             .source-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
             .source-card { font-size: 0.9rem; padding: 8px 4px; }
             .compact-card .app-icon { width: 42px; height: 42px; }
-            .detail-nav-btn { padding: 4px 10px; font-size: 0.7rem; }
-            .source-name-area h2 { font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -553,7 +578,27 @@
         return { total, pageData, totalPages: Math.ceil(total/perPage) };
     }
 
-    // 分页组件
+    // 全局搜索
+    function searchApps(keyword) {
+        if(!keyword.trim()) return [];
+        const kw = keyword.trim().toLowerCase();
+        let results = [];
+        for(let source of allSourcesData){
+            for(let app of source.apps){
+                if((app.name && app.name.toLowerCase().includes(kw)) || (app.versionDescription && app.versionDescription.toLowerCase().includes(kw))){
+                    results.push({
+                        ...app,
+                        sourceName: source.sourceName,
+                        typeTag: getTypeTag(app.type),
+                        desc: app.versionDescription || '暂无介绍'
+                    });
+                }
+            }
+        }
+        return results;
+    }
+
+    // 通用分页组件
     function renderPagination(container, currentPage, totalPages, onPageChange) {
         if(totalPages<=1){ container.innerHTML=''; return; }
         let html = '';
@@ -588,14 +633,33 @@
         }
     }
 
-    // 首页渲染
+    // 渲染首页（带搜索功能）
+    let currentSearchMode = false;
+    let currentSearchResults = [];
+    let currentSearchPage = 1;
+    let currentRecentPage = 1;
+
     function renderHome(recentPage=1) {
+        currentRecentPage = recentPage;
         const { total, pageData, totalPages } = getRecentApps(recentPage, 8);
         let sourceHtml = `<div class="source-grid">`;
         dataSources.forEach((s,idx)=>{
             sourceHtml += `<div class="source-card" data-idx="${idx}">${escapeHtml(s.name)}</div>`;
         });
         sourceHtml += `</div>`;
+
+        let searchHtml = `
+            <div class="search-section">
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off">
+                </div>
+                <div class="search-actions">
+                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
+                    <button id="clearSearchBtn" class="clear-btn"><i class="fas fa-times"></i> 清除</button>
+                </div>
+            </div>
+        `;
+
         let recentHtml = `
             <div class="recent-header">
                 <div class="recent-title"><i class="fas fa-clock"></i> 最近更新 · 聚合最新应用</div>
@@ -622,15 +686,45 @@
             </div>
             <div class="pagination" id="recentPagination"></div>
         `;
-        mainContent.innerHTML = sourceHtml + recentHtml;
-        // 绑定源卡片点击
+
+        mainContent.innerHTML = sourceHtml + searchHtml + recentHtml;
+
+        // 绑定源卡片
         document.querySelectorAll('.source-card').forEach(card=>{
             card.addEventListener('click',()=>{
                 let idx = parseInt(card.getAttribute('data-idx'));
                 navigateToSource(idx, 1);
             });
         });
-        // 绑定最近更新按钮
+
+        // 绑定搜索事件
+        const searchInputEl = document.getElementById('searchInput');
+        const doSearchBtn = document.getElementById('doSearchBtn');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+        doSearchBtn.addEventListener('click', () => {
+            const keyword = searchInputEl.value;
+            if(!keyword.trim()) { showToast("请输入搜索关键词"); return; }
+            const results = searchApps(keyword);
+            if(results.length === 0) {
+                showToast("未找到相关应用");
+                currentSearchMode = false;
+                renderHome(currentRecentPage);
+                return;
+            }
+            currentSearchMode = true;
+            currentSearchResults = results;
+            currentSearchPage = 1;
+            renderSearchResults(currentSearchPage);
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInputEl.value = '';
+            currentSearchMode = false;
+            renderHome(currentRecentPage);
+        });
+
+        // 绑定最近更新卡片按钮
         document.querySelectorAll('.recent-card .btn-download').forEach(btn=>{
             btn.addEventListener('click',()=>{
                 let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
@@ -643,6 +737,7 @@
                 copyUrl(url,name);
             });
         });
+
         const paginationDiv = document.getElementById('recentPagination');
         if(paginationDiv && totalPages>1){
             renderPagination(paginationDiv, recentPage, totalPages, (newPage)=>{
@@ -652,7 +747,80 @@
         }
     }
 
-    // 源详情页 - 新布局：导航包含所有源，当前源置灰；名称在上，数量悬浮，banner在下
+    function renderSearchResults(page=1) {
+        const perPage = 8;
+        const total = currentSearchResults.length;
+        const totalPages = Math.ceil(total/perPage);
+        const start = (page-1)*perPage;
+        const pageData = currentSearchResults.slice(start, start+perPage);
+        let searchHtml = `
+            <div class="recent-header">
+                <div class="recent-title"><i class="fas fa-search"></i> 搜索结果 · 共 ${total} 条</div>
+                <div class="recent-stats"></div>
+            </div>
+            <div class="recent-grid" id="searchResultGrid">
+                ${pageData.map(app => `
+                    <div class="recent-card">
+                        <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                        <div class="app-name">${escapeHtml(app.name)}</div>
+                        <div class="app-desc">${escapeHtml(app.desc).substring(0,60)}...</div>
+                        <div class="app-meta">
+                            <span class="source-name">${escapeHtml(app.sourceName)}</span>
+                            <span>📅 ${formatDate(app.versionDate)}</span>
+                            <span>💾 ${formatSize(app.size)}</span>
+                            ${app.typeTag}
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-download" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}">下载</button>
+                            <button class="btn btn-copy" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}">复制</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="pagination" id="searchPagination"></div>
+        `;
+        // 替换内容
+        const recentGrid = document.getElementById('recentGrid');
+        const recentPagination = document.getElementById('recentPagination');
+        if(recentGrid && recentPagination){
+            recentGrid.outerHTML = searchHtml.split('searchResultGrid')[0] + 'searchResultGrid' + searchHtml.split('searchResultGrid')[1]; // 简单替换，直接重建
+            // 更稳妥：直接修改DOM
+            const container = document.getElementById('recentGrid')?.parentNode;
+            if(container){
+                container.innerHTML = searchHtml;
+            }
+        } else {
+            // 若没有recentGrid，直接追加
+            const recentHeader = document.querySelector('.recent-header');
+            if(recentHeader){
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = searchHtml;
+                recentHeader.insertAdjacentElement('afterend', wrapper.firstChild);
+            }
+        }
+        // 重新绑定下载复制按钮
+        document.querySelectorAll('.recent-card .btn-download').forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
+                downloadApp(url,name);
+            });
+        });
+        document.querySelectorAll('.recent-card .btn-copy').forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
+                copyUrl(url,name);
+            });
+        });
+        const paginationDiv = document.getElementById('searchPagination');
+        if(paginationDiv && totalPages>1){
+            renderPagination(paginationDiv, page, totalPages, (newPage)=>{
+                currentSearchPage = newPage;
+                renderSearchResults(newPage);
+            });
+        }
+    }
+
+    // 源详情页（与之前相同，省略以免重复，但需要完整包含）
     function renderSourceDetail(sourceIndex, page=1) {
         const source = allSourcesData[sourceIndex];
         if(!source) return;
@@ -661,7 +829,6 @@
         const totalPages = Math.ceil(apps.length / perPage);
         const start = (page-1)*perPage;
         const pageApps = apps.slice(start, start+perPage);
-        // 导航栏：首页 + 所有源（当前源置灰不可点）
         let navHtml = `<div class="detail-nav">`;
         navHtml += `<button class="detail-nav-btn home-highlight" data-action="home">🏠 首页</button>`;
         for(let i=0; i<dataSources.length; i++){
@@ -672,14 +839,11 @@
             }
         }
         navHtml += `</div>`;
-        // 源名称区域（美化）
         let nameHtml = `<div class="source-name-area">
                             <h2>${escapeHtml(dataSources[sourceIndex].name)}</h2>
                             <div class="app-count-badge"><i class="fas fa-layer-group"></i> 共 ${apps.length} 款应用</div>
                         </div>`;
-        // 横幅
         let bannerHtml = `<div class="source-banner-area"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[sourceIndex].bannerText)}</div>`;
-        // 应用列表
         let appsHtml = `<div class="source-apps-list">`;
         for(let app of pageApps){
             let iconHtml = `<img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">`;
@@ -709,7 +873,6 @@
         let paginationHtml = `<div class="pagination" id="sourcePagination"></div>`;
         mainContent.innerHTML = navHtml + nameHtml + bannerHtml + appsHtml + paginationHtml;
 
-        // 绑定事件
         document.querySelectorAll('.compact-card .btn-download').forEach(btn=>{
             btn.addEventListener('click',()=>{
                 let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
@@ -765,7 +928,7 @@
     function navigateToHome(){ pushState({ type: 'home', recentPage: 1 }); }
     function navigateToSource(sourceIndex, page=1){ pushState({ type: 'source', sourceIndex, page }); }
 
-    // 导航栏透明逻辑
+    // 导航栏透明
     let navTimeout;
     function setNavTransparent(transparent){
         if(transparent) globalNav.classList.add('transparent');
@@ -861,7 +1024,7 @@
     init();
 </script>
 
-<!-- 弹窗结构 -->
+<!-- 弹窗 -->
 <div id="customModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
