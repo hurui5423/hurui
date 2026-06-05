@@ -1,295 +1,566 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>多源破解应用库</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="多源库">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-      body {
-          background: linear-gradient(145deg, #f5f7fc 0%, #eef2f6 100%);
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          padding: 0.8rem;
-          color: #1e293b;
-          font-size: 14px;
-          padding-top: env(safe-area-inset-top, 20px);
-      }
-      body, button, a, .app-card, input, textarea { touch-action: manipulation; }
-      .container { max-width: 1200px; margin: 0 auto; }
-      
-      /* 悬浮导航栏 */
-      .global-nav {
-          position: sticky;
-          top: env(safe-area-inset-top, 0);
-          z-index: 100;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: rgba(255,255,255,0.95);
-          backdrop-filter: blur(12px);
-          border-radius: 60px;
-          padding: 8px 16px;
-          margin-bottom: 20px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-          transition: opacity 0.2s;
-      }
-      .global-nav.transparent {
-          opacity: 0.3;
-          pointer-events: none;
-      }
-      .nav-btn {
-          background: #1e2f47;
-          border: none;
-          border-radius: 40px;
-          padding: 8px 16px;
-          color: white;
-          font-weight: 600;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: 0.2s;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-      }
-      .nav-btn:active { transform: scale(0.96); }
-      .nav-btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-      .refresh-btn { background: #f59e0b; }
-      .back-btn, .forward-btn { background: #2c3e66; width: 44px; justify-content: center; }
-      
-      /* 源卡片倒三角网格 */
-      .source-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
-          margin: 20px 0;
-      }
-      .source-card {
-          background: rgba(255,255,255,0.9);
-          border-radius: 40px;
-          padding: 10px 4px;
-          text-align: center;
-          font-size: 0.95rem;
-          font-weight: 700;
-          color: #1e2f47;
-          cursor: pointer;
-          transition: 0.2s;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-          border: 1px solid rgba(255,215,150,0.5);
-      }
-      .source-card:hover { transform: translateY(-2px); background: white; }
-      
-      /* 最近更新板块 */
-      .recent-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-          margin: 24px 0 12px;
-          flex-wrap: wrap;
-      }
-      .recent-title { font-size: 1.3rem; font-weight: 800; border-left: 5px solid #f59e0b; padding-left: 12px; }
-      .recent-stats { font-size: 0.8rem; color: #5a6e8a; }
-      .recent-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 16px;
-          margin-bottom: 20px;
-      }
-      .recent-card {
-          background: white;
-          border-radius: 24px;
-          padding: 12px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-          transition: 0.2s;
-      }
-      .recent-card .app-icon {
-          width: 100%;
-          aspect-ratio: 1;
-          object-fit: cover;
-          border-radius: 16px;
-          background: #f1f5f9;
-          margin-bottom: 8px;
-      }
-      .recent-card .app-name {
-          font-weight: 800;
-          font-size: 0.9rem;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-      }
-      .recent-card .app-meta {
-          font-size: 0.7rem;
-          color: #5a6e8a;
-          margin-top: 6px;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-      }
-      .recent-card .source-name { color: #f59e0b; font-weight: 600; }
-      .recent-card .btn-group { margin-top: 10px; display: flex; gap: 8px; }
-      .recent-card .btn { flex: 1; background: #1e2f47; color: white; border: none; border-radius: 30px; padding: 5px; font-size: 0.7rem; cursor: pointer; }
-      .recent-card .btn-copy { background: white; color: #1e2f47; border: 1px solid #cbd5e1; }
-      
-      /* 分页控件 */
-      .pagination {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 8px;
-          margin: 20px 0;
-      }
-      .pagination button, .pagination .page-number {
-          background: white;
-          border: none;
-          border-radius: 30px;
-          padding: 6px 12px;
-          font-size: 0.8rem;
-          cursor: pointer;
-      }
-      .pagination .active-page { background: #1e2f47; color: white; }
-      .pagination .goto-input { width: 60px; text-align: center; border-radius: 30px; border: 1px solid #cbd5e1; }
-      
-      /* 源详情页样式 */
-      .detail-nav {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-bottom: 20px;
-          padding: 8px;
-          background: rgba(255,255,255,0.6);
-          border-radius: 60px;
-          justify-content: center;
-      }
-      .detail-nav-btn {
-          background: white;
-          border: none;
-          border-radius: 40px;
-          padding: 6px 14px;
-          font-size: 0.85rem;
-          font-weight: 600;
-          color: #1e2f47;
-          cursor: pointer;
-      }
-      .detail-nav-btn.home-highlight { background: #f59e0b; color: white; }
-      .source-apps-list {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-      }
-      .compact-card {
-          display: flex;
-          gap: 12px;
-          background: white;
-          border-radius: 20px;
-          padding: 12px;
-          border: 1px solid #e2e8f0;
-      }
-      .compact-card .app-icon {
-          width: 60px;
-          height: 60px;
-          border-radius: 16px;
-          object-fit: cover;
-          flex-shrink: 0;
-      }
-      .compact-card .app-info { flex: 1; }
-      .compact-card .app-name { font-weight: 800; font-size: 1rem; }
-      .compact-card .desc { font-size: 0.8rem; font-weight: 600; color: #b45309; margin: 4px 0; }
-      .compact-card .meta { font-size: 0.7rem; color: #475569; display: flex; gap: 12px; }
-      .compact-card .btn-group { margin-top: 8px; display: flex; gap: 8px; }
-      .compact-card .btn { background: #1e2f47; color: white; border: none; border-radius: 30px; padding: 4px 12px; font-size: 0.7rem; cursor: pointer; }
-      .compact-card .btn-copy { background: white; color: #1e2f47; border: 1px solid #cbd5e1; }
-      
-      footer { margin-top: 30px; text-align: center; font-size: 0.6rem; color: #6f88a4; }
-      @media (max-width: 640px) {
-          .recent-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-          .source-grid { grid-template-columns: repeat(4, 1fr); }
-          .compact-card .app-icon { width: 48px; height: 48px; }
-      }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>多源破解应用库</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="多源库">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f6 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 0.6rem;
+            color: #1e293b;
+            font-size: 14px;
+            padding-top: env(safe-area-inset-top, 16px);
+        }
+
+        body,
+        button,
+        a,
+        .app-card,
+        input,
+        textarea {
+            touch-action: manipulation;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 头部 */
+        .app-header {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .app-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e2b3c, #2c4c6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .app-sub {
+            font-size: 0.8rem;
+            color: #5a6e8a;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+
+        /* 悬浮导航栏 - 更小更透明 */
+        .global-nav {
+            position: sticky;
+            top: env(safe-area-inset-top, 0);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 4px 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: opacity 0.2s;
+        }
+
+        .global-nav.transparent {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .nav-btn {
+            background: #1e2f47;
+            border: none;
+            border-radius: 36px;
+            padding: 6px 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.96);
+        }
+
+        .nav-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .refresh-btn {
+            background: #f59e0b;
+        }
+
+        .back-btn,
+        .forward-btn {
+            background: #2c3e66;
+            width: 38px;
+            justify-content: center;
+        }
+
+        /* 源卡片倒三角布局：第一排4个，第二排3个，第三排2个，整体居中 */
+        .source-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0 20px;
+        }
+
+        .source-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 60px;
+            padding: 6px 12px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e2f47;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 215, 150, 0.5);
+            white-space: nowrap;
+        }
+
+        /* 控制每行数量 */
+        .source-grid .source-card {
+            flex: 0 0 auto;
+            width: calc(25% - 12px);
+            /* 默认4个一行 */
+        }
+
+        /* 第二行3个：利用flex换行后，通过JS动态添加样式，也可用CSS nth-child，但更稳妥用JS */
+        /* 简单起见，我们直接用flex布局，通过修改子元素宽度来实现倒三角，后面用JS控制 */
+        /* 为了确保倒三角，我们将在渲染时动态设置不同行元素的宽度 */
+
+        /* 最近更新板块 - 卡片缩小，网格4x2 */
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin: 16px 0 12px;
+            flex-wrap: wrap;
+        }
+
+        .recent-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-left: 4px solid #f59e0b;
+            padding-left: 10px;
+        }
+
+        .recent-stats {
+            font-size: 0.7rem;
+            color: #5a6e8a;
+        }
+
+        .recent-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .recent-card {
+            background: white;
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            transition: 0.2s;
+        }
+
+        .recent-card .app-icon {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 14px;
+            background: #f1f5f9;
+            margin-bottom: 6px;
+        }
+
+        .recent-card .app-name {
+            font-weight: 800;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recent-card .app-meta {
+            font-size: 0.65rem;
+            color: #5a6e8a;
+            margin-top: 4px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .recent-card .source-name {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .recent-card .type-tag {
+            background: #e9eef3;
+            border-radius: 20px;
+            padding: 0px 6px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #1e2f47;
+        }
+
+        .recent-card .btn-group {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .recent-card .btn {
+            flex: 1;
+            background: #1e2f47;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+
+        .recent-card .btn-copy {
+            background: white;
+            color: #1e2f47;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* 分页控件 */
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin: 16px 0;
+        }
+
+        .pagination button,
+        .pagination .page-number {
+            background: white;
+            border: none;
+            border-radius: 30px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .pagination .active-page {
+            background: #1e2f47;
+            color: white;
+        }
+
+        .pagination .goto-input {
+            width: 50px;
+            text-align: center;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.7rem;
+        }
+
+        /* 源详情页 */
+        .detail-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50px;
+            justify-content: center;
+        }
+
+        .detail-nav-btn {
+            background: white;
+            border: none;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e2f47;
+            cursor: pointer;
+        }
+
+        .detail-nav-btn.home-highlight {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .source-banner-area {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .source-name-area {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .source-name-area h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e2b3c, #2c4c6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-block;
+            padding: 0 16px;
+            border-radius: 60px;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .source-apps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .compact-card {
+            display: flex;
+            gap: 10px;
+            background: white;
+            border-radius: 18px;
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .compact-card .app-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .compact-card .app-info {
+            flex: 1;
+        }
+
+        .compact-card .app-name {
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .compact-card .type-tag {
+            background: #e9eef3;
+            border-radius: 20px;
+            padding: 0px 6px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #1e2f47;
+            display: inline-block;
+            margin-left: 6px;
+        }
+
+        .compact-card .desc {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #b45309;
+            margin: 4px 0;
+            line-height: 1.3;
+        }
+
+        .compact-card .meta {
+            font-size: 0.6rem;
+            color: #475569;
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .compact-card .btn-group {
+            margin-top: 6px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .compact-card .btn {
+            background: #1e2f47;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 3px 10px;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+
+        .compact-card .btn-copy {
+            background: white;
+            color: #1e2f47;
+            border: 1px solid #cbd5e1;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.55rem;
+            color: #6f88a4;
+        }
+
+        @media (max-width: 640px) {
+            .recent-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .source-card {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+
+            .compact-card .app-icon {
+                width: 44px;
+                height: 44px;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
+    <!-- 顶部标题 -->
+    <div class="app-header">
+        <h1><i class="fas fa-database"></i> 多源破解应用库</h1>
+        <div class="app-sub">全局搜索 · 最新更新 · 独立源展示</div>
+    </div>
+
+    <!-- 悬浮导航栏 -->
     <div class="global-nav" id="globalNav">
         <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
         <button id="refreshBtn" class="nav-btn refresh-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
         <button id="forwardBtn" class="nav-btn forward-btn"><i class="fas fa-arrow-right"></i></button>
     </div>
+
     <div id="mainContent"></div>
+
     <footer>点击下载跳转 Safari · 复制链接 · 历史导航支持</footer>
 </div>
 
 <script>
-    // 数据源配置（9个源）
+    // ======================== 配置 ========================
     const dataSources = [
-        { name: "💦 兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", bannerText: "🎉 兮兮源专属：内含 9000+ 破解应用" },
-        { name: "👶 弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", bannerText: "🍭 弟弟源 · 年轻人最喜欢的游戏合集" },
-        { name: "🐛 虫虫源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/congcongyuan.json", bannerText: "🐞 虫虫源 · 精品小体积应用" },
-        { name: "🎨 美化主题", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/theme.json", bannerText: "🎨 主题美化源 · 手机美化" },
-        { name: "⭐ 我的收藏", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/fav.json", bannerText: "⭐ 个人收藏源 · 精心筛选" },
-        { name: "🔥 热门源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/hot.json", bannerText: "🔥 热门推荐 · 本周下载最高" },
-        { name: "📺 影视源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/movie.json", bannerText: "📺 影视源 · 观影神器" },
-        { name: "🎵 音乐源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/music.json", bannerText: "🎵 音乐源 · 无损下载" },
-        { name: "📚 阅读源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/reader.json", bannerText: "📚 阅读源 · 小说漫画免费" }
+        { name: "兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", bannerText: "🎉 内含 9000+ 破解应用，每日更新" },
+        { name: "弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", bannerText: "🍭 年轻人最喜欢的游戏合集" },
+        { name: "虫虫源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/congcongyuan.json", bannerText: "🐞 精品小体积应用" },
+        { name: "美化主题", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/theme.json", bannerText: "🎨 手机美化、壁纸" },
+        { name: "我的收藏", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/fav.json", bannerText: "⭐ 个人收藏源" },
+        { name: "热门源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/hot.json", bannerText: "🔥 本周下载最高" },
+        { name: "影视源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/movie.json", bannerText: "📺 观影神器" },
+        { name: "音乐源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/music.json", bannerText: "🎵 无损下载" },
+        { name: "阅读源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/reader.json", bannerText: "📚 小说漫画免费" }
     ];
-    
+
     let allSourcesData = [];
     let isDataLoaded = false;
     let historyStack = [];
     let currentStateIndex = -1;
-    
+
     const mainContent = document.getElementById('mainContent');
     const backBtn = document.getElementById('backBtn');
     const forwardBtn = document.getElementById('forwardBtn');
     const refreshBtn = document.getElementById('refreshBtn');
     const globalNav = document.getElementById('globalNav');
-    
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+
+    // ======================== 工具函数 ========================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+    }
+
     function formatSize(bytes) {
-        if (!bytes || bytes==='0') return '?';
-        let num = parseInt(bytes,10);
-        if(isNaN(num)) return '~';
-        if(num<1024*1024) return (num/1024).toFixed(0)+'KB';
-        if(num<1024*1024*1024) return (num/(1024*1024)).toFixed(1)+'MB';
-        return (num/(1024*1024*1024)).toFixed(1)+'GB';
+        if (!bytes || bytes === '0') return '?';
+        let num = parseInt(bytes, 10);
+        if (isNaN(num)) return '~';
+        if (num < 1024 * 1024) return (num / 1024).toFixed(0) + 'KB';
+        if (num < 1024 * 1024 * 1024) return (num / (1024 * 1024)).toFixed(1) + 'MB';
+        return (num / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
     }
+
     function formatDate(dateStr) {
-        if(!dateStr) return '未知';
-        if(dateStr==='最新版') return '最新';
-        try{
-            let d=new Date(dateStr);
-            if(isNaN(d.getTime())){
-                let m=dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
-                if(m) return m[1];
-                return dateStr.split('T')[0]||dateStr;
+        if (!dateStr) return '未知';
+        if (dateStr === '最新版') return '最新';
+        try {
+            let d = new Date(dateStr);
+            if (isNaN(d.getTime())) {
+                let m = dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
+                if (m) return m[1];
+                return dateStr.split('T')[0] || dateStr;
             }
-            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        }catch(e){ return dateStr; }
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        } catch (e) {
+            return dateStr;
+        }
     }
+
+    // 应用类型标签映射（高亮）
+    function getTypeTag(typeVal) {
+        let t = parseInt(typeVal);
+        if (t === 10) return '<span class="type-tag">⚡破解版</span>';
+        if (t === 2) return '<span class="type-tag">📱应用</span>';
+        if (t === 5) return '<span class="type-tag">🔓会员</span>';
+        return '<span class="type-tag">✨其他</span>';
+    }
+
     function showToast(msg) {
-        let toast=document.createElement('div');
-        toast.innerText=msg;
-        toast.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:6px 16px;border-radius:40px;font-size:0.75rem;z-index:10001;';
+        let toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:6px 16px;border-radius:40px;font-size:0.7rem;z-index:10001;';
         document.body.appendChild(toast);
-        setTimeout(()=>toast.remove(),1800);
+        setTimeout(() => toast.remove(), 1800);
     }
-    function downloadApp(url,name){
-        if(!url){ showToast(`⚠️ 无链接`); return; }
-        window.open(url,'_blank');
+
+    function downloadApp(url, name) {
+        if (!url) {
+            showToast(`⚠️ 无链接`);
+            return;
+        }
+        window.open(url, '_blank');
         showToast(`⬇️ 下载 ${name}`);
     }
-    async function copyUrl(url,name){
-        if(!url){ showToast(`❌ 无链接`); return; }
-        try{
+
+    async function copyUrl(url, name) {
+        if (!url) {
+            showToast(`❌ 无链接`);
+            return;
+        }
+        try {
             await navigator.clipboard.writeText(url);
             showToast(`✅ 已复制 ${name}`);
-        }catch{
-            let ta=document.createElement('textarea');
-            ta.value=url;
+        } catch {
+            let ta = document.createElement('textarea');
+            ta.value = url;
             document.body.appendChild(ta);
             ta.select();
             document.execCommand('copy');
@@ -297,16 +568,17 @@
             showToast(`📋 复制成功`);
         }
     }
-    
+
+    // ======================== 数据加载 ========================
     async function loadAllData() {
-        if(isDataLoaded) return;
+        if (isDataLoaded) return;
         const promises = dataSources.map(async (source, idx) => {
-            try{
+            try {
                 let resp = await fetch(source.url);
-                if(!resp.ok) throw new Error();
+                if (!resp.ok) throw new Error();
                 let json = await resp.json();
-                let appsRaw = json.apps || (Array.isArray(json)?json:null);
-                if(!appsRaw) return { sourceName: source.name, sourceIndex: idx, apps: [] };
+                let appsRaw = json.apps || (Array.isArray(json) ? json : null);
+                if (!appsRaw) return { sourceName: source.name, sourceIndex: idx, apps: [] };
                 let apps = appsRaw.map(app => ({
                     name: app.name || '未命名',
                     iconURL: app.iconURL || '',
@@ -319,7 +591,7 @@
                     type: app.type || 0
                 })).filter(app => app.downloadURL);
                 return { sourceName: source.name, sourceIndex: idx, apps: apps };
-            }catch(e){
+            } catch (e) {
                 console.error(`加载源 ${source.name} 失败`);
                 return { sourceName: source.name, sourceIndex: idx, apps: [] };
             }
@@ -327,70 +599,89 @@
         allSourcesData = await Promise.all(promises);
         isDataLoaded = true;
     }
-    
-    function getRecentApps(page=1, perPage=8) {
+
+    // 获取最近更新（每个源取20个，全局排序，用于分页）
+    function getRecentApps(page = 1, perPage = 8) {
         let allRecent = [];
-        for(let source of allSourcesData){
-            let sorted = [...source.apps].sort((a,b)=> {
+        for (let source of allSourcesData) {
+            let sorted = [...source.apps].sort((a, b) => {
                 let da = a.versionDate ? new Date(a.versionDate).getTime() : 0;
                 let db = b.versionDate ? new Date(b.versionDate).getTime() : 0;
                 return db - da;
             });
             let top = sorted.slice(0, 20);
-            top.forEach(app => { allRecent.push({ ...app, sourceName: source.sourceName }); });
+            top.forEach(app => {
+                allRecent.push({
+                    ...app,
+                    sourceName: source.sourceName,
+                    typeTag: getTypeTag(app.type)
+                });
+            });
         }
-        allRecent.sort((a,b)=>{
+        allRecent.sort((a, b) => {
             let da = a.versionDate ? new Date(a.versionDate).getTime() : 0;
             let db = b.versionDate ? new Date(b.versionDate).getTime() : 0;
             return db - da;
         });
         const total = allRecent.length;
-        const start = (page-1)*perPage;
-        const pageData = allRecent.slice(start, start+perPage);
-        return { total, pageData, totalPages: Math.ceil(total/perPage) };
+        const start = (page - 1) * perPage;
+        const pageData = allRecent.slice(start, start + perPage);
+        return { total, pageData, totalPages: Math.ceil(total / perPage) };
     }
-    
-    function renderPagination(container, currentPage, totalPages, onPageChange){
-        let html = '';
-        html += `<button class="first-page" ${currentPage===1?'disabled':''}>1</button>`;
-        html += `<button class="prev-page" ${currentPage===1?'disabled':''}>‹</button>`;
-        let start = Math.max(1, currentPage-2);
-        let end = Math.min(totalPages, currentPage+2);
-        for(let i=start; i<=end; i++){
-            html += `<span class="page-number ${i===currentPage?'active-page':''}" data-page="${i}">${i}</span>`;
+
+    // ======================== 分页组件 ========================
+    function renderPagination(container, currentPage, totalPages, onPageChange) {
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
         }
-        html += `<button class="next-page" ${currentPage===totalPages?'disabled':''}>›</button>`;
-        html += `<button class="last-page" ${currentPage===totalPages?'disabled':''}>${totalPages}</button>`;
-        html += `<input type="number" class="goto-input" placeholder="页码" min="1" max="${totalPages}"><button class="goto-btn">跳转</button>`;
+        let html = '';
+        html += `<button class="first-page" ${currentPage === 1 ? 'disabled' : ''}>1</button>`;
+        html += `<button class="prev-page" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+        let start = Math.max(1, currentPage - 2);
+        let end = Math.min(totalPages, currentPage + 2);
+        for (let i = start; i <= end; i++) {
+            html += `<span class="page-number ${i === currentPage ? 'active-page' : ''}" data-page="${i}">${i}</span>`;
+        }
+        html += `<button class="next-page" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+        html += `<button class="last-page" ${currentPage === totalPages ? 'disabled' : ''}>${totalPages}</button>`;
+        html += `<input type="number" class="goto-input" placeholder="页" min="1" max="${totalPages}"><button class="goto-btn">跳转</button>`;
         container.innerHTML = html;
-        const goToPage = (p)=>{
-            if(p>=1 && p<=totalPages) onPageChange(p);
+
+        const goToPage = (p) => {
+            if (p >= 1 && p <= totalPages) onPageChange(p);
         };
-        container.querySelector('.first-page')?.addEventListener('click',()=>goToPage(1));
-        container.querySelector('.prev-page')?.addEventListener('click',()=>goToPage(currentPage-1));
-        container.querySelector('.next-page')?.addEventListener('click',()=>goToPage(currentPage+1));
-        container.querySelector('.last-page')?.addEventListener('click',()=>goToPage(totalPages));
-        container.querySelectorAll('.page-number').forEach(el=>{
-            el.addEventListener('click',()=>goToPage(parseInt(el.dataset.page)));
+        container.querySelector('.first-page')?.addEventListener('click', () => goToPage(1));
+        container.querySelector('.prev-page')?.addEventListener('click', () => goToPage(currentPage - 1));
+        container.querySelector('.next-page')?.addEventListener('click', () => goToPage(currentPage + 1));
+        container.querySelector('.last-page')?.addEventListener('click', () => goToPage(totalPages));
+        container.querySelectorAll('.page-number').forEach(el => {
+            el.addEventListener('click', () => goToPage(parseInt(el.dataset.page)));
         });
         const gotoBtn = container.querySelector('.goto-btn');
         const gotoInput = container.querySelector('.goto-input');
-        if(gotoBtn && gotoInput){
-            gotoBtn.addEventListener('click',()=>{
+        if (gotoBtn && gotoInput) {
+            gotoBtn.addEventListener('click', () => {
                 let p = parseInt(gotoInput.value);
-                if(!isNaN(p) && p>=1 && p<=totalPages) goToPage(p);
+                if (!isNaN(p) && p >= 1 && p <= totalPages) goToPage(p);
                 else showToast(`请输入1-${totalPages}之间的页码`);
-                gotoInput.value='';
+                gotoInput.value = '';
             });
         }
     }
-    
-    function renderHome(recentPage=1) {
+
+    // ======================== 首页渲染 ========================
+    function renderHome(recentPage = 1) {
         const { total, pageData, totalPages } = getRecentApps(recentPage, 8);
-        let html = `
-            <div class="source-grid">
-                ${dataSources.map((s,idx)=>`<div class="source-card" data-idx="${idx}">${escapeHtml(s.name)}</div>`).join('')}
-            </div>
+        // 生成源卡片（倒三角：4-3-2）
+        let sourceHtml = `<div class="source-grid" id="sourceGrid">`;
+        dataSources.forEach((s, idx) => {
+            sourceHtml += `<div class="source-card" data-idx="${idx}">${escapeHtml(s.name)}</div>`;
+        });
+        sourceHtml += `</div>`;
+        // 动态调整倒三角布局：第一行4个，第二行3个，第三行2个，使用flex + 宽度控制
+        // 利用JS添加类
+        let recentHtml = `
             <div class="recent-header">
                 <div class="recent-title"><i class="fas fa-clock"></i> 最近更新 · 聚合最新应用</div>
                 <div class="recent-stats">共 ${total} 款更新</div>
@@ -404,6 +695,7 @@
                             <span class="source-name">${escapeHtml(app.sourceName)}</span>
                             <span>📅 ${formatDate(app.versionDate)}</span>
                             <span>💾 ${formatSize(app.size)}</span>
+                            ${app.typeTag}
                         </div>
                         <div class="btn-group">
                             <button class="btn btn-download" data-url="${escapeHtml(app.downloadURL)}" data-name="${escapeHtml(app.name)}">下载</button>
@@ -412,65 +704,90 @@
                     </div>
                 `).join('')}
             </div>
-            <div class="pagination" id="recentPagination" data-total="${totalPages}" data-current="${recentPage}"></div>
+            <div class="pagination" id="recentPagination"></div>
         `;
-        mainContent.innerHTML = html;
-        document.querySelectorAll('.source-card').forEach(card=>{
-            card.addEventListener('click',()=>{
+        mainContent.innerHTML = sourceHtml + recentHtml;
+
+        // 倒三角布局：通过设置不同行的宽度实现
+        const sourceCards = document.querySelectorAll('.source-card');
+        if (sourceCards.length === 9) {
+            // 第一行4个：宽度25% ，第二行3个：宽度33.33%，第三行2个：宽度50%
+            // 更精确：在flex父容器中，通过动态设置不同索引的元素的宽度
+            sourceCards.forEach((card, idx) => {
+                if (idx < 4) card.style.width = 'calc(25% - 12px)';
+                else if (idx < 7) card.style.width = 'calc(33.33% - 12px)';
+                else card.style.width = 'calc(50% - 12px)';
+                card.style.flex = '0 0 auto';
+            });
+            // 使整体居中: 父容器 text-align center，子元素inline-block已经可以，但flex下需要调整
+            const grid = document.getElementById('sourceGrid');
+            grid.style.justifyContent = 'center';
+        }
+
+        // 绑定源卡片点击
+        document.querySelectorAll('.source-card').forEach(card => {
+            card.addEventListener('click', () => {
                 let idx = parseInt(card.getAttribute('data-idx'));
                 navigateToSource(idx, 1);
             });
         });
-        document.querySelectorAll('.recent-card .btn-download').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url=btn.getAttribute('data-url'), name=btn.getAttribute('data-name');
-                downloadApp(url,name);
+        // 绑定最近更新卡片按钮
+        document.querySelectorAll('.recent-card .btn-download').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
+                downloadApp(url, name);
             });
         });
-        document.querySelectorAll('.recent-card .btn-copy').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url=btn.getAttribute('data-url'), name=btn.getAttribute('data-name');
-                copyUrl(url,name);
+        document.querySelectorAll('.recent-card .btn-copy').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
+                copyUrl(url, name);
             });
         });
         const paginationDiv = document.getElementById('recentPagination');
-        if(paginationDiv && totalPages>1){
-            renderPagination(paginationDiv, recentPage, totalPages, (newPage)=>{
+        if (paginationDiv && totalPages > 1) {
+            renderPagination(paginationDiv, recentPage, totalPages, (newPage) => {
                 renderHome(newPage);
                 pushState({ type: 'home', recentPage: newPage });
             });
         }
+        // 如果没有分页，清空
+        if (totalPages <= 1 && paginationDiv) paginationDiv.innerHTML = '';
     }
-    
-    function renderSourceDetail(sourceIndex, page=1) {
+
+    // ======================== 源详情页 ========================
+    function renderSourceDetail(sourceIndex, page = 1) {
         const source = allSourcesData[sourceIndex];
-        if(!source) return;
+        if (!source) return;
         const apps = source.apps;
         const perPage = 24;
         const totalPages = Math.ceil(apps.length / perPage);
-        const start = (page-1)*perPage;
-        const pageApps = apps.slice(start, start+perPage);
-        
+        const start = (page - 1) * perPage;
+        const pageApps = apps.slice(start, start + perPage);
+
         let navHtml = `<div class="detail-nav">`;
         navHtml += `<button class="detail-nav-btn home-highlight" data-action="home">🏠 首页</button>`;
-        for(let i=0; i<dataSources.length; i++){
-            if(i===sourceIndex) continue;
+        for (let i = 0; i < dataSources.length; i++) {
+            if (i === sourceIndex) continue;
             navHtml += `<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(dataSources[i].name)}</button>`;
         }
         navHtml += `</div>`;
-        navHtml += `<div style="text-align:center; margin-bottom:16px;"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[sourceIndex].bannerText)}</div>`;
-        navHtml += `<h2 style="text-align:center;">${escapeHtml(dataSources[sourceIndex].name)} <span style="font-size:0.8rem;">共 ${apps.length} 款应用</span></h2>`;
-        
+
+        let bannerHtml = `<div class="source-banner-area"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[sourceIndex].bannerText)}</div>`;
+        let nameHtml = `<div class="source-name-area"><h2>${escapeHtml(dataSources[sourceIndex].name)} <span style="font-size:0.8rem;">共 ${apps.length} 款应用</span></h2></div>`;
+
         let appsHtml = `<div class="source-apps-list">`;
-        for(let app of pageApps){
+        for (let app of pageApps) {
             let iconHtml = `<img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">`;
             let desc = app.versionDescription || '暂无描述';
+            let typeTag = getTypeTag(app.type);
+            let lockBadge = app.lock === '1' ? '🔒锁' : '';
             appsHtml += `
                 <div class="compact-card">
                     ${iconHtml}
                     <div class="app-info">
-                        <div class="app-name">${escapeHtml(app.name)} ${app.lock==='1'?'🔒锁':''}</div>
-                        <div class="desc">${escapeHtml(desc).substring(0,100)}</div>
+                        <div class="app-name">${escapeHtml(app.name)} ${lockBadge} ${typeTag}</div>
+                        <div class="desc">${escapeHtml(desc).substring(0, 100)}</div>
                         <div class="meta">
                             <span>版本 ${escapeHtml(app.version)}</span>
                             <span>📅 ${formatDate(app.versionDate)}</span>
@@ -486,36 +803,38 @@
         }
         appsHtml += `</div>`;
         let paginationHtml = `<div class="pagination" id="sourcePagination"></div>`;
-        mainContent.innerHTML = navHtml + appsHtml + paginationHtml;
-        
-        document.querySelectorAll('.compact-card .btn-download').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url=btn.getAttribute('data-url'), name=btn.getAttribute('data-name');
-                downloadApp(url,name);
+        mainContent.innerHTML = navHtml + bannerHtml + nameHtml + appsHtml + paginationHtml;
+
+        // 绑定按钮
+        document.querySelectorAll('.compact-card .btn-download').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
+                downloadApp(url, name);
             });
         });
-        document.querySelectorAll('.compact-card .btn-copy').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url=btn.getAttribute('data-url'), name=btn.getAttribute('data-name');
-                copyUrl(url,name);
+        document.querySelectorAll('.compact-card .btn-copy').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
+                copyUrl(url, name);
             });
         });
-        document.querySelectorAll('.detail-nav-btn').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                if(btn.dataset.action === 'home') navigateToHome();
-                else if(btn.dataset.idx) navigateToSource(parseInt(btn.dataset.idx), 1);
+        document.querySelectorAll('.detail-nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.dataset.action === 'home') navigateToHome();
+                else if (btn.dataset.idx) navigateToSource(parseInt(btn.dataset.idx), 1);
             });
         });
         const paginationDiv = document.getElementById('sourcePagination');
-        if(paginationDiv && totalPages>1){
-            renderPagination(paginationDiv, page, totalPages, (newPage)=>{
+        if (paginationDiv && totalPages > 1) {
+            renderPagination(paginationDiv, page, totalPages, (newPage) => {
                 navigateToSource(sourceIndex, newPage);
             });
         }
     }
-    
-    function pushState(state){
-        historyStack = historyStack.slice(0, currentStateIndex+1);
+
+    // ======================== 历史管理 ========================
+    function pushState(state) {
+        historyStack = historyStack.slice(0, currentStateIndex + 1);
         historyStack.push(state);
         currentStateIndex++;
         updateNavButtons();
@@ -524,46 +843,52 @@
         url.searchParams.set('state', JSON.stringify(state));
         window.history.pushState(state, '', url);
     }
-    function applyState(state){
-        if(state.type === 'home'){
+
+    function applyState(state) {
+        if (state.type === 'home') {
             renderHome(state.recentPage || 1);
             showModalIfNeeded('home');
-        }else if(state.type === 'source'){
+        } else if (state.type === 'source') {
             renderSourceDetail(state.sourceIndex, state.page);
         }
     }
-    function updateNavButtons(){
+
+    function updateNavButtons() {
         backBtn.disabled = (currentStateIndex <= 0);
-        forwardBtn.disabled = (currentStateIndex >= historyStack.length-1);
+        forwardBtn.disabled = (currentStateIndex >= historyStack.length - 1);
         backBtn.classList.toggle('disabled', backBtn.disabled);
         forwardBtn.classList.toggle('disabled', forwardBtn.disabled);
     }
-    function navigateToHome(){
+
+    function navigateToHome() {
         pushState({ type: 'home', recentPage: 1 });
     }
-    function navigateToSource(sourceIndex, page=1){
+
+    function navigateToSource(sourceIndex, page = 1) {
         pushState({ type: 'source', sourceIndex, page });
     }
-    
+
+    // ======================== 悬浮导航栏透明逻辑 ========================
     let navTimeout;
-    function setNavTransparent(transparent){
-        if(transparent) globalNav.classList.add('transparent');
+    function setNavTransparent(transparent) {
+        if (transparent) globalNav.classList.add('transparent');
         else globalNav.classList.remove('transparent');
     }
-    function resetNavTimer(){
+    function resetNavTimer() {
         clearTimeout(navTimeout);
         setNavTransparent(false);
-        navTimeout = setTimeout(()=> setNavTransparent(true), 3000);
+        navTimeout = setTimeout(() => setNavTransparent(true), 3000);
     }
     window.addEventListener('scroll', resetNavTimer);
     window.addEventListener('touchstart', resetNavTimer);
     window.addEventListener('mousemove', resetNavTimer);
     resetNavTimer();
-    
-    function showModalIfNeeded(triggerType){
-        if(triggerType === 'home'){
+
+    // ======================== 弹窗控制（每次进首页弹出）================
+    function showModalIfNeeded(triggerType) {
+        if (triggerType === 'home') {
             const modal = document.getElementById('customModal');
-            if(modal && !modal.classList.contains('show')){
+            if (modal && !modal.classList.contains('show')) {
                 let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 document.body.classList.add('modal-open');
                 document.body.style.top = `-${scrollTop}px`;
@@ -577,59 +902,62 @@
                     document.body.removeEventListener('touchmove', preventTouch);
                     window.scrollTo(0, scrollTop);
                 };
-                if(confirmBtn) confirmBtn.onclick = (e)=>{ e.preventDefault(); hideModal(); };
-                function preventTouch(e){ if(modal.classList.contains('show')) e.preventDefault(); }
+                if (confirmBtn) confirmBtn.onclick = (e) => { e.preventDefault(); hideModal(); };
+                function preventTouch(e) { if (modal.classList.contains('show')) e.preventDefault(); }
             }
         }
     }
-    
-    async function refreshData(){
+
+    // ======================== 刷新功能 ========================
+    async function refreshData() {
         showToast("刷新数据中...");
         isDataLoaded = false;
         allSourcesData = [];
         await loadAllData();
-        if(currentStateIndex>=0){
+        if (currentStateIndex >= 0) {
             let state = historyStack[currentStateIndex];
             applyState(state);
         }
         showToast("刷新完成");
     }
-    
-    async function init(){
+
+    // ======================== 初始化 ========================
+    async function init() {
         await loadAllData();
         let initState = { type: 'home', recentPage: 1 };
         historyStack = [initState];
         currentStateIndex = 0;
         applyState(initState);
         updateNavButtons();
-        window.addEventListener('popstate', (event)=>{
-            if(event.state){
+
+        window.addEventListener('popstate', (event) => {
+            if (event.state) {
                 let state = event.state;
-                let idx = historyStack.findIndex(s=>JSON.stringify(s)===JSON.stringify(state));
-                if(idx!==-1){
+                let idx = historyStack.findIndex(s => JSON.stringify(s) === JSON.stringify(state));
+                if (idx !== -1) {
                     currentStateIndex = idx;
                     applyState(state);
                     updateNavButtons();
-                }else{
+                } else {
                     historyStack.push(state);
-                    currentStateIndex = historyStack.length-1;
+                    currentStateIndex = historyStack.length - 1;
                     applyState(state);
                     updateNavButtons();
                 }
-            }else{
+            } else {
                 navigateToHome();
             }
         });
-        backBtn.addEventListener('click', ()=>{
-            if(currentStateIndex>0){
+        backBtn.addEventListener('click', () => {
+            if (currentStateIndex > 0) {
                 currentStateIndex--;
                 applyState(historyStack[currentStateIndex]);
                 updateNavButtons();
                 window.history.back();
             }
         });
-        forwardBtn.addEventListener('click', ()=>{
-            if(currentStateIndex < historyStack.length-1){
+        forwardBtn.addEventListener('click', () => {
+            if (currentStateIndex < historyStack.length - 1) {
                 currentStateIndex++;
                 applyState(historyStack[currentStateIndex]);
                 updateNavButtons();
@@ -638,10 +966,11 @@
         });
         refreshBtn.addEventListener('click', refreshData);
     }
-    
+
     init();
 </script>
 
+<!-- 弹窗结构 -->
 <div id="customModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
@@ -655,35 +984,97 @@
         </div>
     </div>
 </div>
+
 <style>
     .modal-overlay {
-        position: fixed; top:0; left:0; width:100%; height:100%;
-        background-color: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
-        display: flex; align-items: center; justify-content: center;
-        z-index: 9999; visibility: hidden; opacity: 0; transition: 0.2s;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        visibility: hidden;
+        opacity: 0;
+        transition: 0.2s;
     }
-    .modal-overlay.show { visibility: visible; opacity: 1; }
+
+    .modal-overlay.show {
+        visibility: visible;
+        opacity: 1;
+    }
+
     .modal-container {
-        background: rgba(255,255,255,0.98); border-radius: 48px;
-        max-width: 420px; width: 85%; padding: 28px 24px 32px;
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 48px;
+        max-width: 420px;
+        width: 85%;
+        padding: 24px 20px 28px;
         text-align: center;
     }
-    .modal-header i { font-size: 2.5rem; background: linear-gradient(135deg,#fbbf24,#f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
-    .modal-header h3 { font-size: 1.6rem; margin-top: 6px; }
-    .modal-body p { font-size: 0.9rem; line-height: 1.4; margin-bottom: 12px; }
-    .modal-btn { background: #1e2f47; color: white; border: none; border-radius: 60px; padding: 12px 24px; font-size: 1.1rem; cursor: pointer; width: 80%; margin-top: 16px; }
-    @media (max-width:480px){ .modal-container{ width:90%; padding: 20px; } .modal-header h3{ font-size:1.3rem; } }
+
+    .modal-header i {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    .modal-header h3 {
+        font-size: 1.5rem;
+        margin-top: 6px;
+    }
+
+    .modal-body p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 10px;
+    }
+
+    .modal-btn {
+        background: #1e2f47;
+        color: white;
+        border: none;
+        border-radius: 60px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 80%;
+        margin-top: 16px;
+    }
+
+    @media (max-width:480px) {
+        .modal-container {
+            width: 90%;
+            padding: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+        }
+    }
 </style>
+
+<!-- 禁止双击缩放 -->
 <script>
     let lastTouchTime = 0;
     document.addEventListener('touchend', function(e) {
         const now = Date.now();
         if (now - lastTouchTime < 300 && e.touches.length === 0) {
-            e.preventDefault(); e.stopPropagation(); return false;
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         }
         lastTouchTime = now;
     }, { passive: false });
-    document.addEventListener('dblclick', function(e) { e.preventDefault(); });
+    document.addEventListener('dblclick', function(e) {
+        e.preventDefault();
+    });
 </script>
 </body>
 </html>
