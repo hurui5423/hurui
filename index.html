@@ -17,38 +17,46 @@
             -webkit-tap-highlight-color: transparent;
         }
         body {
-            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f6 100%);
+            background: #f0f4f8;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             padding: 0.5rem;
-            color: #1e293b;
+            color: #1a202c;
             font-size: 14px;
             padding-top: env(safe-area-inset-top, 12px);
+            line-height: 1.4;
         }
-        body, button, a, .app-card, input, textarea { touch-action: manipulation; }
-        .container { max-width: 1200px; margin: 0 auto; }
+        body, button, a, .app-card, input, textarea {
+            touch-action: manipulation;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
         /* 头部 */
         .app-header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
         }
         .app-header h1 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e2b3c, #2c4c6e);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 4px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+        .app-header h1 i {
+            color: #f59e0b;
         }
         .app-sub {
             font-size: 0.75rem;
-            color: #5a6e8a;
-            background: rgba(255,255,255,0.6);
-            backdrop-filter: blur(4px);
+            color: #64748b;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(8px);
             display: inline-block;
-            padding: 2px 12px;
-            border-radius: 30px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-weight: 500;
         }
 
         /* 导航栏 */
@@ -59,116 +67,176 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(20px);
-            border-radius: 60px;
-            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 6px 10px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: opacity 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            transition: opacity 0.25s;
         }
         .global-nav.transparent {
-            opacity: 0.3;
+            opacity: 0.25;
             pointer-events: none;
         }
         .nav-btn {
-            background: #1e2f47;
+            background: #1e293b;
             border: none;
-            border-radius: 40px;
-            padding: 10px 18px;
+            border-radius: 16px;
+            padding: 8px 14px;
             color: white;
-            font-weight: 700;
-            font-size: 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: all 0.15s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
-        .nav-btn:active { transform: scale(0.96); }
-        .nav-btn.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
-        .refresh-btn { background: #f59e0b; }
-        .back-btn, .forward-btn { background: #2c3e66; width: 48px; justify-content: center; padding: 10px 0; }
+        .nav-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+        .nav-btn.disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .refresh-btn {
+            background: #f59e0b;
+            color: #fff;
+        }
+        .back-btn, .forward-btn {
+            background: #334155;
+            width: 40px;
+            justify-content: center;
+            padding: 8px 0;
+        }
 
-        /* 源卡片 - 3列 */
+        /* 源卡片 */
         .source-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            gap: 12px;
             margin: 20px 0;
         }
         .source-card {
-            background: linear-gradient(135deg, #ffffff 0%, #fef9e6 100%);
-            border-radius: 60px;
-            padding: 12px 8px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 14px 6px;
             text-align: center;
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #1e2f47;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e293b;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,215,150,0.6);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #f1f5f9;
+            position: relative;
         }
-        .source-card:hover { transform: translateY(-3px); background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+        .source-card:active {
+            transform: scale(0.96);
+            background: #f8fafc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .source-card::before {
+            content: '';
+            display: block;
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 6px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+        .source-card:nth-child(2)::before { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .source-card:nth-child(3)::before { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+        .source-card:nth-child(4)::before { background: linear-gradient(135deg, #ede9fe, #c4b5fd); }
+        .source-card:nth-child(5)::before { background: linear-gradient(135deg, #ffe4e6, #fecdd3); }
+        .source-card:nth-child(6)::before { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+        .source-card:nth-child(7)::before { background: linear-gradient(135deg, #ccfbf1, #99f6e4); }
+        .source-card:nth-child(8)::before { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+        .source-card:nth-child(9)::before { background: linear-gradient(135deg, #fef9c3, #fef08a); }
 
         /* 搜索栏 */
         .search-section {
             margin: 16px 0;
-            background: rgba(255,255,255,0.7);
-            border-radius: 60px;
-            padding: 12px 16px;
-            backdrop-filter: blur(8px);
+            background: #fff;
+            border-radius: 20px;
+            padding: 12px 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .search-input-wrapper {
             display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
         .search-input-wrapper input {
             flex: 1;
-            border: none;
-            background: white;
-            border-radius: 60px;
-            padding: 10px 16px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 10px 14px;
             font-size: 0.9rem;
             outline: none;
+            transition: border 0.2s;
+        }
+        .search-input-wrapper input:focus {
+            border-color: #f59e0b;
         }
         .search-actions {
             display: flex;
-            gap: 12px;
+            gap: 10px;
         }
         .search-btn, .clear-btn {
-            background: #1e2f47;
             border: none;
-            border-radius: 40px;
-            padding: 8px 20px;
-            color: white;
+            border-radius: 16px;
+            padding: 9px 18px;
             font-weight: 600;
+            font-size: 0.85rem;
             cursor: pointer;
             flex: 1;
             text-align: center;
+            transition: all 0.15s;
         }
-        .clear-btn { background: #64748b; }
+        .search-btn {
+            background: #1e293b;
+            color: white;
+        }
+        .search-btn:active {
+            background: #0f172a;
+            transform: scale(0.97);
+        }
+        .clear-btn {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .clear-btn:active {
+            background: #cbd5e1;
+            transform: scale(0.97);
+        }
 
-        /* 最近更新区域 */
+        /* 最近更新 */
         .recent-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin: 16px 0 12px;
+            margin: 20px 0 12px;
             flex-wrap: wrap;
         }
         .recent-title {
             font-size: 1.2rem;
-            font-weight: 800;
+            font-weight: 700;
+            color: #1e293b;
             border-left: 4px solid #f59e0b;
             padding-left: 10px;
         }
         .recent-stats {
-            font-size: 0.7rem;
-            color: #5a6e8a;
+            font-size: 0.75rem;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 3px 10px;
+            border-radius: 12px;
         }
         .recent-grid {
             display: grid;
@@ -177,52 +245,68 @@
             margin-bottom: 16px;
         }
         .recent-card {
-            background: white;
-            border-radius: 20px;
-            padding: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            background: #fff;
+            border-radius: 18px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 0.15s;
+            border: 1px solid #f1f5f9;
+            display: flex;
+            flex-direction: column;
+        }
+        .recent-card:active {
+            transform: scale(0.98);
         }
         .recent-card .app-icon {
             width: 100%;
             height: 80px;
             object-fit: cover;
-            border-radius: 16px;
+            border-radius: 14px;
             background: #f1f5f9;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .recent-card .app-name {
-            font-weight: 800;
+            font-weight: 700;
             font-size: 0.85rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: #1e293b;
         }
         .recent-card .app-desc {
-            font-size: 0.65rem;
-            color: #5a6e8a;
-            margin-top: 4px;
+            font-size: 0.7rem;
+            color: #64748b;
+            margin: 4px 0;
             line-height: 1.3;
+            flex: 1;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
         .recent-card .app-meta {
-            font-size: 0.6rem;
-            color: #5a6e8a;
+            font-size: 0.65rem;
+            color: #94a3b8;
             margin-top: 6px;
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 6px;
+            align-items: center;
         }
-        .recent-card .source-name { color: #f59e0b; font-weight: 600; }
-        .recent-card .type-tag {
-            background: #e9eef3;
-            border-radius: 20px;
-            padding: 0px 5px;
-            font-size: 0.55rem;
+        .recent-card .source-name {
+            color: #f59e0b;
             font-weight: 600;
-            color: #1e2f47;
+            background: #fef9c3;
+            padding: 1px 6px;
+            border-radius: 8px;
+        }
+        .type-tag {
+            background: #e2e8f0;
+            border-radius: 8px;
+            padding: 2px 6px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #334155;
         }
         .recent-card .btn-group {
             margin-top: 8px;
@@ -231,18 +315,24 @@
         }
         .recent-card .btn {
             flex: 1;
-            background: #1e2f47;
+            background: #1e293b;
             color: white;
             border: none;
-            border-radius: 30px;
-            padding: 4px;
-            font-size: 0.6rem;
+            border-radius: 14px;
+            padding: 6px 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.15s;
+        }
+        .recent-card .btn:active {
+            background: #0f172a;
+            transform: scale(0.95);
         }
         .recent-card .btn-copy {
-            background: white;
-            color: #1e2f47;
-            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #334155;
+            border: 1px solid #e2e8f0;
         }
 
         /* 分页 */
@@ -252,82 +342,96 @@
             justify-content: center;
             gap: 6px;
             margin: 16px 0;
+            align-items: center;
         }
         .pagination button, .pagination .page-number {
-            background: white;
-            border: none;
-            border-radius: 30px;
-            padding: 4px 10px;
-            font-size: 0.7rem;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 5px 12px;
+            font-size: 0.75rem;
             cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s;
+            color: #334155;
         }
-        .pagination .active-page { background: #1e2f47; color: white; }
-        .pagination .goto-input { width: 50px; text-align: center; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 0.7rem; }
+        .pagination button:active, .pagination .page-number:active {
+            background: #f1f5f9;
+        }
+        .pagination .active-page {
+            background: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+        .pagination .goto-input {
+            width: 45px;
+            text-align: center;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+            padding: 5px;
+        }
 
         /* 源详情页 */
         .detail-nav {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 16px;
-            padding: 8px;
-            background: rgba(255,255,255,0.6);
-            border-radius: 60px;
             justify-content: center;
         }
         .detail-nav-btn {
-            background: white;
-            border: none;
-            border-radius: 40px;
-            padding: 6px 14px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 6px 12px;
             font-size: 0.8rem;
             font-weight: 600;
-            color: #1e2f47;
+            color: #334155;
             cursor: pointer;
+            transition: all 0.15s;
+        }
+        .detail-nav-btn:active {
+            background: #f1f5f9;
         }
         .detail-nav-btn.disabled-source {
-            background: #e2e8f0;
+            background: #f1f5f9;
             color: #94a3b8;
             cursor: default;
-            opacity: 0.7;
+            border-color: #e2e8f0;
         }
-        .detail-nav-btn.home-highlight { background: #f59e0b; color: white; }
+        .detail-nav-btn.home-highlight {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
         .source-name-area {
             text-align: center;
-            margin: 12px 0 4px;
+            margin: 12px 0 8px;
         }
         .source-name-area h2 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e2b3c, #2c4c6e);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            display: inline-block;
-            padding: 0 12px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1e293b;
         }
         .app-count-badge {
             display: inline-block;
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(8px);
-            border-radius: 60px;
-            padding: 4px 16px;
+            background: #fef9c3;
+            border-radius: 14px;
+            padding: 4px 14px;
             font-size: 0.8rem;
-            font-weight: 700;
-            color: #f59e0b;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin: 8px auto 0 auto;
-            width: fit-content;
-            border: 1px solid rgba(255,215,150,0.6);
+            font-weight: 600;
+            color: #b45309;
+            margin-top: 6px;
         }
         .source-banner-area {
             text-align: center;
             margin: 8px 0 16px;
             font-size: 0.85rem;
-            color: #b45309;
-            background: rgba(255,248,225,0.7);
-            padding: 6px 12px;
-            border-radius: 40px;
+            color: #92400e;
+            background: #fffbeb;
+            padding: 6px 14px;
+            border-radius: 14px;
             display: inline-block;
             width: auto;
             margin-left: auto;
@@ -336,51 +440,47 @@
         .source-apps-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .compact-card {
             display: flex;
             gap: 10px;
-            background: white;
+            background: #fff;
             border-radius: 18px;
-            padding: 8px 10px;
-            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
         .compact-card .app-icon {
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             border-radius: 14px;
             object-fit: cover;
             flex-shrink: 0;
+            background: #f1f5f9;
         }
-        .compact-card .app-info { flex: 1; }
+        .compact-card .app-info {
+            flex: 1;
+            min-width: 0;
+        }
         .compact-card .app-name {
-            font-weight: 800;
+            font-weight: 700;
             font-size: 0.9rem;
-        }
-        .compact-card .type-tag {
-            background: #e9eef3;
-            border-radius: 20px;
-            padding: 0px 6px;
-            font-size: 0.6rem;
-            font-weight: 600;
-            color: #1e2f47;
-            display: inline-block;
-            margin-left: 6px;
+            color: #1e293b;
         }
         .compact-card .desc {
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #b45309;
+            font-size: 0.75rem;
+            color: #64748b;
             margin: 4px 0;
             line-height: 1.3;
         }
         .compact-card .meta {
-            font-size: 0.6rem;
-            color: #475569;
+            font-size: 0.7rem;
+            color: #94a3b8;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-top: 4px;
+            flex-wrap: wrap;
         }
         .compact-card .btn-group {
             margin-top: 6px;
@@ -388,31 +488,116 @@
             gap: 8px;
         }
         .compact-card .btn {
-            background: #1e2f47;
+            background: #1e293b;
             color: white;
             border: none;
-            border-radius: 30px;
-            padding: 3px 10px;
-            font-size: 0.65rem;
+            border-radius: 14px;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.15s;
+        }
+        .compact-card .btn:active {
+            background: #0f172a;
+            transform: scale(0.95);
         }
         .compact-card .btn-copy {
-            background: white;
-            color: #1e2f47;
-            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #334155;
+            border: 1px solid #e2e8f0;
         }
+
         footer {
-            margin-top: 20px;
+            margin-top: 24px;
             text-align: center;
-            font-size: 0.55rem;
-            color: #6f88a4;
+            font-size: 0.65rem;
+            color: #94a3b8;
+            padding-bottom: 16px;
         }
 
         @media (max-width: 640px) {
-            .recent-grid { grid-template-columns: repeat(2, 1fr); }
-            .source-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-            .source-card { font-size: 0.9rem; padding: 8px 4px; }
-            .compact-card .app-icon { width: 42px; height: 42px; }
+            .recent-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .source-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            .source-card {
+                font-size: 0.8rem;
+                padding: 10px 4px;
+            }
+            .compact-card .app-icon {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* 弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.25s;
+        }
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-container {
+            background: #fff;
+            border-radius: 28px;
+            max-width: 400px;
+            width: 88%;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .modal-header i {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .modal-header h3 {
+            font-size: 1.4rem;
+            margin-top: 8px;
+            color: #1e293b;
+        }
+        .modal-body p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            color: #475569;
+        }
+        .modal-btn {
+            background: #1e293b;
+            color: white;
+            border: none;
+            border-radius: 18px;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: auto;
+            margin-top: 10px;
+            transition: all 0.15s;
+        }
+        .modal-btn:active {
+            background: #0f172a;
+            transform: scale(0.96);
         }
     </style>
 </head>
@@ -432,6 +617,21 @@
     <div id="mainContent"></div>
 
     <footer>点击下载跳转 Safari · 复制链接 · 历史导航支持</footer>
+</div>
+
+<!-- 弹窗 -->
+<div id="customModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
+        <div class="modal-body">
+            <p>破解应用为 <strong>.ipa</strong> 格式，仅支持越狱 iOS、iPad、Mac 自签安装和巨魔用户安装。</p>
+            <p>💾 各种破解源集合已有 <strong>9000+</strong> 资源，平均三天持续更新。</p>
+            <p>⚠️ 用户须仔细甄别下载，使用过程中产生的一切后果由用户自行负责</p>
+        </div>
+        <div class="modal-buttons">
+            <button id="modalConfirmBtn" class="modal-btn">已明白，开始探索</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -460,27 +660,30 @@
     const globalNav = document.getElementById('globalNav');
 
     // 工具函数
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+    }
     function formatSize(bytes) {
-        if (!bytes || bytes==='0') return '?';
-        let num = parseInt(bytes,10);
-        if(isNaN(num)) return '~';
-        if(num<1024*1024) return (num/1024).toFixed(0)+'KB';
-        if(num<1024*1024*1024) return (num/(1024*1024)).toFixed(1)+'MB';
-        return (num/(1024*1024*1024)).toFixed(1)+'GB';
+        if (!bytes || bytes === '0') return '?';
+        let num = parseInt(bytes, 10);
+        if (isNaN(num)) return '~';
+        if (num < 1024 * 1024) return (num / 1024).toFixed(0) + 'KB';
+        if (num < 1024 * 1024 * 1024) return (num / (1024 * 1024)).toFixed(1) + 'MB';
+        return (num / (1024 * 1024 * 1024)).toFixed(1) + 'GB';
     }
     function formatDate(dateStr) {
-        if(!dateStr) return '未知';
-        if(dateStr==='最新版') return '最新';
-        try{
-            let d=new Date(dateStr);
-            if(isNaN(d.getTime())){
-                let m=dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
-                if(m) return m[1];
-                return dateStr.split('T')[0]||dateStr;
+        if (!dateStr) return '未知';
+        if (dateStr === '最新版') return '最新';
+        try {
+            let d = new Date(dateStr);
+            if (isNaN(d.getTime())) {
+                let m = dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
+                if (m) return m[1];
+                return dateStr.split('T')[0] || dateStr;
             }
-            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        }catch(e){ return dateStr; }
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        } catch (e) { return dateStr; }
     }
     function getTypeTag(typeVal) {
         let t = parseInt(typeVal);
@@ -490,25 +693,25 @@
         return '<span class="type-tag">✨其他</span>';
     }
     function showToast(msg) {
-        let toast=document.createElement('div');
-        toast.innerText=msg;
-        toast.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:6px 16px;border-radius:40px;font-size:0.7rem;z-index:10001;';
+        let toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:8px 20px;border-radius:20px;font-size:0.8rem;z-index:10001;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
         document.body.appendChild(toast);
-        setTimeout(()=>toast.remove(),1800);
+        setTimeout(() => toast.remove(), 2000);
     }
-    function downloadApp(url,name){
-        if(!url){ showToast(`⚠️ 无链接`); return; }
-        window.open(url,'_blank');
+    function downloadApp(url, name) {
+        if (!url) { showToast(`⚠️ 无链接`); return; }
+        window.open(url, '_blank');
         showToast(`⬇️ 下载 ${name}`);
     }
-    async function copyUrl(url,name){
-        if(!url){ showToast(`❌ 无链接`); return; }
-        try{
+    async function copyUrl(url, name) {
+        if (!url) { showToast(`❌ 无链接`); return; }
+        try {
             await navigator.clipboard.writeText(url);
             showToast(`✅ 已复制 ${name}`);
-        }catch{
-            let ta=document.createElement('textarea');
-            ta.value=url;
+        } catch {
+            let ta = document.createElement('textarea');
+            ta.value = url;
             document.body.appendChild(ta);
             ta.select();
             document.execCommand('copy');
@@ -519,14 +722,14 @@
 
     // 加载数据
     async function loadAllData() {
-        if(isDataLoaded) return;
+        if (isDataLoaded) return;
         const promises = dataSources.map(async (source, idx) => {
-            try{
+            try {
                 let resp = await fetch(source.url);
-                if(!resp.ok) throw new Error();
+                if (!resp.ok) throw new Error();
                 let json = await resp.json();
-                let appsRaw = json.apps || (Array.isArray(json)?json:null);
-                if(!appsRaw) return { sourceName: source.name, sourceIndex: idx, apps: [] };
+                let appsRaw = json.apps || (Array.isArray(json) ? json : null);
+                if (!appsRaw) return { sourceName: source.name, sourceIndex: idx, apps: [] };
                 let apps = appsRaw.map(app => ({
                     name: app.name || '未命名',
                     iconURL: app.iconURL || '',
@@ -539,7 +742,7 @@
                     type: app.type || 0
                 })).filter(app => app.downloadURL);
                 return { sourceName: source.name, sourceIndex: idx, apps: apps };
-            }catch(e){
+            } catch (e) {
                 console.error(`加载源 ${source.name} 失败`);
                 return { sourceName: source.name, sourceIndex: idx, apps: [] };
             }
@@ -548,11 +751,11 @@
         isDataLoaded = true;
     }
 
-    // 获取最近更新（每个源前20，全局排序）
-    function getRecentApps(page=1, perPage=8) {
+    // 获取最近更新
+    function getRecentApps(page = 1, perPage = 8) {
         let allRecent = [];
-        for(let source of allSourcesData){
-            let sorted = [...source.apps].sort((a,b)=>{
+        for (let source of allSourcesData) {
+            let sorted = [...source.apps].sort((a, b) => {
                 let da = a.versionDate ? new Date(a.versionDate).getTime() : 0;
                 let db = b.versionDate ? new Date(b.versionDate).getTime() : 0;
                 return db - da;
@@ -567,25 +770,25 @@
                 });
             });
         }
-        allRecent.sort((a,b)=>{
+        allRecent.sort((a, b) => {
             let da = a.versionDate ? new Date(a.versionDate).getTime() : 0;
             let db = b.versionDate ? new Date(b.versionDate).getTime() : 0;
             return db - da;
         });
         const total = allRecent.length;
-        const start = (page-1)*perPage;
-        const pageData = allRecent.slice(start, start+perPage);
-        return { total, pageData, totalPages: Math.ceil(total/perPage) };
+        const start = (page - 1) * perPage;
+        const pageData = allRecent.slice(start, start + perPage);
+        return { total, pageData, totalPages: Math.ceil(total / perPage) };
     }
 
     // 全局搜索
     function searchApps(keyword) {
-        if(!keyword.trim()) return [];
+        if (!keyword.trim()) return [];
         const kw = keyword.trim().toLowerCase();
         let results = [];
-        for(let source of allSourcesData){
-            for(let app of source.apps){
-                if((app.name && app.name.toLowerCase().includes(kw)) || (app.versionDescription && app.versionDescription.toLowerCase().includes(kw))){
+        for (let source of allSourcesData) {
+            for (let app of source.apps) {
+                if ((app.name && app.name.toLowerCase().includes(kw)) || (app.versionDescription && app.versionDescription.toLowerCase().includes(kw))) {
                     results.push({
                         ...app,
                         sourceName: source.sourceName,
@@ -598,52 +801,53 @@
         return results;
     }
 
-    // 通用分页组件
+    // 分页组件
     function renderPagination(container, currentPage, totalPages, onPageChange) {
-        if(totalPages<=1){ container.innerHTML=''; return; }
+        if (totalPages <= 1) { container.innerHTML = ''; return; }
         let html = '';
-        html += `<button class="first-page" ${currentPage===1?'disabled':''}>1</button>`;
-        html += `<button class="prev-page" ${currentPage===1?'disabled':''}>‹</button>`;
-        let start = Math.max(1, currentPage-2);
-        let end = Math.min(totalPages, currentPage+2);
-        for(let i=start;i<=end;i++){
-            html += `<span class="page-number ${i===currentPage?'active-page':''}" data-page="${i}">${i}</span>`;
+        html += `<button class="first-page" ${currentPage === 1 ? 'disabled' : ''}>1</button>`;
+        html += `<button class="prev-page" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+        let start = Math.max(1, currentPage - 2);
+        let end = Math.min(totalPages, currentPage + 2);
+        for (let i = start; i <= end; i++) {
+            html += `<span class="page-number ${i === currentPage ? 'active-page' : ''}" data-page="${i}">${i}</span>`;
         }
-        html += `<button class="next-page" ${currentPage===totalPages?'disabled':''}>›</button>`;
-        html += `<button class="last-page" ${currentPage===totalPages?'disabled':''}>${totalPages}</button>`;
+        html += `<button class="next-page" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+        html += `<button class="last-page" ${currentPage === totalPages ? 'disabled' : ''}>${totalPages}</button>`;
         html += `<input type="number" class="goto-input" placeholder="页" min="1" max="${totalPages}"><button class="goto-btn">跳转</button>`;
         container.innerHTML = html;
-        const goToPage = (p)=>{ if(p>=1 && p<=totalPages) onPageChange(p); };
-        container.querySelector('.first-page')?.addEventListener('click',()=>goToPage(1));
-        container.querySelector('.prev-page')?.addEventListener('click',()=>goToPage(currentPage-1));
-        container.querySelector('.next-page')?.addEventListener('click',()=>goToPage(currentPage+1));
-        container.querySelector('.last-page')?.addEventListener('click',()=>goToPage(totalPages));
-        container.querySelectorAll('.page-number').forEach(el=>{
-            el.addEventListener('click',()=>goToPage(parseInt(el.dataset.page)));
+        const goToPage = (p) => { if (p >= 1 && p <= totalPages) onPageChange(p); };
+        container.querySelector('.first-page')?.addEventListener('click', () => goToPage(1));
+        container.querySelector('.prev-page')?.addEventListener('click', () => goToPage(currentPage - 1));
+        container.querySelector('.next-page')?.addEventListener('click', () => goToPage(currentPage + 1));
+        container.querySelector('.last-page')?.addEventListener('click', () => goToPage(totalPages));
+        container.querySelectorAll('.page-number').forEach(el => {
+            el.addEventListener('click', () => goToPage(parseInt(el.dataset.page)));
         });
         const gotoBtn = container.querySelector('.goto-btn');
         const gotoInput = container.querySelector('.goto-input');
-        if(gotoBtn && gotoInput){
-            gotoBtn.addEventListener('click',()=>{
+        if (gotoBtn && gotoInput) {
+            gotoBtn.addEventListener('click', () => {
                 let p = parseInt(gotoInput.value);
-                if(!isNaN(p) && p>=1 && p<=totalPages) goToPage(p);
+                if (!isNaN(p) && p >= 1 && p <= totalPages) goToPage(p);
                 else showToast(`请输入1-${totalPages}之间的页码`);
-                gotoInput.value='';
+                gotoInput.value = '';
             });
         }
     }
 
-    // 渲染首页（带搜索功能）
+    // 渲染首页
     let currentSearchMode = false;
     let currentSearchResults = [];
     let currentSearchPage = 1;
     let currentRecentPage = 1;
 
-    function renderHome(recentPage=1) {
+    function renderHome(recentPage = 1) {
         currentRecentPage = recentPage;
         const { total, pageData, totalPages } = getRecentApps(recentPage, 8);
+
         let sourceHtml = `<div class="source-grid">`;
-        dataSources.forEach((s,idx)=>{
+        dataSources.forEach((s, idx) => {
             sourceHtml += `<div class="source-card" data-idx="${idx}">${escapeHtml(s.name)}</div>`;
         });
         sourceHtml += `</div>`;
@@ -670,7 +874,7 @@
                     <div class="recent-card">
                         <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">
                         <div class="app-name">${escapeHtml(app.name)}</div>
-                        <div class="app-desc">${escapeHtml(app.desc).substring(0,60)}...</div>
+                        <div class="app-desc">${escapeHtml(app.desc).substring(0, 60)}...</div>
                         <div class="app-meta">
                             <span class="source-name">${escapeHtml(app.sourceName)}</span>
                             <span>📅 ${formatDate(app.versionDate)}</span>
@@ -690,23 +894,20 @@
         mainContent.innerHTML = sourceHtml + searchHtml + recentHtml;
 
         // 绑定源卡片
-        document.querySelectorAll('.source-card').forEach(card=>{
-            card.addEventListener('click',()=>{
+        document.querySelectorAll('.source-card').forEach(card => {
+            card.addEventListener('click', () => {
                 let idx = parseInt(card.getAttribute('data-idx'));
                 navigateToSource(idx, 1);
             });
         });
 
-        // 绑定搜索事件
+        // 搜索事件
         const searchInputEl = document.getElementById('searchInput');
-        const doSearchBtn = document.getElementById('doSearchBtn');
-        const clearSearchBtn = document.getElementById('clearSearchBtn');
-
-        doSearchBtn.addEventListener('click', () => {
+        document.getElementById('doSearchBtn').addEventListener('click', () => {
             const keyword = searchInputEl.value;
-            if(!keyword.trim()) { showToast("请输入搜索关键词"); return; }
+            if (!keyword.trim()) { showToast("请输入搜索关键词"); return; }
             const results = searchApps(keyword);
-            if(results.length === 0) {
+            if (results.length === 0) {
                 showToast("未找到相关应用");
                 currentSearchMode = false;
                 renderHome(currentRecentPage);
@@ -717,53 +918,46 @@
             currentSearchPage = 1;
             renderSearchResults(currentSearchPage);
         });
-
-        clearSearchBtn.addEventListener('click', () => {
+        document.getElementById('clearSearchBtn').addEventListener('click', () => {
             searchInputEl.value = '';
             currentSearchMode = false;
             renderHome(currentRecentPage);
         });
 
-        // 绑定最近更新卡片按钮
-        document.querySelectorAll('.recent-card .btn-download').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                downloadApp(url,name);
-            });
+        // 下载/复制按钮
+        document.querySelectorAll('.recent-card .btn-download').forEach(btn => {
+            btn.addEventListener('click', () => downloadApp(btn.dataset.url, btn.dataset.name));
         });
-        document.querySelectorAll('.recent-card .btn-copy').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                copyUrl(url,name);
-            });
+        document.querySelectorAll('.recent-card .btn-copy').forEach(btn => {
+            btn.addEventListener('click', () => copyUrl(btn.dataset.url, btn.dataset.name));
         });
 
         const paginationDiv = document.getElementById('recentPagination');
-        if(paginationDiv && totalPages>1){
-            renderPagination(paginationDiv, recentPage, totalPages, (newPage)=>{
+        if (paginationDiv && totalPages > 1) {
+            renderPagination(paginationDiv, recentPage, totalPages, (newPage) => {
                 renderHome(newPage);
                 pushState({ type: 'home', recentPage: newPage });
             });
         }
     }
 
-    function renderSearchResults(page=1) {
+    function renderSearchResults(page = 1) {
         const perPage = 8;
         const total = currentSearchResults.length;
-        const totalPages = Math.ceil(total/perPage);
-        const start = (page-1)*perPage;
-        const pageData = currentSearchResults.slice(start, start+perPage);
-        let searchHtml = `
+        const totalPages = Math.ceil(total / perPage);
+        const start = (page - 1) * perPage;
+        const pageData = currentSearchResults.slice(start, start + perPage);
+
+        let html = `
             <div class="recent-header">
                 <div class="recent-title"><i class="fas fa-search"></i> 搜索结果 · 共 ${total} 条</div>
-                <div class="recent-stats"></div>
             </div>
-            <div class="recent-grid" id="searchResultGrid">
+            <div class="recent-grid">
                 ${pageData.map(app => `
                     <div class="recent-card">
                         <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">
                         <div class="app-name">${escapeHtml(app.name)}</div>
-                        <div class="app-desc">${escapeHtml(app.desc).substring(0,60)}...</div>
+                        <div class="app-desc">${escapeHtml(app.desc).substring(0, 60)}...</div>
                         <div class="app-meta">
                             <span class="source-name">${escapeHtml(app.sourceName)}</span>
                             <span>📅 ${formatDate(app.versionDate)}</span>
@@ -779,83 +973,70 @@
             </div>
             <div class="pagination" id="searchPagination"></div>
         `;
-        // 替换内容
+
         const recentGrid = document.getElementById('recentGrid');
         const recentPagination = document.getElementById('recentPagination');
-        if(recentGrid && recentPagination){
-            recentGrid.outerHTML = searchHtml.split('searchResultGrid')[0] + 'searchResultGrid' + searchHtml.split('searchResultGrid')[1]; // 简单替换，直接重建
-            // 更稳妥：直接修改DOM
-            const container = document.getElementById('recentGrid')?.parentNode;
-            if(container){
-                container.innerHTML = searchHtml;
-            }
+        if (recentGrid && recentPagination) {
+            recentGrid.outerHTML = html;
         } else {
-            // 若没有recentGrid，直接追加
             const recentHeader = document.querySelector('.recent-header');
-            if(recentHeader){
-                const wrapper = document.createElement('div');
-                wrapper.innerHTML = searchHtml;
-                recentHeader.insertAdjacentElement('afterend', wrapper.firstChild);
+            if (recentHeader) {
+                recentHeader.insertAdjacentHTML('afterend', html);
             }
         }
-        // 重新绑定下载复制按钮
-        document.querySelectorAll('.recent-card .btn-download').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                downloadApp(url,name);
-            });
+
+        document.querySelectorAll('.recent-card .btn-download').forEach(btn => {
+            btn.addEventListener('click', () => downloadApp(btn.dataset.url, btn.dataset.name));
         });
-        document.querySelectorAll('.recent-card .btn-copy').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                copyUrl(url,name);
-            });
+        document.querySelectorAll('.recent-card .btn-copy').forEach(btn => {
+            btn.addEventListener('click', () => copyUrl(btn.dataset.url, btn.dataset.name));
         });
+
         const paginationDiv = document.getElementById('searchPagination');
-        if(paginationDiv && totalPages>1){
-            renderPagination(paginationDiv, page, totalPages, (newPage)=>{
+        if (paginationDiv && totalPages > 1) {
+            renderPagination(paginationDiv, page, totalPages, (newPage) => {
                 currentSearchPage = newPage;
                 renderSearchResults(newPage);
             });
         }
     }
 
-    // 源详情页（与之前相同，省略以免重复，但需要完整包含）
-    function renderSourceDetail(sourceIndex, page=1) {
+    // 源详情页
+    function renderSourceDetail(sourceIndex, page = 1) {
         const source = allSourcesData[sourceIndex];
-        if(!source) return;
+        if (!source) return;
         const apps = source.apps;
         const perPage = 24;
         const totalPages = Math.ceil(apps.length / perPage);
-        const start = (page-1)*perPage;
-        const pageApps = apps.slice(start, start+perPage);
+        const start = (page - 1) * perPage;
+        const pageApps = apps.slice(start, start + perPage);
+
         let navHtml = `<div class="detail-nav">`;
         navHtml += `<button class="detail-nav-btn home-highlight" data-action="home">🏠 首页</button>`;
-        for(let i=0; i<dataSources.length; i++){
-            if(i === sourceIndex){
+        for (let i = 0; i < dataSources.length; i++) {
+            if (i === sourceIndex) {
                 navHtml += `<button class="detail-nav-btn disabled-source" disabled>${escapeHtml(dataSources[i].name)}</button>`;
             } else {
                 navHtml += `<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(dataSources[i].name)}</button>`;
             }
         }
         navHtml += `</div>`;
-        let nameHtml = `<div class="source-name-area">
-                            <h2>${escapeHtml(dataSources[sourceIndex].name)}</h2>
-                            <div class="app-count-badge"><i class="fas fa-layer-group"></i> 共 ${apps.length} 款应用</div>
-                        </div>`;
+
+        let nameHtml = `<div class="source-name-area"><h2>${escapeHtml(dataSources[sourceIndex].name)}</h2><div class="app-count-badge"><i class="fas fa-layer-group"></i> 共 ${apps.length} 款应用</div></div>`;
         let bannerHtml = `<div class="source-banner-area"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[sourceIndex].bannerText)}</div>`;
+
         let appsHtml = `<div class="source-apps-list">`;
-        for(let app of pageApps){
+        for (let app of pageApps) {
             let iconHtml = `<img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23e2e8f0%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2255%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394a3b8%22%20font-size%3D%2240%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E'">`;
             let desc = app.versionDescription || '暂无描述';
             let typeTag = getTypeTag(app.type);
-            let lockBadge = app.lock === '1' ? '🔒锁' : '';
+            let lockBadge = app.lock === '1' ? '🔒' : '';
             appsHtml += `
                 <div class="compact-card">
                     ${iconHtml}
                     <div class="app-info">
                         <div class="app-name">${escapeHtml(app.name)} ${lockBadge} ${typeTag}</div>
-                        <div class="desc">${escapeHtml(desc).substring(0,100)}</div>
+                        <div class="desc">${escapeHtml(desc).substring(0, 100)}</div>
                         <div class="meta">
                             <span>版本 ${escapeHtml(app.version)}</span>
                             <span>📅 ${formatDate(app.versionDate)}</span>
@@ -873,36 +1054,31 @@
         let paginationHtml = `<div class="pagination" id="sourcePagination"></div>`;
         mainContent.innerHTML = navHtml + nameHtml + bannerHtml + appsHtml + paginationHtml;
 
-        document.querySelectorAll('.compact-card .btn-download').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                downloadApp(url,name);
-            });
+        document.querySelectorAll('.compact-card .btn-download').forEach(btn => {
+            btn.addEventListener('click', () => downloadApp(btn.dataset.url, btn.dataset.name));
         });
-        document.querySelectorAll('.compact-card .btn-copy').forEach(btn=>{
-            btn.addEventListener('click',()=>{
-                let url = btn.getAttribute('data-url'), name = btn.getAttribute('data-name');
-                copyUrl(url,name);
-            });
+        document.querySelectorAll('.compact-card .btn-copy').forEach(btn => {
+            btn.addEventListener('click', () => copyUrl(btn.dataset.url, btn.dataset.name));
         });
-        document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(btn=>{
-            if(btn.dataset.action === 'home') {
-                btn.addEventListener('click',()=> navigateToHome());
-            } else if(btn.dataset.idx) {
-                btn.addEventListener('click',()=> navigateToSource(parseInt(btn.dataset.idx), 1));
+        document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(btn => {
+            if (btn.dataset.action === 'home') {
+                btn.addEventListener('click', () => navigateToHome());
+            } else if (btn.dataset.idx) {
+                btn.addEventListener('click', () => navigateToSource(parseInt(btn.dataset.idx), 1));
             }
         });
+
         const paginationDiv = document.getElementById('sourcePagination');
-        if(paginationDiv && totalPages>1){
-            renderPagination(paginationDiv, page, totalPages, (newPage)=>{
+        if (paginationDiv && totalPages > 1) {
+            renderPagination(paginationDiv, page, totalPages, (newPage) => {
                 navigateToSource(sourceIndex, newPage);
             });
         }
     }
 
     // 历史管理
-    function pushState(state){
-        historyStack = historyStack.slice(0, currentStateIndex+1);
+    function pushState(state) {
+        historyStack = historyStack.slice(0, currentStateIndex + 1);
         historyStack.push(state);
         currentStateIndex++;
         updateNavButtons();
@@ -911,108 +1087,117 @@
         url.searchParams.set('state', JSON.stringify(state));
         window.history.pushState(state, '', url);
     }
-    function applyState(state){
-        if(state.type === 'home'){
+
+    function applyState(state) {
+        if (state.type === 'home') {
             renderHome(state.recentPage || 1);
-            showModalIfNeeded('home');
-        }else if(state.type === 'source'){
+            // 【修复】只在初次访问首页时弹窗，翻页不弹
+            if (!sessionStorage.getItem('modalShown')) {
+                showModal();
+                sessionStorage.setItem('modalShown', '1');
+            }
+        } else if (state.type === 'source') {
             renderSourceDetail(state.sourceIndex, state.page);
         }
     }
-    function updateNavButtons(){
+
+    function updateNavButtons() {
         backBtn.disabled = (currentStateIndex <= 0);
-        forwardBtn.disabled = (currentStateIndex >= historyStack.length-1);
+        forwardBtn.disabled = (currentStateIndex >= historyStack.length - 1);
         backBtn.classList.toggle('disabled', backBtn.disabled);
         forwardBtn.classList.toggle('disabled', forwardBtn.disabled);
     }
-    function navigateToHome(){ pushState({ type: 'home', recentPage: 1 }); }
-    function navigateToSource(sourceIndex, page=1){ pushState({ type: 'source', sourceIndex, page }); }
+
+    function navigateToHome() {
+        pushState({ type: 'home', recentPage: 1 });
+    }
+    function navigateToSource(sourceIndex, page = 1) {
+        pushState({ type: 'source', sourceIndex, page });
+    }
+
+    // 弹窗控制
+    function showModal() {
+        const modal = document.getElementById('customModal');
+        if (!modal) return;
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        document.body.style.top = `-${scrollTop}px`;
+        document.body.classList.add('modal-open');
+        modal.classList.add('show');
+
+        const hideModal = () => {
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, scrollTop);
+        };
+        document.getElementById('modalConfirmBtn').onclick = (e) => {
+            e.preventDefault();
+            hideModal();
+        };
+    }
 
     // 导航栏透明
     let navTimeout;
-    function setNavTransparent(transparent){
-        if(transparent) globalNav.classList.add('transparent');
+    function setNavTransparent(transparent) {
+        if (transparent) globalNav.classList.add('transparent');
         else globalNav.classList.remove('transparent');
     }
-    function resetNavTimer(){
+    function resetNavTimer() {
         clearTimeout(navTimeout);
         setNavTransparent(false);
-        navTimeout = setTimeout(()=> setNavTransparent(true), 3000);
+        navTimeout = setTimeout(() => setNavTransparent(true), 3000);
     }
     window.addEventListener('scroll', resetNavTimer);
     window.addEventListener('touchstart', resetNavTimer);
-    window.addEventListener('mousemove', resetNavTimer);
     resetNavTimer();
 
-    // 弹窗
-    function showModalIfNeeded(triggerType){
-        if(triggerType === 'home'){
-            const modal = document.getElementById('customModal');
-            if(modal && !modal.classList.contains('show')){
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                document.body.classList.add('modal-open');
-                document.body.style.top = `-${scrollTop}px`;
-                document.body.addEventListener('touchmove', preventTouch, { passive: false });
-                modal.classList.add('show');
-                const confirmBtn = document.getElementById('modalConfirmBtn');
-                const hideModal = () => {
-                    modal.classList.remove('show');
-                    document.body.classList.remove('modal-open');
-                    document.body.style.top = '';
-                    document.body.removeEventListener('touchmove', preventTouch);
-                    window.scrollTo(0, scrollTop);
-                };
-                if(confirmBtn) confirmBtn.onclick = (e)=>{ e.preventDefault(); hideModal(); };
-                function preventTouch(e){ if(modal.classList.contains('show')) e.preventDefault(); }
-            }
-        }
-    }
-
-    async function refreshData(){
+    async function refreshData() {
         showToast("刷新数据中...");
         isDataLoaded = false;
         allSourcesData = [];
         await loadAllData();
-        if(currentStateIndex>=0){
-            let state = historyStack[currentStateIndex];
-            applyState(state);
+        if (currentStateIndex >= 0) {
+            applyState(historyStack[currentStateIndex]);
         }
         showToast("刷新完成");
     }
 
-    async function init(){
+    async function init() {
         await loadAllData();
         let initState = { type: 'home', recentPage: 1 };
         historyStack = [initState];
         currentStateIndex = 0;
         applyState(initState);
         updateNavButtons();
-        window.addEventListener('popstate', (event)=>{
-            if(event.state){
-                let state = event.state;
-                let idx = historyStack.findIndex(s=>JSON.stringify(s)===JSON.stringify(state));
-                if(idx!==-1){
+
+        window.addEventListener('popstate', (event) => {
+            if (event.state) {
+                let idx = historyStack.findIndex(s => JSON.stringify(s) === JSON.stringify(event.state));
+                if (idx !== -1) {
                     currentStateIndex = idx;
-                    applyState(state);
+                    applyState(event.state);
                     updateNavButtons();
-                }else{
-                    historyStack.push(state);
-                    currentStateIndex = historyStack.length-1;
-                    applyState(state);
+                } else {
+                    historyStack.push(event.state);
+                    currentStateIndex = historyStack.length - 1;
+                    applyState(event.state);
                     updateNavButtons();
                 }
-            }else{ navigateToHome(); }
+            } else {
+                navigateToHome();
+            }
         });
-        backBtn.addEventListener('click', ()=>{
-            if(currentStateIndex>0){
+
+        backBtn.addEventListener('click', () => {
+            if (currentStateIndex > 0) {
                 currentStateIndex--;
                 applyState(historyStack[currentStateIndex]);
                 updateNavButtons();
                 window.history.back();
             }
         });
-        forwardBtn.addEventListener('click', ()=>{
-            if(currentStateIndex < historyStack.length-1){
+        forwardBtn.addEventListener('click', () => {
+            if (currentStateIndex < historyStack.length - 1) {
                 currentStateIndex++;
                 applyState(historyStack[currentStateIndex]);
                 updateNavButtons();
@@ -1021,52 +1206,8 @@
         });
         refreshBtn.addEventListener('click', refreshData);
     }
-    init();
-</script>
 
-<!-- 弹窗 -->
-<div id="customModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
-        <div class="modal-body">
-            <p>破解应用为 <strong>.ipa</strong> 格式，仅支持越狱 iOS、iPad、Mac 自签安装和巨魔用户安装。</p>
-            <p>💾 各种破解源集合已有 <strong>9000+</strong> 资源，平均三天持续更新。</p>
-            <p>⚠️ 用户须仔细甄别下载，使用过程中产生的一切后果由用户自行负责 ⚠️</p>
-        </div>
-        <div class="modal-buttons">
-            <button id="modalConfirmBtn" class="modal-btn modal-btn-primary">已明白，开始探索</button>
-        </div>
-    </div>
-</div>
-<style>
-    .modal-overlay {
-        position: fixed; top:0; left:0; width:100%; height:100%;
-        background-color: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
-        display: flex; align-items: center; justify-content: center;
-        z-index: 9999; visibility: hidden; opacity: 0; transition: 0.2s;
-    }
-    .modal-overlay.show { visibility: visible; opacity: 1; }
-    .modal-container {
-        background: rgba(255,255,255,0.98); border-radius: 48px;
-        max-width: 420px; width: 85%; padding: 24px 20px 28px;
-        text-align: center;
-    }
-    .modal-header i { font-size: 2.5rem; background: linear-gradient(135deg,#fbbf24,#f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
-    .modal-header h3 { font-size: 1.5rem; margin-top: 6px; }
-    .modal-body p { font-size: 0.85rem; line-height: 1.4; margin-bottom: 10px; }
-    .modal-btn { background: #1e2f47; color: white; border: none; border-radius: 60px; padding: 10px 20px; font-size: 1rem; cursor: pointer; width: 80%; margin-top: 16px; }
-    @media (max-width:480px){ .modal-container{ width:90%; padding:20px; } .modal-header h3{ font-size:1.3rem; } }
-</style>
-<script>
-    let lastTouchTime = 0;
-    document.addEventListener('touchend', function(e) {
-        const now = Date.now();
-        if (now - lastTouchTime < 300 && e.touches.length === 0) {
-            e.preventDefault(); e.stopPropagation(); return false;
-        }
-        lastTouchTime = now;
-    }, { passive: false });
-    document.addEventListener('dblclick', function(e) { e.preventDefault(); });
+    init();
 </script>
 </body>
 </html>
