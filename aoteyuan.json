@@ -2,7 +2,7 @@
   "payURL" : "",
   "apps" : [
     {
-      "isLanZouCloud" : "index",
+      "isLanZouCloud" : "0",
       "versionDate" : "2026-06-15T11:13:44+08:00",
       "lock" : "0",
       "iconURL" : "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/91/3a/af/913aafd3-63f2-4269-1df2-dca012704f81/AppIcon-0-0-1x_U007emarketing-0-5-85-220.png/512x512bb.jpg",
