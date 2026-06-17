@@ -176,7 +176,7 @@
         }
         .app-card .app-desc {
             font-size: 0.7rem; color: #475569; line-height: 1.4;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden;
         }
         .app-card .app-meta {
             font-size: 0.65rem; color: #94a3b8;
@@ -522,7 +522,7 @@
                 <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
                 <div class="app-info">
                     <div class="app-name">${escapeHtml(app.name)} ${app.typeTag||''}</div>
-                    <div class="app-desc">${escapeHtml(app.desc||'').substring(0,80)}</div>
+                    <div class="app-desc">$<div class="app-desc">${escapeHtml(app.desc||'')}</div>
                     <div class="app-meta">
                         ${showSource ? `<span class="source-badge">${escapeHtml(app.sourceName)}</span>` : ''}
                         <span>📅 ${formatDate(app.versionDate)}</span>
