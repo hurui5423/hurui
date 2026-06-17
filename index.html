@@ -100,7 +100,6 @@
             font-size: 1rem;
             outline: none;
             transition: border 0.2s;
-            background: #f8fafc;
         }
         .search-input-wrapper input:focus {
             border-color: #f59e0b;
@@ -176,7 +175,11 @@
         }
         .app-card .app-desc {
             font-size: 0.7rem; color: #475569; line-height: 1.4;
-            display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 5;  /* 增大到5行，完整显示 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 4px;
         }
         .app-card .app-meta {
             font-size: 0.65rem; color: #94a3b8;
@@ -226,76 +229,39 @@
             color: #92400e; background: #fffbeb; padding: 6px 16px; border-radius: 14px;
         }
 
-        /* 新增附属卡片样式 */
         .merged-subs {
-            margin-top: -6px;
-            margin-left: 14px;
-            padding-left: 14px;
+            margin-top: -6px; margin-left: 14px; padding-left: 14px;
             border-left: 2px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            display: flex; flex-direction: column; gap: 8px;
             margin-bottom: 10px;
         }
         .sub-card {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 8px 10px;
-            font-size: 0.75rem;
-            transition: all 0.15s;
+            display: flex; align-items: center; gap: 8px;
+            background: #f8fafc; border-radius: 12px; padding: 8px 10px;
+            font-size: 0.75rem; transition: all 0.15s;
         }
         .sub-card:active { background: #f1f5f9; }
         .sub-card .sub-icon {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            object-fit: cover;
-            background: #e2e8f0;
-            flex-shrink: 0;
+            width: 36px; height: 36px; border-radius: 10px;
+            object-fit: cover; background: #e2e8f0; flex-shrink: 0;
         }
         .sub-info {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: baseline;
-            gap: 6px;
+            flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px;
         }
         .sub-name {
-            font-weight: 700;
-            color: #0f172a;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-weight: 700; color: #0f172a;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .sub-version {
-            color: #64748b;
-            font-weight: 500;
-        }
+        .sub-version { color: #64748b; font-weight: 500; }
         .sub-source {
-            color: #f59e0b;
-            font-weight: 600;
-            background: #fef9c3;
-            padding: 0px 6px;
-            border-radius: 6px;
-            font-size: 0.65rem;
+            color: #f59e0b; font-weight: 600; background: #fef9c3;
+            padding: 0px 6px; border-radius: 6px; font-size: 0.65rem;
         }
         .sub-jump-btn {
-            color: #2563eb;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            border: none;
-            background: transparent;
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 8px;
-            transition: background 0.15s;
+            color: #2563eb; font-weight: 600; cursor: pointer; white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 4px;
+            border: none; background: transparent; font-size: 0.75rem;
+            padding: 4px 8px; border-radius: 8px; transition: background 0.15s;
         }
         .sub-jump-btn:active { background: #dbeafe; }
 
@@ -522,7 +488,7 @@
                 <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
                 <div class="app-info">
                     <div class="app-name">${escapeHtml(app.name)} ${app.typeTag||''}</div>
-                    <div class="app-desc">$<div class="app-desc">${escapeHtml(app.desc||'')}</div>
+                    <div class="app-desc">${escapeHtml(app.desc||'')}</div>
                     <div class="app-meta">
                         ${showSource ? `<span class="source-badge">${escapeHtml(app.sourceName)}</span>` : ''}
                         <span>📅 ${formatDate(app.versionDate)}</span>
@@ -567,7 +533,6 @@
         container.querySelectorAll('[data-action="copy"]').forEach(b=>b.addEventListener('click',()=>copyLink(b.dataset.url, '')));
     }
 
-    // ========== 搜索联想 ==========
     function setupSearchSuggestions(inputEl, doSearchFn) {
         let suggestionBox = document.createElement('div');
         suggestionBox.className = 'search-suggestions';
@@ -602,7 +567,6 @@
         });
     }
 
-    // ========== 渲染首页 ==========
     function renderHome(page=1) {
         let {total,data,totalPages} = getRecentApps(page,10);
         let srcHtml = '<div class="source-grid">';
@@ -638,7 +602,6 @@
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToHome(p));
     }
 
-    // ========== 搜索结果页 ==========
     function renderSearchResults(keyword, page=1) {
         let results = searchApps(keyword);
         if(!results.length){ showToast('未找到相关应用'); navigateToHome(); return; }
@@ -687,7 +650,6 @@
                     let subHtml = '<div class="merged-subs">';
                     for (let i = 1; i < group.length; i++) {
                         let app = group[i];
-                        // 找到这个app在allSourcesData中的源索引和app在源中的索引
                         let srcIdx = allSourcesData.findIndex(s => s.name === app.sourceName);
                         if (srcIdx === -1) continue;
                         let appIdx = allSourcesData[srcIdx].apps.findIndex(a => a.downloadURL === app.downloadURL);
@@ -725,7 +687,6 @@
         si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
         setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
 
-        // 绑定附属跳转按钮
         document.querySelectorAll('.sub-jump-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 let srcIdx = parseInt(btn.dataset.src);
@@ -739,7 +700,6 @@
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSearch(keyword,p));
     }
 
-    // ========== 源详情页 ==========
     function renderSourceDetail(idx, page=1, scrollToUrl = null) {
         let src = allSourcesData[idx];
         if(!src) return;
@@ -766,7 +726,7 @@
                     ${icon}
                     <div class="app-info">
                         <div class="app-name">${escapeHtml(a.name)} ${lock} ${tag}</div>
-                        <div class="app-desc">${escapeHtml(desc).substring(0,80)}</div>
+                        <div class="app-desc">${escapeHtml(desc)}</div>
                         <div class="app-meta"><span>版本 ${escapeHtml(a.version)}</span><span>📅 ${formatDate(a.versionDate)}</span><span>💾 ${formatSize(a.size)}</span></div>
                         <div class="btn-row">
                             <button class="btn btn-trollstore" data-url="${escapeHtml(cleanDl)}" data-action="trollstore">🤖 巨魔安装</button>
@@ -779,7 +739,6 @@
         list+='</div><div class="pagination" id="pagination"></div>';
         mainContent.innerHTML = nav+head+banner+list;
 
-        // 滚动到指定应用
         if (scrollToUrl) {
             let targetCard = document.querySelector(`.app-card[data-url="${CSS.escape(scrollToUrl)}"]`);
             if (targetCard) {
@@ -797,7 +756,6 @@
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSource(idx,p));
     }
 
-    // ========== 导航 ==========
     function navigateToHome(page=1) { pushState({mode:'home',page}); }
     function navigateToSource(idx,page=1, scrollToUrl=null) { pushState({mode:'source',idx,page,scrollToUrl}); }
     function navigateToSearch(keyword,page=1) { pushState({mode:'search',keyword,page}); }
