@@ -497,16 +497,24 @@
     // ========== 工具函数 ==========
     function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
 
-    // 清理并编码 URL，防止中文、空格导致跳转失败
+    // 智能清理链接：仅当链接包含中文或未编码的空格时才进行编码，避免二次编码
     function cleanUrl(raw) {
         if (!raw) return '';
-        let url = raw.trim(); // 去首尾空格
-        // 替换内部空格为 %20
-        url = url.replace(/\s+/g, '%20');
-        // 对整个 URL 进行编码，保留已编码的部分和合法字符
-        try {
-            url = encodeURI(url);
-        } catch(e) {}
+        let url = raw.trim();
+        // 检查是否已经包含百分号编码
+        if (/%[0-9A-Fa-f]{2}/.test(url)) {
+            // 已经编码，只替换内部可能的未编码空格
+            return url.replace(/\s+/g, '%20');
+        }
+        // 如果包含中文或其他需要编码的字符，则进行 encodeURI
+        if (/[\u4e00-\u9fff]/.test(url)) {
+            // 先替换空格，再整体编码
+            url = url.replace(/\s+/g, '%20');
+            try { url = encodeURI(url); } catch(e) {}
+        } else {
+            // 纯英文数字链接，只替换空格
+            url = url.replace(/\s+/g, '%20');
+        }
         return url;
     }
 
@@ -543,10 +551,8 @@
     function downloadTrollStore(url, name) {
         if(!url){ showToast('⚠️ 无链接'); return; }
         let clean = cleanUrl(url);
-        // 尝试用巨魔商店协议打开
         let trollUrl = 'trollstore://install?url=' + encodeURIComponent(clean);
         window.open(trollUrl, '_blank');
-        // 如果没装巨魔，降级为 Safari 下载
         setTimeout(() => {
             window.open(clean, '_blank');
             showToast(`🤖 ${name} 已发起下载`);
@@ -681,11 +687,13 @@
 
         document.querySelectorAll('.source-card').forEach(c=>c.addEventListener('click',()=>navigateToSource(parseInt(c.dataset.idx),1)));
         let si = document.getElementById('searchInput');
+        // 搜索按钮
         document.getElementById('doSearchBtn').addEventListener('click',()=>doSearch(si.value));
+        // 清除按钮
         document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; navigateToHome(); });
+        // 回车键搜索
         si.addEventListener('keydown',e=>{ if(e.key==='Enter') doSearch(si.value); });
-        let timer;
-        si.addEventListener('input',()=>{ clearTimeout(timer); timer=setTimeout(()=>doSearch(si.value),300); });
+        // 移除实时搜索
 
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>{ navigateToHome(p); });
@@ -718,8 +726,7 @@
         document.getElementById('doSearchBtn').addEventListener('click',()=>doSearch(si.value));
         document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; navigateToHome(); });
         si.addEventListener('keydown',e=>{ if(e.key==='Enter') doSearch(si.value); });
-        let timer;
-        si.addEventListener('input',()=>{ clearTimeout(timer); timer=setTimeout(()=>doSearch(si.value),300); });
+        // 移除实时搜索
 
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>renderSearchResults(keyword,p));
