@@ -82,7 +82,6 @@
         .source-card:nth-child(8) .source-icon { background: linear-gradient(135deg, #84cc16, #a3e635); }
         .source-card:nth-child(9) .source-icon { background: linear-gradient(135deg, #f43f5e, #fb7185); }
 
-        /* 搜索区域 */
         .search-section {
             margin: 16px 0; background: #fff; border-radius: 20px;
             padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
@@ -227,30 +226,78 @@
             color: #92400e; background: #fffbeb; padding: 6px 16px; border-radius: 14px;
         }
 
-        /* 多源合并卡片 */
-        .merged-card {
-            background: #fff; border-radius: 18px; padding: 12px; border: 1px solid #f1f5f9;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-bottom: 10px;
+        /* 新增附属卡片样式 */
+        .merged-subs {
+            margin-top: -6px;
+            margin-left: 14px;
+            padding-left: 14px;
+            border-left: 2px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
         }
-        .merged-header {
-            display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;
+        .sub-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            transition: all 0.15s;
         }
-        .merged-header .app-icon {
-            width: 52px; height: 52px; border-radius: 16px; background: #f1f5f9;
+        .sub-card:active { background: #f1f5f9; }
+        .sub-card .sub-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #e2e8f0;
+            flex-shrink: 0;
         }
-        .merged-info { flex: 1; }
-        .merged-name { font-weight: 700; font-size: 0.9rem; }
-        .merged-sources {
-            font-size: 0.7rem; color: #64748b; margin-top: 4px;
-            display: flex; flex-wrap: wrap; gap: 4px;
+        .sub-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 6px;
         }
-        .merged-source-item {
-            background: #f1f5f9; border-radius: 8px; padding: 2px 8px;
+        .sub-name {
+            font-weight: 700;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sub-version {
+            color: #64748b;
+            font-weight: 500;
+        }
+        .sub-source {
+            color: #f59e0b;
+            font-weight: 600;
+            background: #fef9c3;
+            padding: 0px 6px;
+            border-radius: 6px;
             font-size: 0.65rem;
         }
-        .merged-source-item .source-name { color: #f59e0b; font-weight: 600; }
-        .merged-actions { display: flex; gap: 5px; margin-top: 8px; }
-        .merged-actions .btn { flex: 1; }
+        .sub-jump-btn {
+            color: #2563eb;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: none;
+            background: transparent;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .sub-jump-btn:active { background: #dbeafe; }
 
         .pagination {
             display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;
@@ -468,16 +515,16 @@
         return res;
     }
 
-    function renderAppCard(app) {
+    function renderAppCard(app, showSource = true) {
         let cleanDl = cleanUrl(app.downloadURL);
         return `
-            <div class="app-card">
+            <div class="app-card" data-url="${escapeHtml(app.downloadURL)}">
                 <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
                 <div class="app-info">
                     <div class="app-name">${escapeHtml(app.name)} ${app.typeTag||''}</div>
                     <div class="app-desc">${escapeHtml(app.desc||'').substring(0,80)}</div>
                     <div class="app-meta">
-                        <span class="source-badge">${escapeHtml(app.sourceName)}</span>
+                        ${showSource ? `<span class="source-badge">${escapeHtml(app.sourceName)}</span>` : ''}
                         <span>📅 ${formatDate(app.versionDate)}</span>
                         <span>💾 ${formatSize(app.size)}</span>
                     </div>
@@ -574,7 +621,7 @@
             </div>`;
         let listHtml = `
             <div class="section-header"><div class="section-title"><i class="fas fa-clock"></i> 最近更新</div><div class="section-stats">共 ${total} 款</div></div>
-            <div class="app-list" id="appList">${data.map(renderAppCard).join('')}</div>
+            <div class="app-list" id="appList">${data.map(app => renderAppCard(app, true)).join('')}</div>
             <div class="pagination" id="pagination"></div>`;
         mainContent.innerHTML = srcHtml + searchHtml + listHtml;
 
@@ -595,7 +642,6 @@
     function renderSearchResults(keyword, page=1) {
         let results = searchApps(keyword);
         if(!results.length){ showToast('未找到相关应用'); navigateToHome(); return; }
-        // 合并同名应用
         let mergedMap = new Map();
         results.forEach(app => {
             let key = app.name.toLowerCase();
@@ -632,26 +678,38 @@
         let listHtml = '<div class="app-list">';
         pageItems.forEach(item => {
             if(item.single) {
-                listHtml += renderAppCard(item.single);
+                listHtml += renderAppCard(item.single, true);
             } else {
                 let group = item.group;
                 let latest = group[0];
-                let sourcesInfo = group.map(app => `<span class="merged-source-item"><span class="source-name">${escapeHtml(app.sourceName)}</span> v${escapeHtml(app.version)} ${formatSize(app.size)}</span>`).join('');
-                listHtml += `
-                    <div class="merged-card">
-                        <div class="merged-header">
-                            <img class="app-icon" src="${escapeHtml(latest.iconURL)}" onerror="this.style.display='none'">
-                            <div class="merged-info">
-                                <div class="merged-name">${escapeHtml(latest.name)} ${getTypeTag(latest.type)}</div>
-                                <div class="merged-sources">${sourcesInfo}</div>
-                            </div>
-                        </div>
-                        <div class="merged-actions">
-                            <button class="btn btn-trollstore" data-url="${escapeHtml(cleanUrl(latest.downloadURL))}" data-action="trollstore">🤖 最新版巨魔安装</button>
-                            <button class="btn btn-safari" data-url="${escapeHtml(cleanUrl(latest.downloadURL))}" data-action="safari">🧭 Safari下载</button>
-                            <button class="btn btn-copy-link" data-url="${escapeHtml(cleanUrl(latest.downloadURL))}" data-action="copy">📋 复制</button>
-                        </div>
-                    </div>`;
+                listHtml += renderAppCard(latest, true);
+                if (group.length > 1) {
+                    let subHtml = '<div class="merged-subs">';
+                    for (let i = 1; i < group.length; i++) {
+                        let app = group[i];
+                        // 找到这个app在allSourcesData中的源索引和app在源中的索引
+                        let srcIdx = allSourcesData.findIndex(s => s.name === app.sourceName);
+                        if (srcIdx === -1) continue;
+                        let appIdx = allSourcesData[srcIdx].apps.findIndex(a => a.downloadURL === app.downloadURL);
+                        if (appIdx === -1) continue;
+                        let pageSize = 24;
+                        let targetPage = Math.floor(appIdx / pageSize) + 1;
+                        subHtml += `
+                            <div class="sub-card">
+                                <img class="sub-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
+                                <div class="sub-info">
+                                    <span class="sub-name">${escapeHtml(app.name)}</span>
+                                    <span class="sub-version">v${escapeHtml(app.version)}</span>
+                                    <span class="sub-source">${escapeHtml(app.sourceName)}</span>
+                                </div>
+                                <button class="sub-jump-btn" data-src="${srcIdx}" data-page="${targetPage}" data-target-url="${escapeHtml(app.downloadURL)}">
+                                    👉 点击跳转
+                                </button>
+                            </div>`;
+                    }
+                    subHtml += '</div>';
+                    listHtml += subHtml;
+                }
             }
         });
         listHtml += '</div><div class="pagination" id="pagination"></div>';
@@ -667,12 +725,22 @@
         si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
         setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
 
+        // 绑定附属跳转按钮
+        document.querySelectorAll('.sub-jump-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let srcIdx = parseInt(btn.dataset.src);
+                let page = parseInt(btn.dataset.page);
+                let targetUrl = btn.dataset.targetUrl;
+                navigateToSource(srcIdx, page, targetUrl);
+            });
+        });
+
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSearch(keyword,p));
     }
 
     // ========== 源详情页 ==========
-    function renderSourceDetail(idx,page=1) {
+    function renderSourceDetail(idx, page=1, scrollToUrl = null) {
         let src = allSourcesData[idx];
         if(!src) return;
         let apps=src.apps, perPage=24, totalPages=Math.ceil(apps.length/perPage);
@@ -694,7 +762,7 @@
             let lock=a.lock==='1'?'🔒':'';
             let cleanDl = cleanUrl(a.downloadURL);
             list+=`
-                <div class="app-card">
+                <div class="app-card" data-url="${escapeHtml(a.downloadURL)}">
                     ${icon}
                     <div class="app-info">
                         <div class="app-name">${escapeHtml(a.name)} ${lock} ${tag}</div>
@@ -711,6 +779,16 @@
         list+='</div><div class="pagination" id="pagination"></div>';
         mainContent.innerHTML = nav+head+banner+list;
 
+        // 滚动到指定应用
+        if (scrollToUrl) {
+            let targetCard = document.querySelector(`.app-card[data-url="${CSS.escape(scrollToUrl)}"]`);
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetCard.style.boxShadow = '0 0 0 3px #f59e0b';
+                setTimeout(() => targetCard.style.boxShadow = '', 2000);
+            }
+        }
+
         document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(b=>{
             if(b.dataset.action==='home') b.addEventListener('click',()=>navigateToHome());
             else b.addEventListener('click',()=>navigateToSource(parseInt(b.dataset.idx),1));
@@ -721,7 +799,7 @@
 
     // ========== 导航 ==========
     function navigateToHome(page=1) { pushState({mode:'home',page}); }
-    function navigateToSource(idx,page=1) { pushState({mode:'source',idx,page}); }
+    function navigateToSource(idx,page=1, scrollToUrl=null) { pushState({mode:'source',idx,page,scrollToUrl}); }
     function navigateToSearch(keyword,page=1) { pushState({mode:'search',keyword,page}); }
 
     function pushState(s) {
@@ -736,7 +814,7 @@
         window.scrollTo(0,0);
         if(s.mode==='home') renderHome(s.page||1);
         else if(s.mode==='search') renderSearchResults(s.keyword,s.page||1);
-        else if(s.mode==='source') renderSourceDetail(s.idx,s.page||1);
+        else if(s.mode==='source') renderSourceDetail(s.idx,s.page||1, s.scrollToUrl);
 
         if(!sessionStorage.getItem('modalShown')){
             let m=document.getElementById('customModal');
