@@ -176,7 +176,7 @@
         .app-card .app-desc {
             font-size: 0.7rem; color: #475569; line-height: 1.4;
             display: -webkit-box;
-            -webkit-line-clamp: 5;  /* 增大到5行，完整显示 */
+            -webkit-line-clamp: 5;
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 4px;
@@ -204,9 +204,12 @@
             display: inline-flex; align-items: center; justify-content: center; gap: 3px;
         }
         .btn:active { transform: scale(0.95); }
-        .btn-trollstore { background: #7c3aed; color: white; }
-        .btn-safari { background: #2563eb; color: white; }
-        .btn-copy-link { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+        .btn-download {
+            background: #7c3aed; color: white;
+        }
+        .btn-copy-link {
+            background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0;
+        }
 
         .detail-nav {
             display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; justify-content: center;
@@ -330,7 +333,7 @@
     </div>
 
     <div id="mainContent"></div>
-    <footer>巨魔下载 · Safari下载 · 复制链接 · 历史导航支持</footer>
+    <footer>一键下载 · 复制链接 · 历史导航支持</footer>
 </div>
 
 <div id="customModal" class="modal-overlay">
@@ -421,11 +424,25 @@
         let trollUrl = `trollstore://install?url=${encodeURIComponent(clean)}`;
         window.location.href = trollUrl;
     }
-    function openSafari(url) {
+    function openSafari(url, name) {
         if(!url) { showToast('⚠️ 无链接'); return; }
         let clean = cleanUrl(url);
         window.open(clean, '_blank');
+        showToast(`🧭 ${name || '应用'} 浏览器下载中`);
     }
+
+    // 一键下载：弹出选择菜单
+    function quickDownload(url, name) {
+        if (!url) { showToast('⚠️ 无链接'); return; }
+        const clean = cleanUrl(url);
+        const choice = confirm(`请选择下载方式：\n\n"确定" → 🤖 拉起巨魔安装\n"取消" → 🧭 浏览器下载`);
+        if (choice) {
+            openTrollStore(clean);
+        } else {
+            openSafari(clean, name);
+        }
+    }
+
     async function copyLink(url, name) {
         if(!url) { showToast('❌ 无链接'); return; }
         let clean = cleanUrl(url);
@@ -491,13 +508,13 @@
                     <div class="app-desc">${escapeHtml(app.desc||'')}</div>
                     <div class="app-meta">
                         ${showSource ? `<span class="source-badge">${escapeHtml(app.sourceName)}</span>` : ''}
+                        <span>📱 版本 ${escapeHtml(app.version)}</span>
                         <span>📅 ${formatDate(app.versionDate)}</span>
                         <span>💾 ${formatSize(app.size)}</span>
                     </div>
                     <div class="btn-row">
-                        <button class="btn btn-trollstore" data-url="${escapeHtml(cleanDl)}" data-action="trollstore">🤖 巨魔安装</button>
-                        <button class="btn btn-safari" data-url="${escapeHtml(cleanDl)}" data-action="safari">🧭 Safari下载</button>
-                        <button class="btn btn-copy-link" data-url="${escapeHtml(cleanDl)}" data-action="copy">📋 复制链接</button>
+                        <button class="btn btn-download" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(app.name)}">⚡一键下载</button>
+                        <button class="btn btn-copy-link" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(app.name)}">📋复制链接</button>
                     </div>
                 </div>
             </div>`;
@@ -528,9 +545,12 @@
     }
 
     function bindCardButtons(container) {
-        container.querySelectorAll('[data-action="trollstore"]').forEach(b=>b.addEventListener('click',()=>openTrollStore(b.dataset.url)));
-        container.querySelectorAll('[data-action="safari"]').forEach(b=>b.addEventListener('click',()=>openSafari(b.dataset.url)));
-        container.querySelectorAll('[data-action="copy"]').forEach(b=>b.addEventListener('click',()=>copyLink(b.dataset.url, '')));
+        container.querySelectorAll('.btn-download').forEach(b => {
+            b.addEventListener('click', () => quickDownload(b.dataset.url, b.dataset.name));
+        });
+        container.querySelectorAll('.btn-copy-link').forEach(b => {
+            b.addEventListener('click', () => copyLink(b.dataset.url, b.dataset.name));
+        });
     }
 
     function setupSearchSuggestions(inputEl, doSearchFn) {
@@ -727,11 +747,14 @@
                     <div class="app-info">
                         <div class="app-name">${escapeHtml(a.name)} ${lock} ${tag}</div>
                         <div class="app-desc">${escapeHtml(desc)}</div>
-                        <div class="app-meta"><span>版本 ${escapeHtml(a.version)}</span><span>📅 ${formatDate(a.versionDate)}</span><span>💾 ${formatSize(a.size)}</span></div>
+                        <div class="app-meta">
+                            <span>📱 版本 ${escapeHtml(a.version)}</span>
+                            <span>📅 ${formatDate(a.versionDate)}</span>
+                            <span>💾 ${formatSize(a.size)}</span>
+                        </div>
                         <div class="btn-row">
-                            <button class="btn btn-trollstore" data-url="${escapeHtml(cleanDl)}" data-action="trollstore">🤖 巨魔安装</button>
-                            <button class="btn btn-safari" data-url="${escapeHtml(cleanDl)}" data-action="safari">🧭 Safari下载</button>
-                            <button class="btn btn-copy-link" data-url="${escapeHtml(cleanDl)}" data-action="copy">📋 复制链接</button>
+                            <button class="btn btn-download" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(a.name)}">⚡一键下载</button>
+                            <button class="btn btn-copy-link" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(a.name)}">📋复制链接</button>
                         </div>
                     </div>
                 </div>`;
