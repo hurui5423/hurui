@@ -180,7 +180,6 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 4px;
-            position: relative;
         }
         .app-card .app-desc.expanded {
             -webkit-line-clamp: unset;
@@ -331,6 +330,50 @@
             cursor: pointer; transition: all 0.15s; margin-top: 8px;
         }
         .modal-btn:active { background: #000; transform: scale(0.96); }
+
+        /* 下载选择弹窗 */
+        .download-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; visibility: hidden; opacity: 0; transition: all 0.3s;
+        }
+        .download-modal-overlay.show { visibility: visible; opacity: 1; }
+        .download-modal {
+            background: #fff; border-radius: 28px; width: 90%; max-width: 380px;
+            padding: 24px 20px; text-align: center;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.25);
+        }
+        .download-modal-title {
+            font-size: 1.2rem; font-weight: 700; color: #0f172a; margin-bottom: 16px;
+        }
+        .download-option {
+            display: block; width: 100%; border: none; border-radius: 18px;
+            padding: 14px 16px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: all 0.15s; margin-bottom: 12px;
+            text-align: center; color: white;
+        }
+        .download-option.trollstore-option {
+            background: #7c3aed;
+        }
+        .download-option.trollstore-option:active {
+            background: #6d28d9; transform: scale(0.96);
+        }
+        .download-option.browser-option {
+            background: #2563eb;
+        }
+        .download-option.browser-option:active {
+            background: #1d4ed8; transform: scale(0.96);
+        }
+        .download-cancel {
+            display: block; width: 100%; border: none; border-radius: 18px;
+            padding: 12px 16px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; background: #f1f5f9; color: #64748b;
+            transition: all 0.15s;
+        }
+        .download-cancel:active {
+            background: #e2e8f0; transform: scale(0.96);
+        }
     </style>
 </head>
 <body>
@@ -364,6 +407,20 @@
     </div>
 </div>
 
+<!-- 下载选择弹窗 -->
+<div id="downloadModal" class="download-modal-overlay">
+    <div class="download-modal">
+        <div class="download-modal-title">选择下载方式</div>
+        <button id="trollstoreOption" class="download-option trollstore-option">
+            🤖 巨魔商店内下载安装
+        </button>
+        <button id="browserOption" class="download-option browser-option">
+            🧭 跳转浏览器本地下载
+        </button>
+        <button id="cancelDownload" class="download-cancel">取消下载</button>
+    </div>
+</div>
+
 <script>
     const dataSources = [
         { name: "兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", banner: "🎉 内含 9000+ 破解应用，每日更新" },
@@ -388,6 +445,14 @@
     const forwardBtn = document.getElementById('forwardBtn');
     const refreshBtn = document.getElementById('refreshBtn');
     const globalNav = document.getElementById('globalNav');
+
+    // 下载弹窗相关
+    const downloadModal = document.getElementById('downloadModal');
+    const trollstoreOption = document.getElementById('trollstoreOption');
+    const browserOption = document.getElementById('browserOption');
+    const cancelDownloadBtn = document.getElementById('cancelDownload');
+    let currentDownloadUrl = '';
+    let currentDownloadName = '';
 
     function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
     function cleanUrl(raw) {
@@ -432,28 +497,57 @@
         setTimeout(()=>el.remove(),2000);
     }
 
-    function openTrollStore(url) {
+    function openTrollStore(url, name) {
         if(!url) { showToast('⚠️ 无链接'); return; }
         let clean = cleanUrl(url);
         let trollUrl = `trollstore://install?url=${encodeURIComponent(clean)}`;
         window.location.href = trollUrl;
+        showToast(`🤖 ${name} 已发起巨魔安装`);
     }
     function openSafari(url, name) {
         if(!url) { showToast('⚠️ 无链接'); return; }
         let clean = cleanUrl(url);
-        window.open(clean, '_blank');
-        showToast(`🧭 ${name || '应用'} 浏览器下载中`);
+        // 使用a标签模拟点击，避免被浏览器拦截
+        const a = document.createElement('a');
+        a.href = clean;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast(`🧭 ${name} 浏览器下载中`);
     }
+
+    function showDownloadModal(url, name) {
+        currentDownloadUrl = url;
+        currentDownloadName = name;
+        downloadModal.classList.add('show');
+    }
+
+    function hideDownloadModal() {
+        downloadModal.classList.remove('show');
+    }
+
+    // 绑定下载弹窗按钮事件
+    trollstoreOption.addEventListener('click', () => {
+        hideDownloadModal();
+        if (currentDownloadUrl) {
+            openTrollStore(currentDownloadUrl, currentDownloadName);
+        }
+    });
+
+    browserOption.addEventListener('click', () => {
+        hideDownloadModal();
+        if (currentDownloadUrl) {
+            openSafari(currentDownloadUrl, currentDownloadName);
+        }
+    });
+
+    cancelDownloadBtn.addEventListener('click', hideDownloadModal);
 
     function quickDownload(url, name) {
         if (!url) { showToast('⚠️ 无链接'); return; }
-        const clean = cleanUrl(url);
-        const choice = confirm(`请选择下载方式：\n\n"确定" → 🤖 拉起巨魔安装\n"取消" → 🧭 浏览器下载`);
-        if (choice) {
-            openTrollStore(clean);
-        } else {
-            openSafari(clean, name);
-        }
+        showDownloadModal(url, name);
     }
 
     async function copyLink(url, name) {
@@ -566,15 +660,11 @@
         });
     }
 
-    // 处理描述溢出：添加“...点击详情”/“收起”
     function setupDescToggles() {
         document.querySelectorAll('.app-desc').forEach(desc => {
-            // 移除之前添加的按钮（避免重复）
             const existingToggle = desc.parentNode.querySelector('.app-desc-toggle');
             if (existingToggle) existingToggle.remove();
             desc.classList.remove('expanded');
-
-            // 检测是否溢出（实际高度大于限定高度）
             if (desc.scrollHeight > desc.clientHeight + 2) {
                 const toggle = document.createElement('span');
                 toggle.className = 'app-desc-toggle';
@@ -584,7 +674,6 @@
                     const isExpanded = desc.classList.toggle('expanded');
                     toggle.textContent = isExpanded ? '收起' : '...点击详情';
                 });
-                // 插入到描述元素后面
                 desc.insertAdjacentElement('afterend', toggle);
             }
         });
