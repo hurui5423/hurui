@@ -180,6 +180,20 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 4px;
+            position: relative;
+        }
+        .app-card .app-desc.expanded {
+            -webkit-line-clamp: unset;
+            display: block;
+        }
+        .app-desc-toggle {
+            font-size: 0.7rem;
+            color: #2563eb;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 4px;
+            white-space: nowrap;
         }
         .app-card .app-meta {
             font-size: 0.65rem; color: #94a3b8;
@@ -431,7 +445,6 @@
         showToast(`🧭 ${name || '应用'} 浏览器下载中`);
     }
 
-    // 一键下载：弹出选择菜单
     function quickDownload(url, name) {
         if (!url) { showToast('⚠️ 无链接'); return; }
         const clean = cleanUrl(url);
@@ -553,6 +566,30 @@
         });
     }
 
+    // 处理描述溢出：添加“...点击详情”/“收起”
+    function setupDescToggles() {
+        document.querySelectorAll('.app-desc').forEach(desc => {
+            // 移除之前添加的按钮（避免重复）
+            const existingToggle = desc.parentNode.querySelector('.app-desc-toggle');
+            if (existingToggle) existingToggle.remove();
+            desc.classList.remove('expanded');
+
+            // 检测是否溢出（实际高度大于限定高度）
+            if (desc.scrollHeight > desc.clientHeight + 2) {
+                const toggle = document.createElement('span');
+                toggle.className = 'app-desc-toggle';
+                toggle.textContent = '...点击详情';
+                toggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isExpanded = desc.classList.toggle('expanded');
+                    toggle.textContent = isExpanded ? '收起' : '...点击详情';
+                });
+                // 插入到描述元素后面
+                desc.insertAdjacentElement('afterend', toggle);
+            }
+        });
+    }
+
     function setupSearchSuggestions(inputEl, doSearchFn) {
         let suggestionBox = document.createElement('div');
         suggestionBox.className = 'search-suggestions';
@@ -620,6 +657,7 @@
 
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToHome(p));
+        setupDescToggles();
     }
 
     function renderSearchResults(keyword, page=1) {
@@ -718,6 +756,7 @@
 
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSearch(keyword,p));
+        setupDescToggles();
     }
 
     function renderSourceDetail(idx, page=1, scrollToUrl = null) {
@@ -777,6 +816,7 @@
         });
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSource(idx,p));
+        setupDescToggles();
     }
 
     function navigateToHome(page=1) { pushState({mode:'home',page}); }
