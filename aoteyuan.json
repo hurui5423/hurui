@@ -1,5 +1,5 @@
 {
-  "payURL" : "",
+  "payURL" : "https://www.baidu.com",
   "apps" : [
     {
       "isLanZouCloud" : "index",
