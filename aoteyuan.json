@@ -2,11 +2,6 @@
   "payURL" : "",
   "apps" : [
     {
-      "isLanZouCloud" : "0",
-      "versionDate{
-  "payURL" : "",
-  "apps" : [
-    {
       "isLanZouCloud" : "index",
       "versionDate" : "2026-06-15T11:13:44+08:00",
       "lock" : "0",
