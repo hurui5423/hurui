@@ -19181,9 +19181,9 @@
       "name" : "彩云天气_解锁会员",
       "size" : "295111229"
     }
-],
-"unlockURL" : "http://test.nuosike.com/appstore",
-"message" : "软件来源：和尚\r\n解锁发卡地址：填写用户购买卡密的发卡地址\r\n解锁接口地址：如用本源生成卡密，则解锁接口地址就填写源地址\r\n例如：https://qnq.nuosike.cn/appstore\r\n源识别标符：随意填写，也可填写源地址",
+ ],
+  "unlockURL" : "http://test.nuosike.com/appstore",
+  "message" : "软件来源：和尚\r\n解锁发卡地址：填写用户购买卡密的发卡地址\r\n解锁接口地址：如用本源生成卡密，则解锁接口地址就填写源地址\r\n例如：https://qnq.nuosike.cn/appstore\r\n源识别标符：随意填写，也可填写源地址",
   "identifier" : "填你想填的",
   "sourceicon" : "http://pic.xlhs.com/up/2023-8/2023818162636515.png",
   "name" : "卡卡苹果商店付费源",
