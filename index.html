@@ -153,15 +153,15 @@
         }
 
         .app-list {
-            display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;
         }
         .app-card {
-            display: flex; gap: 10px; background: #fff; border-radius: 18px;
-            padding: 10px 12px; border: 1px solid #f1f5f9;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            align-items: flex-start; transition: transform 0.15s;
+            display: flex; gap: 10px; background: #fff; border-radius: 20px;
+            padding: 12px 14px; border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            align-items: flex-start; transition: transform 0.15s, box-shadow 0.15s;
         }
-        .app-card:active { transform: scale(0.98); }
+        .app-card:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
         .app-card .app-icon {
             width: 52px; height: 52px; border-radius: 16px;
             object-fit: cover; flex-shrink: 0; background: #f1f5f9;
@@ -281,19 +281,25 @@
         }
         .sub-jump-btn:active { background: #dbeafe; }
 
+        /* 翻页按钮加大并美化 */
         .pagination {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
             margin: 16px 0; align-items: center;
         }
         .pagination button, .pagination .page-num {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
-            padding: 5px 12px; font-size: 0.75rem; cursor: pointer;
-            font-weight: 500; color: #334155;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 18px;
+            padding: 8px 16px; font-size: 0.85rem; cursor: pointer;
+            font-weight: 500; color: #334155; transition: all 0.15s;
         }
-        .pagination .active-page { background: #0f172a; color: white; border-color: #0f172a; }
+        .pagination button:active, .pagination .page-num:active {
+            background: #f1f5f9; transform: scale(0.96);
+        }
+        .pagination .active-page {
+            background: #0f172a; color: white; border-color: #0f172a;
+        }
         .pagination .goto-input {
-            width: 45px; text-align: center; border-radius: 14px;
-            border: 1px solid #e2e8f0; font-size: 0.75rem; padding: 5px;
+            width: 55px; text-align: center; border-radius: 18px;
+            border: 1px solid #e2e8f0; font-size: 0.85rem; padding: 8px;
         }
 
         footer {
@@ -353,12 +359,6 @@
             cursor: pointer; transition: all 0.15s; margin-bottom: 12px;
             text-align: center; color: white;
         }
-        .download-option.trollstore-option {
-            background: #7c3aed;
-        }
-        .download-option.trollstore-option:active {
-            background: #6d28d9; transform: scale(0.96);
-        }
         .download-option.browser-option {
             background: #2563eb;
         }
@@ -407,15 +407,12 @@
     </div>
 </div>
 
-<!-- 下载选择弹窗 -->
+<!-- 下载选择弹窗（只留浏览器下载） -->
 <div id="downloadModal" class="download-modal-overlay">
     <div class="download-modal">
-        <div class="download-modal-title">选择下载方式</div>
-        <button id="trollstoreOption" class="download-option trollstore-option">
-            🤖 巨魔商店内下载安装
-        </button>
+        <div class="download-modal-title">下载选项</div>
         <button id="browserOption" class="download-option browser-option">
-            🧭 跳转浏览器本地下载
+            🧭 跳转浏览器直接下载
         </button>
         <button id="cancelDownload" class="download-cancel">取消下载</button>
     </div>
@@ -446,25 +443,31 @@
     const refreshBtn = document.getElementById('refreshBtn');
     const globalNav = document.getElementById('globalNav');
 
-    // 下载弹窗相关
     const downloadModal = document.getElementById('downloadModal');
-    const trollstoreOption = document.getElementById('trollstoreOption');
     const browserOption = document.getElementById('browserOption');
     const cancelDownloadBtn = document.getElementById('cancelDownload');
     let currentDownloadUrl = '';
     let currentDownloadName = '';
 
     function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
+    
+    // 增强的URL清理
     function cleanUrl(raw) {
         if (!raw) return '';
         let url = raw.trim();
-        if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(url)) return url;
-        url = url.replace(/\s+/g, '%20');
-        if (/[\u4e00-\u9fff]/.test(url)) {
-            try { url = encodeURI(url); } catch(e) {}
+        // 如果已经是完整URL，只处理空格
+        if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(url)) {
+            return url.replace(/\s+/g, '%20');
         }
+        // 分步编码：先处理空格，再编码中文和特殊字符
+        url = url.replace(/\s+/g, '%20');
+        // 匹配URL中可能出现的非ASCII字符，进行编码
+        url = url.replace(/[^\x00-\x7F]/g, (char) => {
+            return encodeURIComponent(char);
+        });
         return url;
     }
+
     function formatSize(b) {
         if(!b||b==='0') return '?';
         let n = parseInt(b);
@@ -497,25 +500,20 @@
         setTimeout(()=>el.remove(),2000);
     }
 
-    function openTrollStore(url, name) {
-        if(!url) { showToast('⚠️ 无链接'); return; }
-        let clean = cleanUrl(url);
-        let trollUrl = `trollstore://install?url=${encodeURIComponent(clean)}`;
-        window.location.href = trollUrl;
-        showToast(`🤖 ${name} 已发起巨魔安装`);
-    }
+    // 直接下载，不经过二次跳转
     function openSafari(url, name) {
         if(!url) { showToast('⚠️ 无链接'); return; }
         let clean = cleanUrl(url);
-        // 使用a标签模拟点击，避免被浏览器拦截
         const a = document.createElement('a');
         a.href = clean;
         a.target = '_blank';
         a.rel = 'noopener';
+        // 尝试设置download属性，让浏览器直接弹出保存对话框（对IPA有效）
+        a.download = name ? name.replace(/[^a-zA-Z0-9]/g, '_') + '.ipa' : 'download.ipa';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        showToast(`🧭 ${name} 浏览器下载中`);
+        showToast(`🧭 ${name} 开始下载`);
     }
 
     function showDownloadModal(url, name) {
@@ -523,18 +521,9 @@
         currentDownloadName = name;
         downloadModal.classList.add('show');
     }
-
     function hideDownloadModal() {
         downloadModal.classList.remove('show');
     }
-
-    // 绑定下载弹窗按钮事件
-    trollstoreOption.addEventListener('click', () => {
-        hideDownloadModal();
-        if (currentDownloadUrl) {
-            openTrollStore(currentDownloadUrl, currentDownloadName);
-        }
-    });
 
     browserOption.addEventListener('click', () => {
         hideDownloadModal();
@@ -542,7 +531,6 @@
             openSafari(currentDownloadUrl, currentDownloadName);
         }
     });
-
     cancelDownloadBtn.addEventListener('click', hideDownloadModal);
 
     function quickDownload(url, name) {
@@ -575,7 +563,10 @@
                     name:a.name||'未命名', iconURL:a.iconURL||'', version:a.version||'最新',
                     versionDescription:a.versionDescription||'', downloadURL:a.downloadURL||'',
                     size:a.size||'0', versionDate:a.versionDate||'',
-                    lock:a.lock===undefined?'0':String(a.lock), type:a.type||0
+                    lock:a.lock===undefined?'0':String(a.lock), type:a.type||0,
+                    // 预先计算小写，加速搜索
+                    nameLower: (a.name||'').toLowerCase(),
+                    descLower: (a.versionDescription||'').toLowerCase()
                 })).filter(a=>a.downloadURL);
                 return {name:s.name,idx:i,apps};
             } catch(e) { return {name:s.name,idx:i,apps:[]}; }
@@ -595,12 +586,13 @@
         return {total,data:all.slice(start,start+perPage),totalPages:Math.ceil(total/perPage)};
     }
 
+    // 优化后的搜索，直接使用预计算的小写字段
     function searchApps(kw) {
         if(!kw.trim()) return [];
         let k=kw.trim().toLowerCase(), res=[];
         for(let src of allSourcesData)
             for(let a of src.apps)
-                if((a.name&&a.name.toLowerCase().includes(k))||(a.versionDescription&&a.versionDescription.toLowerCase().includes(k)))
+                if((a.nameLower && a.nameLower.includes(k)) || (a.descLower && a.descLower.includes(k)))
                     res.push({...a,sourceName:src.name,typeTag:getTypeTag(a.type),desc:a.versionDescription||'暂无介绍'});
         return res;
     }
