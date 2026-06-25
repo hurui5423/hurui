@@ -56,7 +56,6 @@
         .refresh-btn { background: #f59e0b; color: #fff; }
         .back-btn, .forward-btn { background: #334155; width: 40px; justify-content: center; padding: 8px 0; }
 
-        /* 源卡片网格优化，适配11个源 */
         .source-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 14px;
             margin: 20px 0 24px;
@@ -76,7 +75,6 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem; color: white;
         }
-        /* 给每个源卡片不同的渐变背景色 */
         .source-card:nth-child(1) .source-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
         .source-card:nth-child(2) .source-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
         .source-card:nth-child(3) .source-icon { background: linear-gradient(135deg, #10b981, #34d399); }
@@ -289,7 +287,6 @@
         }
         .sub-jump-btn:active { background: #dbeafe; }
 
-        /* 分页按钮优化 */
         .pagination {
             display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
             margin: 16px 0; align-items: center;
@@ -345,7 +342,7 @@
         }
         .modal-btn:active { background: #000; transform: scale(0.96); }
 
-        /* ---------- 美化后的下载弹窗 ---------- */
+        /* 下载选择弹窗 */
         .download-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(14px);
@@ -372,7 +369,6 @@
             font-weight: 700;
             color: #0f172a;
             margin-bottom: 24px;
-            letter-spacing: -0.3px;
         }
         .download-option {
             display: flex;
@@ -434,13 +430,18 @@
         }
         .download-note {
             margin-top: 20px;
-            font-size: 0.7rem;
-            color: #94a3b8;
-            line-height: 1.5;
+            font-size: 0.8rem;
+            color: #475569;
+            line-height: 1.6;
             padding: 0 8px;
+            text-align: left;
         }
         .download-note p {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+        }
+        .download-note i {
+            color: #f59e0b;
+            margin-right: 4px;
         }
     </style>
 </head>
@@ -476,25 +477,23 @@
     </div>
 </div>
 
-<!-- 美化后的下载弹窗 -->
+<!-- 下载选择弹窗（优化说明） -->
 <div id="downloadModal" class="download-modal-overlay">
     <div class="download-modal">
         <div class="download-modal-title">选择下载方式</div>
         <button id="browserOption" class="download-option browser-option">
             <i class="fas fa-globe"></i> 跳转浏览器直接下载
         </button>
-        <button id="cancelDownload" class="download-cancel">
-            取消下载
-        </button>
+        <button id="cancelDownload" class="download-cancel">取消下载</button>
         <div class="download-note">
-            <p>点击上方按钮将直接唤醒浏览器开始下载</p>
-            <p>如未自动跳转，请尝试复制链接手动下载</p>
+            <p><i class="fas fa-info-circle"></i> 点击后将打开浏览器下载页</p>
+            <p><i class="fas fa-clock"></i> 如果页面空白，说明正在后台下载，请观察顶部蓝色进度条。完成后点击右下角浏览器图标即可</p>
+            <p><i class="fas fa-hand-pointer"></i> 如果直接出现下载弹窗，请直接点击“下载”或浏览器图标</p>
         </div>
     </div>
 </div>
 
 <script>
-    // 新增两个源：黑猫源、无限源
     const dataSources = [
         { name: "兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", banner: "🎉 破解应用，每日更新" },
         { name: "弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", banner: "🍭应用合集" },
@@ -567,7 +566,7 @@
         el.innerText = msg;
         el.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:8px 20px;border-radius:20px;font-size:0.8rem;z-index:10001;';
         document.body.appendChild(el);
-        setTimeout(()=>el.remove(),2000);
+        setTimeout(()=>el.remove(),2500);
     }
 
     function openSafari(url, name) {
@@ -581,7 +580,8 @@
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        showToast(`🧭 ${name} 开始下载`);
+        // 提示用户注意空白页和进度条
+        showToast(`🧭 正在打开下载页，如页面空白请留意顶部进度条，完成后点击浏览器图标`);
     }
 
     function showDownloadModal(url, name) {
