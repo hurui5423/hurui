@@ -273,6 +273,7 @@
         return m ? m[1] : d.split('T')[0]||d;
     }
     function getTypeTag(t) {
+        t = parseInt(t);
         if(t===10) return '<span class="type-tag">⚡破解版</span>';
         if(t===2) return '<span class="type-tag">🎮破解游戏</span>';
         if(t===5) return '<span class="type-tag">🔓折扣</span>';
