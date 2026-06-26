@@ -207,6 +207,7 @@
       "type" : "1",
       "tintColor" : "",
       "name" : "微信(凡尔赛包)免授权",
+      "size" : "355624550.4"
     },
     {
       "isLanZouCloud" : "0",
@@ -1377,32 +1378,6 @@
       "tintColor" : "",
       "name" : "搜图神器_解锁会员",
       "size" : "17144217.6"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2025-12-17T20:14:40+08:00",
-      "lock" : "0",
-      "iconURL" : "http://rjy.xiaiqiao.icu/uploads/20251217/868f526f4e09f41a551ee0e195c2cd7c.png",
-      "versionDescription" : "苹果付费浏览器砸壳，也是苹果最好用的浏览器",
-      "downloadURL" : "http://154.219.116.5:5244/d/zgydyp/Alook%E6%B8%B8%E8%A7%88%E5%99%A821.8%E4%BB%98%E8%B4%B9%E7%A0%B8%E5%A3%B3.ipa?sign=b-uCSrWSxBNmUPUC6o5Gzr_CENYMyqSYbJueE4Pjhcw=:0",
-      "version" : "21.8",
-      "type" : "1",
-      "tintColor" : "蓝色",
-      "name" : "ALOOK游览器",
-      "size" : "13621002.24"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2025-12-03T00:08:37+08:00",
-      "lock" : "0",
-      "iconURL" : "https://free.picui.cn/free/2025/08/09/68970ac649522.jpg",
-      "versionDescription" : "❶广告友好，微信助手，斗图助手，插件收纳，黄白助手，PKC，WCEhance，WCPulse，Mikoto助手\n❷安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://pan.586226.xyz/d/%E5%BE%AE%E4%BF%A1%E4%B8%93%E5%8C%BA/%E5%A4%9A%E5%BC%80%E5%A4%9A%E5%8A%9F%E8%83%BD/%E5%BE%AE%E4%BF%A1_8.0.66_qy%E5%A4%9A%E5%8A%9F%E8%83%BD.ipa",
-      "version" : "8.0.66",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "微信 8066 qy多开多功能",
-      "size" : "389556469.76"
     },
     {
       "isLanZouCloud" : "0",
@@ -7620,19 +7595,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2026-03-14T14:36:33+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/02/13/67acc9bd70402.png",
-      "versionDescription" : "❶一款ios比较出名的多功能浏览器，名气很大。付费软件，砸壳提取\n❷安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://alist.htl123.com/d/182%E7%A7%BB%E5%8A%A8/26/3%20%E6%9C%88/13/Alook-21.9_%E7%81%B0%E5%A4%AA%E7%8B%BC.ipa",
-      "version" : "21.9",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "Alook",
-      "size" : "16252928"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2026-03-12T00:15:02+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2026/02/19/6995e6e6d3805.jpg",
@@ -9063,19 +9025,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2026-05-06T00:12:10+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2026/05/05/69fa0b7605df6.jpg",
-      "versionDescription" : "❶浏览多种格式, 快速查看图纸\n❷安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://alist.htl123.com/d/182%E7%A7%BB%E5%8A%A8/26/5%E6%9C%88/5/CADReader_6.1.1_%E7%81%B0%E5%A4%AA%E7%8B%BC.ipa",
-      "version" : "6.1.1",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "CAD快速看图",
-      "size" : "75266785.28"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2026-05-06T00:11:40+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2025/02/09/67a86de52f258.png",
@@ -9164,19 +9113,6 @@
       "tintColor" : "018084",
       "name" : "PeakWatch",
       "size" : "125829120"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2026-05-03T00:00:00+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/04/17/6801255c0f7c7.png",
-      "versionDescription" : "❶去广告，注入虚拟定位\n❷安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://alist.htl123.com/d/182%E7%A7%BB%E5%8A%A8/26/5%E6%9C%88/2/%E6%8E%A2%E6%8E%A2-7.4.2_%E7%81%B0%E5%A4%AA%E7%8B%BC.ipa",
-      "version" : "7.4.2",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "探探",
-      "size" : "196870144"
     },
     {
       "isLanZouCloud" : "0",
@@ -10129,19 +10065,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2026-02-10T00:50:13+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/12/06/693429d9e0cee.jpg",
-      "versionDescription" : "❶去广告，防撤回\n❷安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://alist.htl123.com/d/182%E7%A7%BB%E5%8A%A8/26/2%E6%9C%88/10/4Blued%E6%9E%81%E9%80%9F%E7%89%88_7.43.8%40com.danlan.xiaolan.ipa",
-      "version" : "7.43.8",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "Blued极速版",
-      "size" : "221018849.28"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2026-01-24T09:22:25+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2025/12/01/692da3bb0d225.jpg",
@@ -10584,19 +10507,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2025-11-20T00:55:55+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/11/19/691de54f4770c.jpg",
-      "versionDescription" : "❶解锁VIP\n❷安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://alist.htl123.com/d/182%E7%A7%BB%E5%8A%A8/25/11/20/iReface_1.1.6_%E7%81%B0%E5%A4%AA%E7%8B%BC.ipa",
-      "version" : "1.1.6",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "iReface-AI自定义换脸 多人换脸 换脸秀 一键换脸",
-      "size" : "197132288"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2025-11-20T00:43:47+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2025/04/18/680127d737343.png",
@@ -10958,19 +10868,6 @@
       "tintColor" : "",
       "name" : "EasyGlam：AI美颜相机自拍照编辑器",
       "size" : "251941355.52"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2025-10-13T10:20:58+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/05/31/683a6b8a2a2c2.jpg",
-      "versionDescription" : "❶解锁VIP\n❷️安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://alist.htl123.com/d/182%E7%A7%BB%E5%8A%A8/25/10/13/%E9%AB%98%E5%AE%9A%E7%B4%A0%E6%9D%90%E5%A4%A7%E5%B8%88_1.1.3.ipa",
-      "version" : "1.1.3",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "高定素材大师",
-      "size" : "33491517.44"
     },
     {
       "isLanZouCloud" : "0",
@@ -14468,19 +14365,6 @@
       "tintColor" : "",
       "name" : "Days Mattre•倒数日解锁内购",
       "size" : "156552396.8"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2026-03-17T14:53:53+08:00",
-      "lock" : "0",
-      "iconURL" : "http://rj.oulecm.cn/uploads/20260317/c6b1ffce913c95edd142778fb6af7e48.jpg",
-      "versionDescription" : "✅去除广告 ✅双指长按打开操作面板",
-      "downloadURL" : "https://pan.appleipa.cn/d/ipa%E4%B8%8B%E8%BD%BD/%E5%BA%94%E7%94%A8/2026.3.16/%E9%97%B2%E9%B1%BC_7.25.40_%E5%8E%BB%E5%B9%BF%E5%91%8A.ipa",
-      "version" : "7.25.40",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "闲鱼去广告",
-      "size" : "139670323.2"
     },
     {
       "isLanZouCloud" : "0",
@@ -19229,19 +19113,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2026-06-20T00:46:45+08:00",
-      "lock" : "0",
-      "iconURL" : "https://rj.oulecm.cn/uploads/20260203/ecb4cddf828bd20b04cb7f900fa8d67b.jpg",
-      "versionDescription" : "✅ 注入 图层1.2.1插件，去实况水印插件，去视频水印等 去除几乎所有广告，支持所有图片和视频无水印，插件在设置右上方 ✅长按复制文案标题(关注板块需要长按外面的视图 里面无效） ✅APP 设置界面右上角打开菜单功能，打开插件才能使用功能✅注入虚拟定位插件,三指双击屏幕出功能",
-      "downloadURL" : "https://pan.appleipa.cn/d/ipa%E4%B8%8B%E8%BD%BD/%E8%BD%AF%E4%BB%B6%E6%BA%90%E5%BA%94%E7%94%A8/2026.6.20/%E5%B0%8F%E7%BA%A2%E4%B9%A6_9.34.4_%E6%9E%81%E8%87%B4.ipa",
-      "version" : "9.34.4",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "小红书",
-      "size" : "209274798.08"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2026-06-20T00:27:09+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2025/02/12/67ab787f3050b.png",
@@ -19528,19 +19399,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2026-06-15T01:14:04+08:00",
-      "lock" : "0",
-      "iconURL" : "http://rj.oulecm.cn/uploads/20260316/25201152251a61605c3e4fa5d2a328aa.jpg",
-      "versionDescription" : "✅全权限砸壳 ✅iOS最好用的浏览器 ✅AppStore付费应用",
-      "downloadURL" : "https://pan.appleipa.cn/d/ipa%E4%B8%8B%E8%BD%BD/%E8%BD%AF%E4%BB%B6%E6%BA%90%E5%BA%94%E7%94%A8/2026.6.15/com.ld.TakeBrowser_22.1.tipa",
-      "version" : "22.1",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "Alook -iOS最好用的浏览器",
-      "size" : "20793262.08"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2026-06-15T01:09:26+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2025/04/12/67fa8a3e60633.png",
@@ -19723,19 +19581,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2026-06-14T00:44:12+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/04/17/6801255c0f7c7.png",
-      "versionDescription" : "✅无任何弹窗广告✅去除第三方广告✅去除启动广告✅已注入虚拟定位✅进入软件双指或三指连点2下屏幕方可出现定位功能！",
-      "downloadURL" : "https://pan.appleipa.cn/d/ipa%E4%B8%8B%E8%BD%BD/%E8%BD%AF%E4%BB%B6%E6%BA%90%E5%BA%94%E7%94%A8/2026.6.14/Tantan_7.4.7_%E6%9E%81%E8%87%B4.ipa",
-      "version" : "7.4.7",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "探探Tantan",
-      "size" : "209232855.04"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2026-06-14T00:43:29+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2025/02/14/67ae1fcb673d2.png",
@@ -19902,19 +19747,6 @@
       "tintColor" : "",
       "name" : "抖音",
       "size" : "713472081.92"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2026-06-11T00:52:30+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/04/06/67f299baa9e8a.png",
-      "versionDescription" : "✅去除广告✅去除暂停广告,优化软件速度✅可多开",
-      "downloadURL" : "https://pan.appleipa.cn/d/ipa%E4%B8%8B%E8%BD%BD/%E8%BD%AF%E4%BB%B6%E6%BA%90%E5%BA%94%E7%94%A8/2026.6.11/%E9%97%B2%E9%B1%BC_7.26.70_%E6%9E%81%E8%87%B4.ipa",
-      "version" : "7.26.70",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "闲鱼-神奇的闲鱼",
-      "size" : "161365360.64"
     },
     {
       "isLanZouCloud" : "0",
@@ -20386,32 +20218,6 @@
     },
     {
       "isLanZouCloud" : "0",
-      "versionDate" : "2026-06-05T16:21:44+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/11/06/690b81e5b95da.jpg",
-      "versionDescription" : "✅无任何弹窗广告✅去除第三方广告✅去除启动广告✅已注入虚拟定位✅进入软件双指或三指连点2下屏幕方可出现定位功能！",
-      "downloadURL" : "https://pan.appleipa.cn/d/ipa%E4%B8%8B%E8%BD%BD/%E8%BD%AF%E4%BB%B6%E6%BA%90%E5%BA%94%E7%94%A8/2026.6.5/%E8%BF%9E%E4%BF%A1_8.7.2_1780645454.ipa",
-      "version" : "8.7.2",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "连信",
-      "size" : "87944069.12"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2026-06-05T16:17:09+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/03/26/67e416fecccee.png",
-      "versionDescription" : "✅功能强大的智能扫描软件，解锁高级会员✅安装方法：证书签名或巨魔安装",
-      "downloadURL" : "https://pan.appleipa.cn/d/ipa%E4%B8%8B%E8%BD%BD/%E8%BD%AF%E4%BB%B6%E6%BA%90%E5%BA%94%E7%94%A8/2026.6.5/%E6%89%AB%E6%8F%8F%E5%85%A8%E8%83%BD%E7%8E%8B_7.18.5_1780645527.ipa",
-      "version" : "7.18.5",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "扫描全能王",
-      "size" : "179683983.36"
-    },
-    {
-      "isLanZouCloud" : "0",
       "versionDate" : "2026-06-05T16:16:29+08:00",
       "lock" : "0",
       "iconURL" : "https://htl123.cn/zy/2025/11/28/692907191ec53.jpg",
@@ -20760,19 +20566,6 @@
       "tintColor" : "",
       "name" : "切绳2CuttheRope2:OmNom'sQuest",
       "size" : "122410762.24"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2026-05-29T01:24:13+08:00",
-      "lock" : "0",
-      "iconURL" : "https://htl123.cn/zy/2025/02/09/67a86de52f258.png",
-      "versionDescription" : "✅微商凡尔赛包✅免授权✅功能双击搜索框上面:微信俩个字出功能",
-      "downloadURL" : "https://alist.htl123.com/d/182%E7%A7%BB%E5%8A%A8/26/5%E6%9C%88/11/%E5%BE%AE%E4%BF%A1_8.0.73_%E5%87%A1%E5%B0%94%E8%B5%9B.ipa",
-      "version" : "8.0.73",
-      "type" : "1",
-      "tintColor" : "",
-      "name" : "微信(凡尔赛包)免授权",
-      "size" : "379783741.44"
     },
     {
       "isLanZouCloud" : "0",
@@ -21241,19 +21034,6 @@
       "tintColor" : "018084",
       "name" : "SCRL - 图片编辑",
       "size" : "56623104"
-    },
-    {
-      "isLanZouCloud" : "0",
-      "versionDate" : "2026-04-25T05:31:02+08:00",
-      "lock" : "0",
-      "iconURL" : "http://yuan.waixbd.com/uploads/20250126/d73d057a9c65eb0cba2c237d57d7fbf8.png",
-      "versionDescription" : "听歌、看漫画、刷短剧应有尽有\n看4K、追剧、听书、登录网盘均可\n每个页面每日只需1次广告即可纯享",
-      "downloadURL" : "https://pan.xuxuyuan.top/d/%E5%85%B6%E4%BB%96%E6%9D%82%E7%B1%BB/2026/rj2604/iBox_2.4.4_%E8%AF%81%E4%B9%A6%E7%89%88.ipa?sign=0Lur-T2xEv8dbiogfuO781EibSf7jkBZMT6GVFMhjhg=:0",
-      "version" : "iBox - 证书",
-      "type" : "1",
-      "tintColor" : "018084",
-      "name" : "iBox - 证书",
-      "size" : "65011712"
     },
     {
       "isLanZouCloud" : "0",
