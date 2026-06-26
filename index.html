@@ -39,22 +39,30 @@
 
         .global-nav {
             position: sticky; top: env(safe-area-inset-top, 0); z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; gap: 6px; align-items: center;
             background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
-            border-radius: 22px; padding: 6px 10px; margin-bottom: 16px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: opacity 0.25s;
+            border-radius: 22px; padding: 8px 10px; margin-bottom: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            transition: opacity 0.3s;
+            will-change: opacity;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
         .global-nav.transparent { opacity: 0.25; pointer-events: none; }
         .nav-btn {
-            background: #0f172a; border: none; border-radius: 16px;
-            padding: 8px 14px; color: white; font-weight: 600; font-size: 0.9rem;
+            flex: 1;
+            border: none; border-radius: 18px;
+            padding: 12px 6px; color: white; font-weight: 700; font-size: 1rem;
             cursor: pointer; transition: all 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            display: inline-flex; align-items: center; gap: 5px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            white-space: nowrap;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        .nav-btn:active { transform: scale(0.95); opacity: 0.85; }
+        .nav-btn:active { transform: scale(0.96); opacity: 0.9; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
-        .refresh-btn { background: #f59e0b; color: #fff; }
-        .back-btn, .forward-btn { background: #334155; width: 40px; justify-content: center; padding: 8px 0; }
+        .home-nav-btn { background: #f59e0b; }
+        .back-btn, .forward-btn { background: #334155; }
+        .refresh-btn { background: #3b82f6; }
 
         .source-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 14px;
@@ -89,12 +97,12 @@
 
         .search-section {
             margin: 16px 0; background: #fff; border-radius: 22px;
-            padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
             position: relative;
         }
         .search-input-wrapper {
             position: relative;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .search-input-wrapper input {
             width: 100%;
@@ -164,10 +172,10 @@
         .app-card {
             display: flex; gap: 12px; background: #fff; border-radius: 22px;
             padding: 14px; border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
             align-items: flex-start; transition: transform 0.15s, box-shadow 0.15s;
         }
-        .app-card:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .app-card:active { transform: scale(0.98); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
         .app-card .app-icon {
             width: 56px; height: 56px; border-radius: 18px;
             object-fit: cover; flex-shrink: 0; background: #f1f5f9;
@@ -231,15 +239,20 @@
         }
 
         .detail-nav {
-            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; justify-content: center;
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; justify-content: center;
         }
         .detail-nav-btn {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
-            padding: 6px 12px; font-size: 0.8rem; font-weight: 600;
-            color: #334155; cursor: pointer;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
+            padding: 10px 18px; font-size: 0.95rem; font-weight: 700;
+            color: #1e293b; cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        .detail-nav-btn.disabled-source { background: #f1f5f9; color: #94a3b8; }
-        .detail-nav-btn.home-highlight { background: #f59e0b; color: white; border-color: #f59e0b; }
+        .detail-nav-btn:active { background: #f1f5f9; }
+        .detail-nav-btn.disabled-source {
+            background: #f1f5f9; color: #94a3b8; font-weight: 600;
+            font-size: 1.05rem; padding: 10px 22px;
+            border: 2px solid #f59e0b;
+        }
         .source-name-area { text-align: center; margin: 12px 0 8px; }
         .source-name-area h2 { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
         .app-count-badge {
@@ -410,6 +423,9 @@
         .browser-option {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
         }
+        .copy-link-option {
+            background: linear-gradient(135deg, #64748b, #475569);
+        }
         .download-cancel {
             display: block;
             width: 100%;
@@ -453,6 +469,7 @@
     </div>
 
     <div class="global-nav" id="globalNav">
+        <button id="homeBtn" class="nav-btn home-nav-btn"><i class="fas fa-home"></i> 首页</button>
         <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
         <button id="refreshBtn" class="nav-btn refresh-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
         <button id="forwardBtn" class="nav-btn forward-btn"><i class="fas fa-arrow-right"></i></button>
@@ -477,18 +494,20 @@
     </div>
 </div>
 
-<!-- 下载选择弹窗（优化说明） -->
+<!-- 下载选择弹窗（增强版） -->
 <div id="downloadModal" class="download-modal-overlay">
     <div class="download-modal">
         <div class="download-modal-title">选择下载方式</div>
         <button id="browserOption" class="download-option browser-option">
             <i class="fas fa-globe"></i> 跳转浏览器直接下载
         </button>
+        <button id="copyLinkOption" class="download-option copy-link-option">
+            <i class="fas fa-copy"></i> 复制链接到剪贴板
+        </button>
         <button id="cancelDownload" class="download-cancel">取消下载</button>
         <div class="download-note">
-            <p><i class="fas fa-info-circle"></i> 点击后将打开浏览器下载页</p>
-            <p><i class="fas fa-clock"></i> 如果页面空白，说明正在后台下载，请观察顶部蓝色进度条。完成后点击右下角浏览器图标即可</p>
-            <p><i class="fas fa-hand-pointer"></i> 如果直接出现下载弹窗，请直接点击“下载”或浏览器图标</p>
+            <p><i class="fas fa-info-circle"></i> 点击浏览器下载后，如页面空白可能正在后台下载，请留意顶部进度条</p>
+            <p><i class="fas fa-exclamation-triangle"></i> 如提示错误或无法下载，可使用“复制链接”后用其他工具下载</p>
         </div>
     </div>
 </div>
@@ -515,6 +534,7 @@
     let currentStateIndex = -1;
 
     const mainContent = document.getElementById('mainContent');
+    const homeBtn = document.getElementById('homeBtn');
     const backBtn = document.getElementById('backBtn');
     const forwardBtn = document.getElementById('forwardBtn');
     const refreshBtn = document.getElementById('refreshBtn');
@@ -522,11 +542,12 @@
 
     const downloadModal = document.getElementById('downloadModal');
     const browserOption = document.getElementById('browserOption');
+    const copyLinkOption = document.getElementById('copyLinkOption');
     const cancelDownloadBtn = document.getElementById('cancelDownload');
     let currentDownloadUrl = '';
     let currentDownloadName = '';
 
-    function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
+    function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'>'?'&gt;') : ''; }
     
     function cleanUrl(raw) {
         if (!raw) return '';
@@ -580,8 +601,7 @@
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        // 提示用户注意空白页和进度条
-        showToast(`🧭 正在打开下载页，如页面空白请留意顶部进度条，完成后点击浏览器图标`);
+        showToast(`🧭 正在打开下载页，如空白请留意进度条`);
     }
 
     function showDownloadModal(url, name) {
@@ -597,6 +617,12 @@
         hideDownloadModal();
         if (currentDownloadUrl) {
             openSafari(currentDownloadUrl, currentDownloadName);
+        }
+    });
+    copyLinkOption.addEventListener('click', async () => {
+        hideDownloadModal();
+        if (currentDownloadUrl) {
+            await copyLink(currentDownloadUrl, currentDownloadName);
         }
     });
     cancelDownloadBtn.addEventListener('click', hideDownloadModal);
@@ -655,11 +681,24 @@
 
     function searchApps(kw) {
         if(!kw.trim()) return [];
-        let k=kw.trim().toLowerCase(), res=[];
-        for(let src of allSourcesData)
-            for(let a of src.apps)
-                if((a.nameLower && a.nameLower.includes(k)) || (a.descLower && a.descLower.includes(k)))
-                    res.push({...a,sourceName:src.name,typeTag:getTypeTag(a.type),desc:a.versionDescription||'暂无介绍'});
+        let k = kw.trim().toLowerCase();
+        let res = [];
+        for(let src of allSourcesData) {
+            for(let a of src.apps) {
+                let score = 0;
+                if (a.nameLower === k) score = 100;
+                else if (a.nameLower.startsWith(k)) score = 80;
+                else if (a.nameLower.includes(k)) score = 60;
+                if (a.descLower && a.descLower.includes(k)) score = Math.max(score, 40);
+                if (score > 0) {
+                    res.push({...a, sourceName: src.name, typeTag: getTypeTag(a.type), desc: a.versionDescription||'暂无介绍', score});
+                }
+            }
+        }
+        res.sort((a,b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return (b.versionDate?new Date(b.versionDate).getTime():0) - (a.versionDate?new Date(a.versionDate).getTime():0);
+        });
         return res;
     }
 
@@ -764,11 +803,45 @@
                         doSearchFn(item.textContent);
                     });
                 });
-            }, 300);
+            }, 200);
         });
         inputEl.addEventListener('blur', () => {
             setTimeout(() => suggestionBox.classList.remove('active'), 200);
         });
+    }
+
+    function renderSearchBar(defaultKeyword = '') {
+        return `
+            <div class="search-section">
+                <div class="search-input-wrapper">
+                    <input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off" value="${escapeHtml(defaultKeyword)}">
+                </div>
+                <div class="search-actions">
+                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
+                    <button id="clearSearchBtn" class="clear-btn">清除</button>
+                </div>
+            </div>`;
+    }
+
+    function bindSearchBarEvents(container, keyword = '') {
+        const si = container.querySelector('#searchInput');
+        const doBtn = container.querySelector('#doSearchBtn');
+        const clearBtn = container.querySelector('#clearSearchBtn');
+        if (si && doBtn) {
+            doBtn.addEventListener('click', () => {
+                if (si.value.trim()) navigateToSearch(si.value.trim(), 1);
+            });
+            si.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && si.value.trim()) navigateToSearch(si.value.trim(), 1);
+            });
+            setupSearchSuggestions(si, (kw) => navigateToSearch(kw, 1));
+        }
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                si.value = '';
+                navigateToHome();
+            });
+        }
     }
 
     function renderHome(page=1) {
@@ -777,16 +850,7 @@
         dataSources.forEach((s,i)=>srcHtml+=`<div class="source-card" data-idx="${i}"><div class="source-icon">${sourceIcons[i]}</div><div class="source-name">${escapeHtml(s.name)}</div></div>`);
         srcHtml+='</div>';
 
-        let searchHtml = `
-            <div class="search-section">
-                <div class="search-input-wrapper">
-                    <input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off">
-                </div>
-                <div class="search-actions">
-                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
-                    <button id="clearSearchBtn" class="clear-btn">清除</button>
-                </div>
-            </div>`;
+        let searchHtml = renderSearchBar();
         let listHtml = `
             <div class="section-header"><div class="section-title"><i class="fas fa-clock"></i> 最近更新</div><div class="section-stats">共 ${total} 款</div></div>
             <div class="app-list" id="appList">${data.map(app => renderAppCard(app, true)).join('')}</div>
@@ -794,14 +858,7 @@
         mainContent.innerHTML = srcHtml + searchHtml + listHtml;
 
         document.querySelectorAll('.source-card').forEach(c=>c.addEventListener('click',()=>navigateToSource(parseInt(c.dataset.idx),1)));
-        let si = document.getElementById('searchInput');
-        document.getElementById('doSearchBtn').addEventListener('click',()=>{
-            if(si.value.trim()) navigateToSearch(si.value.trim(),1);
-        });
-        document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; });
-        si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
-        setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
-
+        bindSearchBarEvents(mainContent);
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToHome(p));
         setupDescToggles();
@@ -830,17 +887,7 @@
         let start = (page-1)*perPage;
         let pageItems = mergedList.slice(start, start+perPage);
 
-        let backBtnHtml = `<button class="detail-nav-btn home-highlight" id="backToHomeBtn">🏠 返回首页</button>`;
-        let searchHeader = `
-            <div class="search-section">
-                <div class="search-input-wrapper">
-                    <input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off" value="${escapeHtml(keyword)}">
-                </div>
-                <div class="search-actions">
-                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
-                    <button id="clearSearchBtn" class="clear-btn">清除</button>
-                </div>
-            </div>`;
+        let searchHeader = renderSearchBar(keyword);
         let statsHtml = `<div class="section-header"><div class="section-title"><i class="fas fa-search"></i> 搜索结果 · ${keyword}</div><div class="section-stats">${totalItems} 条</div></div>`;
 
         let listHtml = '<div class="app-list">';
@@ -881,17 +928,8 @@
         });
         listHtml += '</div><div class="pagination" id="pagination"></div>';
 
-        mainContent.innerHTML = backBtnHtml + searchHeader + statsHtml + listHtml;
-
-        document.getElementById('backToHomeBtn').addEventListener('click', ()=> navigateToHome());
-        let si = document.getElementById('searchInput');
-        document.getElementById('doSearchBtn').addEventListener('click',()=>{
-            if(si.value.trim()) navigateToSearch(si.value.trim(),1);
-        });
-        document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; navigateToHome(); });
-        si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
-        setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
-
+        mainContent.innerHTML = searchHeader + statsHtml + listHtml;
+        bindSearchBarEvents(mainContent, keyword);
         document.querySelectorAll('.sub-jump-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 let srcIdx = parseInt(btn.dataset.src);
@@ -912,12 +950,13 @@
         let apps=src.apps, perPage=24, totalPages=Math.ceil(apps.length/perPage);
         let data=apps.slice((page-1)*perPage,page*perPage);
 
-        let nav='<div class="detail-nav"><button class="detail-nav-btn home-highlight" data-action="home">🏠 首页</button>';
+        let nav='<div class="detail-nav">';
         dataSources.forEach((s,i)=>{
             if(i===idx) nav+=`<button class="detail-nav-btn disabled-source" disabled>${escapeHtml(s.name)}</button>`;
             else nav+=`<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(s.name)}</button>`;
         });
         nav+='</div>';
+        let searchHtml = renderSearchBar();
         let head=`<div class="source-name-area"><h2>${escapeHtml(dataSources[idx].name)}</h2><div class="app-count-badge"><i class="fas fa-layer-group"></i> 共 ${apps.length} 款</div></div>`;
         let banner=`<div class="source-banner"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[idx].banner)}</div>`;
         let list='<div class="app-list">';
@@ -946,7 +985,8 @@
                 </div>`;
         });
         list+='</div><div class="pagination" id="pagination"></div>';
-        mainContent.innerHTML = nav+head+banner+list;
+        mainContent.innerHTML = nav + searchHtml + head + banner + list;
+        bindSearchBarEvents(mainContent);
 
         if (scrollToUrl) {
             let targetCard = document.querySelector(`.app-card[data-url="${CSS.escape(scrollToUrl)}"]`);
@@ -958,8 +998,7 @@
         }
 
         document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(b=>{
-            if(b.dataset.action==='home') b.addEventListener('click',()=>navigateToHome());
-            else b.addEventListener('click',()=>navigateToSource(parseInt(b.dataset.idx),1));
+            b.addEventListener('click',()=>navigateToSource(parseInt(b.dataset.idx),1));
         });
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSource(idx,p));
@@ -1002,11 +1041,20 @@
         forwardBtn.classList.toggle('disabled',forwardBtn.disabled);
     }
 
-    let navTmr;
-    function resetNav(){ clearTimeout(navTmr); globalNav.classList.remove('transparent'); navTmr=setTimeout(()=>globalNav.classList.add('transparent'),3000); }
-    window.addEventListener('scroll',resetNav);
-    window.addEventListener('touchstart',resetNav);
-    resetNav();
+    let navTransparentTimer;
+    function resetNav() {
+        if (globalNav.classList.contains('transparent')) {
+            globalNav.classList.remove('transparent');
+        }
+        clearTimeout(navTransparentTimer);
+        navTransparentTimer = setTimeout(() => {
+            globalNav.classList.add('transparent');
+        }, 3000);
+    }
+    window.addEventListener('scroll', resetNav, {passive: true});
+    window.addEventListener('touchstart', resetNav, {passive: true});
+    // 初始设为透明
+    globalNav.classList.add('transparent');
 
     async function refreshData() {
         showToast('刷新中...');
@@ -1028,6 +1076,7 @@
                 else{ historyStack.push(e.state); currentStateIndex=historyStack.length-1; applyState(e.state); updateNav(); }
             } else navigateToHome();
         });
+        homeBtn.addEventListener('click', ()=> navigateToHome());
         backBtn.addEventListener('click',()=>{ if(currentStateIndex>0){ currentStateIndex--; applyState(historyStack[currentStateIndex]); updateNav(); window.history.back(); } });
         forwardBtn.addEventListener('click',()=>{ if(currentStateIndex<historyStack.length-1){ currentStateIndex++; applyState(historyStack[currentStateIndex]); updateNav(); window.history.forward(); } });
         refreshBtn.addEventListener('click',refreshData);
