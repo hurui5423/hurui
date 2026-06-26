@@ -10,47 +10,59 @@
     <meta name="apple-mobile-web-app-title" content="多源库">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
-            background: #f0f4f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            padding: 0.5rem; color: #1a202c; font-size: 14px;
-            padding-top: env(safe-area-inset-top, 12px); line-height: 1.45;
+            background: #f0f4f8;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 0.5rem;
+            color: #1a202c;
+            font-size: 14px;
+            padding-top: env(safe-area-inset-top, 12px);
+            line-height: 1.45;
         }
         button, a, input, textarea { touch-action: manipulation; }
         .container { max-width: 1200px; margin: 0 auto; }
+
         .app-header { text-align: center; margin-bottom: 18px; }
-        .app-header h1 { font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+        .app-header h1 {
+            font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;
+        }
         .app-header h1 i { color: #f59e0b; }
-        .app-sub { font-size: 0.75rem; color: #64748b; background: rgba(255,255,255,0.8); display: inline-block; padding: 4px 18px; border-radius: 20px; font-weight: 500; }
+        .app-sub {
+            font-size: 0.75rem; color: #64748b;
+            background: rgba(255,255,255,0.8);
+            display: inline-block; padding: 4px 18px; border-radius: 20px; font-weight: 500;
+        }
 
         .global-nav {
             position: sticky; top: env(safe-area-inset-top, 0); z-index: 100;
-            display: flex; gap: 6px; align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
-            border-radius: 22px; padding: 8px 10px; margin-bottom: 16px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-            transition: opacity 0.3s; will-change: opacity;
-            -webkit-transform: translateZ(0); transform: translateZ(0);
+            border-radius: 22px; padding: 6px 10px; margin-bottom: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: opacity 0.25s;
         }
         .global-nav.transparent { opacity: 0.25; pointer-events: none; }
         .nav-btn {
-            flex: 1; border: none; border-radius: 18px;
-            padding: 12px 6px; color: white; font-weight: 700; font-size: 1rem;
+            background: #0f172a; border: none; border-radius: 16px;
+            padding: 8px 14px; color: white; font-weight: 600; font-size: 0.9rem;
             cursor: pointer; transition: all 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            white-space: nowrap; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: inline-flex; align-items: center; gap: 5px;
         }
-        .nav-btn:active { transform: scale(0.96); opacity: 0.9; }
+        .nav-btn:active { transform: scale(0.95); opacity: 0.85; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
-        .home-nav-btn { background: #f59e0b; }
-        .back-btn, .forward-btn { background: #334155; }
-        .refresh-btn { background: #3b82f6; }
+        .refresh-btn { background: #f59e0b; color: #fff; }
+        .back-btn, .forward-btn { background: #334155; width: 40px; justify-content: center; padding: 8px 0; }
 
         .source-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 14px;
             margin: 20px 0 24px;
         }
-        @media (min-width: 600px) { .source-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (min-width: 600px) {
+            .source-grid { grid-template-columns: repeat(4, 1fr); }
+        }
         .source-card {
             background: #fff; border-radius: 24px; padding: 16px 8px 14px;
             text-align: center; font-size: 0.85rem; font-weight: 700; color: #1e293b;
@@ -77,26 +89,52 @@
 
         .search-section {
             margin: 16px 0; background: #fff; border-radius: 22px;
-            padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
             position: relative;
         }
-        .search-input-wrapper { position: relative; margin-bottom: 10px; }
+        .search-input-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
         .search-input-wrapper input {
-            width: 100%; border: 2px solid #e2e8f0; background: #f8fafc;
-            border-radius: 18px; padding: 12px 16px; font-size: 1rem; outline: none;
+            width: 100%;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            outline: none;
             transition: border 0.2s, box-shadow 0.2s;
         }
-        .search-input-wrapper input:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
+        .search-input-wrapper input:focus {
+            border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
         .search-suggestions {
-            position: absolute; top: 100%; left: 0; right: 0; background: #fff;
-            border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            z-index: 200; display: none; max-height: 280px; overflow-y: auto; margin-top: 4px;
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            z-index: 200;
+            display: none;
+            max-height: 280px;
+            overflow-y: auto;
+            margin-top: 4px;
         }
         .search-suggestions.active { display: block; }
-        .suggestion-item { padding: 12px 16px; font-size: 0.9rem; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+        .suggestion-item {
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
         .suggestion-item:last-child { border-bottom: none; }
         .suggestion-item:hover, .suggestion-item:active { background: #f8fafc; }
-        .search-actions { display: flex; gap: 10px; }
+        .search-actions {
+            display: flex; gap: 10px;
+        }
         .search-btn, .clear-btn {
             border: none; border-radius: 18px; padding: 10px 18px;
             font-weight: 600; font-size: 0.9rem; cursor: pointer;
@@ -116,31 +154,67 @@
             border-left: 4px solid #f59e0b; padding-left: 10px;
         }
         .section-stats {
-            font-size: 0.75rem; color: #64748b; background: #f1f5f9;
-            padding: 4px 12px; border-radius: 12px;
+            font-size: 0.75rem; color: #64748b;
+            background: #f1f5f9; padding: 4px 12px; border-radius: 12px;
         }
 
-        .app-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        .app-list {
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;
+        }
         .app-card {
             display: flex; gap: 12px; background: #fff; border-radius: 22px;
             padding: 14px; border: 1px solid #f1f5f9;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
             align-items: flex-start; transition: transform 0.15s, box-shadow 0.15s;
         }
-        .app-card:active { transform: scale(0.98); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-        .app-card .app-icon { width: 56px; height: 56px; border-radius: 18px; object-fit: cover; flex-shrink: 0; background: #f1f5f9; }
-        .app-card .app-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-        .app-card .app-name { font-weight: 700; font-size: 0.95rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .app-card:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .app-card .app-icon {
+            width: 56px; height: 56px; border-radius: 18px;
+            object-fit: cover; flex-shrink: 0; background: #f1f5f9;
+        }
+        .app-card .app-info {
+            flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;
+        }
+        .app-card .app-name {
+            font-weight: 700; font-size: 0.95rem; color: #0f172a;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         .app-card .app-desc {
             font-size: 0.7rem; color: #475569; line-height: 1.4;
-            display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 4px;
         }
-        .app-card .app-desc.expanded { -webkit-line-clamp: unset; display: block; }
-        .app-desc-toggle { font-size: 0.7rem; color: #2563eb; font-weight: 600; cursor: pointer; display: inline-block; margin-left: 4px; white-space: nowrap; }
-        .app-card .app-meta { font-size: 0.65rem; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .source-badge { color: #f59e0b; font-weight: 600; background: #fef9c3; padding: 1px 8px; border-radius: 8px; font-size: 0.6rem; }
-        .type-tag { background: #e2e8f0; border-radius: 8px; padding: 2px 8px; font-size: 0.6rem; font-weight: 600; color: #334155; }
-        .btn-row { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+        .app-card .app-desc.expanded {
+            -webkit-line-clamp: unset;
+            display: block;
+        }
+        .app-desc-toggle {
+            font-size: 0.7rem;
+            color: #2563eb;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 4px;
+            white-space: nowrap;
+        }
+        .app-card .app-meta {
+            font-size: 0.65rem; color: #94a3b8;
+            display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        }
+        .source-badge {
+            color: #f59e0b; font-weight: 600; background: #fef9c3;
+            padding: 1px 8px; border-radius: 8px; font-size: 0.6rem;
+        }
+        .type-tag {
+            background: #e2e8f0; border-radius: 8px; padding: 2px 8px;
+            font-size: 0.6rem; font-weight: 600; color: #334155;
+        }
+        .btn-row {
+            display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap;
+        }
         .btn {
             flex: 1; min-width: 60px; border: none; border-radius: 14px;
             padding: 6px 8px; font-size: 0.7rem; font-weight: 600;
@@ -149,49 +223,98 @@
             display: inline-flex; align-items: center; justify-content: center; gap: 4px;
         }
         .btn:active { transform: scale(0.95); }
-        .btn-download { background: #7c3aed; color: white; }
-        .btn-copy-link { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+        .btn-download {
+            background: #7c3aed; color: white;
+        }
+        .btn-copy-link {
+            background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0;
+        }
 
         .detail-nav {
-            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; justify-content: center;
+            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; justify-content: center;
         }
         .detail-nav-btn {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
-            padding: 10px 18px; font-size: 0.95rem; font-weight: 700;
-            color: #1e293b; cursor: pointer;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
+            padding: 6px 12px; font-size: 0.8rem; font-weight: 600;
+            color: #334155; cursor: pointer;
         }
-        .detail-nav-btn:active { background: #f1f5f9; }
-        .detail-nav-btn.disabled-source {
-            background: #f1f5f9; color: #94a3b8; font-weight: 600;
-            font-size: 1.05rem; padding: 10px 22px; border: 2px solid #f59e0b;
-        }
+        .detail-nav-btn.disabled-source { background: #f1f5f9; color: #94a3b8; }
+        .detail-nav-btn.home-highlight { background: #f59e0b; color: white; border-color: #f59e0b; }
         .source-name-area { text-align: center; margin: 12px 0 8px; }
         .source-name-area h2 { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
-        .app-count-badge { display: inline-block; background: #fef9c3; border-radius: 14px; padding: 4px 16px; font-size: 0.8rem; font-weight: 600; color: #b45309; margin-top: 6px; }
-        .source-banner { text-align: center; margin: 8px 0 16px; font-size: 0.85rem; color: #92400e; background: #fffbeb; padding: 6px 16px; border-radius: 14px; }
+        .app-count-badge {
+            display: inline-block; background: #fef9c3; border-radius: 14px;
+            padding: 4px 16px; font-size: 0.8rem; font-weight: 600; color: #b45309; margin-top: 6px;
+        }
+        .source-banner {
+            text-align: center; margin: 8px 0 16px; font-size: 0.85rem;
+            color: #92400e; background: #fffbeb; padding: 6px 16px; border-radius: 14px;
+        }
 
-        .merged-subs { margin-top: -6px; margin-left: 14px; padding-left: 14px; border-left: 2px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-        .sub-card { display: flex; align-items: center; gap: 8px; background: #f8fafc; border-radius: 12px; padding: 8px 10px; font-size: 0.75rem; }
+        .merged-subs {
+            margin-top: -6px; margin-left: 14px; padding-left: 14px;
+            border-left: 2px solid #e2e8f0;
+            display: flex; flex-direction: column; gap: 8px;
+            margin-bottom: 10px;
+        }
+        .sub-card {
+            display: flex; align-items: center; gap: 8px;
+            background: #f8fafc; border-radius: 12px; padding: 8px 10px;
+            font-size: 0.75rem; transition: all 0.15s;
+        }
         .sub-card:active { background: #f1f5f9; }
-        .sub-card .sub-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; background: #e2e8f0; flex-shrink: 0; }
-        .sub-info { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
-        .sub-name { font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sub-card .sub-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            object-fit: cover; background: #e2e8f0; flex-shrink: 0;
+        }
+        .sub-info {
+            flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px;
+        }
+        .sub-name {
+            font-weight: 700; color: #0f172a;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         .sub-version { color: #64748b; font-weight: 500; }
-        .sub-source { color: #f59e0b; font-weight: 600; background: #fef9c3; padding: 0px 6px; border-radius: 6px; font-size: 0.65rem; }
-        .sub-jump-btn { color: #2563eb; font-weight: 600; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; border: none; background: transparent; font-size: 0.75rem; padding: 4px 8px; border-radius: 8px; }
+        .sub-source {
+            color: #f59e0b; font-weight: 600; background: #fef9c3;
+            padding: 0px 6px; border-radius: 6px; font-size: 0.65rem;
+        }
+        .sub-jump-btn {
+            color: #2563eb; font-weight: 600; cursor: pointer; white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 4px;
+            border: none; background: transparent; font-size: 0.75rem;
+            padding: 4px 8px; border-radius: 8px; transition: background 0.15s;
+        }
+        .sub-jump-btn:active { background: #dbeafe; }
 
-        .pagination { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 16px 0; align-items: center; }
+        .pagination {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+            margin: 16px 0; align-items: center;
+        }
         .pagination button, .pagination .page-num {
             background: #fff; border: 1px solid #e2e8f0; border-radius: 18px;
             padding: 8px 16px; font-size: 0.85rem; cursor: pointer;
-            font-weight: 500; color: #334155;
+            font-weight: 500; color: #334155; transition: all 0.15s;
         }
-        .pagination .active-page { background: #0f172a; color: white; border-color: #0f172a; }
-        .pagination .goto-input { width: 55px; text-align: center; border-radius: 18px; border: 1px solid #e2e8f0; font-size: 0.85rem; padding: 8px; }
+        .pagination button:active, .pagination .page-num:active {
+            background: #f1f5f9; transform: scale(0.96);
+        }
+        .pagination .active-page {
+            background: #0f172a; color: white; border-color: #0f172a;
+        }
+        .pagination .goto-input {
+            width: 55px; text-align: center; border-radius: 18px;
+            border: 1px solid #e2e8f0; font-size: 0.85rem; padding: 8px;
+        }
 
-        footer { margin-top: 24px; text-align: center; font-size: 0.65rem; color: #94a3b8; padding-bottom: 16px; }
-        @media (max-width: 640px) { .source-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; } }
+        footer {
+            margin-top: 24px; text-align: center; font-size: 0.65rem;
+            color: #94a3b8; padding-bottom: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .source-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -205,12 +328,21 @@
             padding: 28px 22px; text-align: center;
             box-shadow: 0 30px 50px rgba(0,0,0,0.25);
         }
+        .modal-header i {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .modal-header h3 { font-size: 1.4rem; margin: 10px 0 6px; color: #0f172a; }
+        .modal-body p { font-size: 0.85rem; line-height: 1.55; margin-bottom: 14px; color: #475569; }
         .modal-btn {
             background: #0f172a; color: white; border: none; border-radius: 18px;
             padding: 12px 28px; font-size: 0.95rem; font-weight: 600;
-            cursor: pointer; margin-top: 8px;
+            cursor: pointer; transition: all 0.15s; margin-top: 8px;
         }
+        .modal-btn:active { background: #000; transform: scale(0.96); }
 
+        /* 下载选择弹窗 */
         .download-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(14px);
@@ -219,21 +351,98 @@
         }
         .download-modal-overlay.show { visibility: visible; opacity: 1; }
         .download-modal {
-            background: rgba(255,255,255,0.98); border-radius: 36px;
-            width: 92%; max-width: 420px; padding: 32px 24px 24px;
-            text-align: center; box-shadow: 0 40px 60px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.98);
+            border-radius: 36px;
+            width: 92%;
+            max-width: 420px;
+            padding: 32px 24px 24px;
+            text-align: center;
+            box-shadow: 0 40px 60px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s;
         }
-        .download-modal-title { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin-bottom: 24px; }
+        .download-modal-overlay.show .download-modal {
+            transform: scale(1);
+        }
+        .download-modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 24px;
+        }
         .download-option {
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            width: 100%; border: none; border-radius: 20px; padding: 16px 20px;
-            font-size: 1rem; font-weight: 600; cursor: pointer; margin-bottom: 16px;
-            color: white; box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 20px;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
         }
-        .browser-option { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .copy-link-option { background: linear-gradient(135deg, #64748b, #475569); }
-        .download-cancel { display: block; width: 100%; border: none; border-radius: 20px; padding: 14px 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; background: #f1f5f9; color: #64748b; margin-top: 4px; }
-        .download-note { margin-top: 20px; font-size: 0.8rem; color: #475569; line-height: 1.6; text-align: left; }
+        .download-option::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0);
+            transition: background 0.2s;
+        }
+        .download-option:active::after {
+            background: rgba(255,255,255,0.2);
+        }
+        .download-option:active {
+            transform: scale(0.96);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .download-option i {
+            font-size: 1.3rem;
+        }
+        .browser-option {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        .download-cancel {
+            display: block;
+            width: 100%;
+            border: none;
+            border-radius: 20px;
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #f1f5f9;
+            color: #64748b;
+            transition: all 0.2s;
+            margin-top: 4px;
+        }
+        .download-cancel:active {
+            background: #e2e8f0;
+            transform: scale(0.96);
+        }
+        .download-note {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #475569;
+            line-height: 1.6;
+            padding: 0 8px;
+            text-align: left;
+        }
+        .download-note p {
+            margin-bottom: 6px;
+        }
+        .download-note i {
+            color: #f59e0b;
+            margin-right: 4px;
+        }
     </style>
 </head>
 <body>
@@ -244,7 +453,6 @@
     </div>
 
     <div class="global-nav" id="globalNav">
-        <button id="homeBtn" class="nav-btn home-nav-btn"><i class="fas fa-home"></i> 首页</button>
         <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
         <button id="refreshBtn" class="nav-btn refresh-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
         <button id="forwardBtn" class="nav-btn forward-btn"><i class="fas fa-arrow-right"></i></button>
@@ -254,581 +462,577 @@
     <footer>一键下载 · 复制链接 · 历史导航支持</footer>
 </div>
 
-<!-- 下载方式弹窗 -->
+<div id="customModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header"><i class="fas fa-gem"></i><h3>💡 温馨提醒</h3></div>
+        <div class="modal-body">
+            <p>🔧破解应用、内购修改手游、福利软件、18绅士游戏、各种工具、插件为 <strong>.ipa</strong> 或deb及相关格式，仅支持越狱iOS、iPad、Mac, 巨魔用户直接安装或自签安装（签名软件不提供)和巨魔用户安装。</p>
+            <p> 🪜如遇到打开刷新出现网络问题，尝试打开或关闭梯子，刷新下就行了，但是一般绝大数时间不用。</p>
+            <p>💾 各种破解源集合已有 <strong>9000+</strong> 资源，平均三天持续更新。</p>
+            <p>⚠️ 用户须仔细甄别下载需求类型，使用过程中产生的一切后果由用户自行负责！</p>
+        </div>
+        <div class="modal-buttons">
+            <button id="modalConfirmBtn" class="modal-btn">已明白，开始探索</button>
+        </div>
+    </div>
+</div>
+
+<!-- 下载选择弹窗（优化说明） -->
 <div id="downloadModal" class="download-modal-overlay">
     <div class="download-modal">
         <div class="download-modal-title">选择下载方式</div>
         <button id="browserOption" class="download-option browser-option">
             <i class="fas fa-globe"></i> 跳转浏览器直接下载
         </button>
-        <button id="copyLinkOption" class="download-option copy-link-option">
-            <i class="fas fa-copy"></i> 复制链接到剪贴板
-        </button>
         <button id="cancelDownload" class="download-cancel">取消下载</button>
         <div class="download-note">
-            <p><i class="fas fa-info-circle"></i> 点击浏览器下载后，如页面空白可能正在后台下载，请留意顶部进度条</p>
+            <p><i class="fas fa-info-circle"></i> 点击后将打开浏览器下载页</p>
+            <p><i class="fas fa-clock"></i> 如果页面空白，说明正在后台下载，请观察顶部蓝色进度条。完成后点击右下角浏览器图标即可</p>
+            <p><i class="fas fa-hand-pointer"></i> 如果直接出现下载弹窗，请直接点击“下载”或浏览器图标</p>
         </div>
     </div>
 </div>
 
 <script>
-    (function() {
-        // 检查必要容器
-        const mainContent = document.getElementById('mainContent');
-        if (!mainContent) return alert('缺少内容容器');
+    const dataSources = [
+        { name: "兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", banner: "🎉 破解应用，每日更新" },
+        { name: "弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", banner: "🍭应用合集" },
+        { name: "虫虫源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/congcongyuan.json", banner: "🐞 精品小体积应用" },
+        { name: "天月源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/ttyyuan.json", banner: "💨 旧源，新源多个组合" },
+        { name: "绅士黄油源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/fulishenshiyuan.json", banner: "😍 色色的全都有" },
+        { name: "卡子源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/kaziyuan.json", banner: "📀 破解资源" },
+        { name: "利特源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/liteyuan.json", banner: "🔌 承诺更新快" },
+        { name: "奔跑源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/speedyuan.json", banner: "🛞 更新下载快" },
+        { name: "游戏源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/youxiyuan.json", banner: "🕹️游戏和手游：破解、内购、内置修改" },
+        { name: "黑猫源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/heimao.json", banner: "🐈‍⬛ 精选稳定资源" },
+        { name: "无限源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/wuxian.json", banner: "♾️ 海量应用合集" }
+    ];
+    const sourceIcons = ['🎉','🍭','🐞','💨','😍','📀','🔌','🛞','🕹️','🐈‍⬛','♾️'];
 
-        const dataSources = [
-            { name: "兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", banner: "🎉 破解应用，每日更新" },
-            { name: "弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", banner: "🍭应用合集" },
-            { name: "虫虫源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/congcongyuan.json", banner: "🐞 精品小体积应用" },
-            { name: "天嘻源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/tianxiyuan.json", banner: "💡 旧源，老源有很多能用的" },
-            { name: "绅士黄油源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/fulishenshiyuan.json", banner: "😍 色色的全都有" },
-            { name: "卡子源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/kaziyuan.json", banner: "📀 破解资源" },
-            { name: "利特源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/liteyuan.json", banner: "🔌 承诺更新快" },
-            { name: "奔跑源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/speedyuan.json", banner: "🛞 更新下载快" },
-            { name: "游戏源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/youxiyuan.json", banner: "🕹️游戏和手游" },
-            { name: "外服游戏源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/youxiyuan2.json", banner: "🖲️国外破解游戏" },
-            { name: "更新中……", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/wuxian.json", banner: "♾️ 海量应用合集" }
-        ];
-        const sourceIcons = ['🎉','🍭','🐞','💡','😍','📀','🔌','🛞','🕹️','🐈‍⬛','♾️'];
+    let allSourcesData = [];
+    let isDataLoaded = false;
+    let historyStack = [];
+    let currentStateIndex = -1;
 
-        let allSourcesData = [];
-        let historyStack = [];
-        let currentStateIndex = -1;
+    const mainContent = document.getElementById('mainContent');
+    const backBtn = document.getElementById('backBtn');
+    const forwardBtn = document.getElementById('forwardBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const globalNav = document.getElementById('globalNav');
 
-        const globalNav = document.getElementById('globalNav');
-        const homeBtn = document.getElementById('homeBtn');
-        const backBtn = document.getElementById('backBtn');
-        const forwardBtn = document.getElementById('forwardBtn');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const downloadModal = document.getElementById('downloadModal');
-        const browserOption = document.getElementById('browserOption');
-        const copyLinkOption = document.getElementById('copyLinkOption');
-        const cancelDownloadBtn = document.getElementById('cancelDownload');
-        let currentDownloadUrl = '';
-        let currentDownloadName = '';
+    const downloadModal = document.getElementById('downloadModal');
+    const browserOption = document.getElementById('browserOption');
+    const cancelDownloadBtn = document.getElementById('cancelDownload');
+    let currentDownloadUrl = '';
+    let currentDownloadName = '';
 
-        // 工具函数
-        const escapeHtml = (s) => s ? String(s).replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'>'?'&gt;') : '';
-        const cleanUrl = (raw) => raw ? raw.trim().replace(/\s+/g, '%20') : '';
-        const showToast = (msg) => {
-            const el = document.createElement('div');
-            el.textContent = msg;
-            el.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:8px 20px;border-radius:20px;font-size:0.8rem;z-index:10001;';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 2500);
-        };
+    function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
+    
+    function cleanUrl(raw) {
+        if (!raw) return '';
+        let url = raw.trim();
+        if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(url)) return url.replace(/\s+/g, '%20');
+        url = url.replace(/\s+/g, '%20');
+        url = url.replace(/[^\x00-\x7F]/g, (char) => encodeURIComponent(char));
+        return url;
+    }
 
-        // 下载
-        function openSafari(url, name) {
-            if (!url) return showToast('⚠️ 无链接');
-            const a = document.createElement('a');
-            a.href = cleanUrl(url);
-            a.target = '_blank';
-            a.download = name ? name.replace(/[^a-zA-Z0-9]/g, '_') + '.ipa' : 'download.ipa';
-            document.body.appendChild(a); a.click(); a.remove();
-            showToast('正在打开下载页');
-        }
-        async function copyLink(url, name) {
-            if (!url) return;
-            try {
-                await navigator.clipboard.writeText(cleanUrl(url));
-                showToast(`已复制 ${name} 链接`);
-            } catch {
-                showToast('复制失败，请长按链接手动复制');
-            }
-        }
-        function showDownloadModal(url, name) {
-            currentDownloadUrl = url;
-            currentDownloadName = name;
-            downloadModal.classList.add('show');
-        }
-        function hideDownloadModal() { downloadModal.classList.remove('show'); }
-        browserOption.addEventListener('click', () => {
-            hideDownloadModal();
+    function formatSize(b) {
+        if(!b||b==='0') return '?';
+        let n = parseInt(b);
+        if(isNaN(n)) return '~';
+        if(n<1048576) return (n/1024).toFixed(0)+'KB';
+        if(n<1073741824) return (n/1048576).toFixed(1)+'MB';
+        return (n/1073741824).toFixed(1)+'GB';
+    }
+    function formatDate(d) {
+        if(!d) return '未知';
+        if(d==='最新版') return '最新';
+        try { let dt=new Date(d); if(!isNaN(dt.getTime())) return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; } catch(e){}
+        let m = d.match(/^(\d{4}-\d{2}-\d{2})/);
+        return m ? m[1] : d.split('T')[0]||d;
+    }
+    function getTypeTag(t) {
+        if(t===10) return '<span class="type-tag">⚡破解版</span>';
+        if(t===2) return '<span class="type-tag">🎮破解游戏</span>';
+        if(t===5) return '<span class="type-tag">🔓折扣</span>';
+        if(t===3) return '<span class="type-tag">💽视音应用</span>';
+        if(t===1) return '<span class="type-tag">🛠️应用工具</span>';
+        if(t===4) return '<span class="type-tag">🔧插件辅助</span>';
+        return '<span class="type-tag">📦资源</span>';
+    }
+    function showToast(msg) {
+        let el = document.createElement('div');
+        el.innerText = msg;
+        el.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:8px 20px;border-radius:20px;font-size:0.8rem;z-index:10001;';
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),2500);
+    }
+
+    function openSafari(url, name) {
+        if(!url) { showToast('⚠️ 无链接'); return; }
+        let clean = cleanUrl(url);
+        const a = document.createElement('a');
+        a.href = clean;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.download = name ? name.replace(/[^a-zA-Z0-9]/g, '_') + '.ipa' : 'download.ipa';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        // 提示用户注意空白页和进度条
+        showToast(`🧭 正在打开下载页，如页面空白请留意顶部进度条，完成后点击浏览器图标`);
+    }
+
+    function showDownloadModal(url, name) {
+        currentDownloadUrl = url;
+        currentDownloadName = name;
+        downloadModal.classList.add('show');
+    }
+    function hideDownloadModal() {
+        downloadModal.classList.remove('show');
+    }
+
+    browserOption.addEventListener('click', () => {
+        hideDownloadModal();
+        if (currentDownloadUrl) {
             openSafari(currentDownloadUrl, currentDownloadName);
+        }
+    });
+    cancelDownloadBtn.addEventListener('click', hideDownloadModal);
+
+    function quickDownload(url, name) {
+        if (!url) { showToast('⚠️ 无链接'); return; }
+        showDownloadModal(url, name);
+    }
+
+    async function copyLink(url, name) {
+        if(!url) { showToast('❌ 无链接'); return; }
+        let clean = cleanUrl(url);
+        try {
+            await navigator.clipboard.writeText(clean);
+            showToast(`✅ 已复制 ${name} 链接`);
+        } catch {
+            let ta = document.createElement('textarea'); ta.value=clean; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta); showToast('📋 复制成功');
+        }
+    }
+
+    async function loadAllData() {
+        if(isDataLoaded) return;
+        let proms = dataSources.map(async (s,i)=>{
+            try {
+                let r = await fetch(s.url);
+                if(!r.ok) throw new Error();
+                let j = await r.json();
+                let raw = j.apps||(Array.isArray(j)?j:null);
+                if(!raw) return {name:s.name,idx:i,apps:[]};
+                let apps = raw.map(a=>({
+                    name:a.name||'未命名', iconURL:a.iconURL||'', version:a.version||'最新',
+                    versionDescription:a.versionDescription||'', downloadURL:a.downloadURL||'',
+                    size:a.size||'0', versionDate:a.versionDate||'',
+                    lock:a.lock===undefined?'0':String(a.lock), type:a.type||0,
+                    nameLower: (a.name||'').toLowerCase(),
+                    descLower: (a.versionDescription||'').toLowerCase()
+                })).filter(a=>a.downloadURL);
+                return {name:s.name,idx:i,apps};
+            } catch(e) { return {name:s.name,idx:i,apps:[]}; }
         });
-        copyLinkOption.addEventListener('click', () => {
-            hideDownloadModal();
-            copyLink(currentDownloadUrl, currentDownloadName);
-        });
-        cancelDownloadBtn.addEventListener('click', hideDownloadModal);
+        allSourcesData = await Promise.all(proms);
+        isDataLoaded = true;
+    }
 
-        function quickDownload(url, name) {
-            if (!url) return showToast('无链接');
-            showDownloadModal(url, name);
+    function getRecentApps(page=1, perPage=10) {
+        let all=[];
+        for(let src of allSourcesData) {
+            let sorted = [...src.apps].sort((a,b)=>(b.versionDate?new Date(b.versionDate).getTime():0)-(a.versionDate?new Date(a.versionDate).getTime():0));
+            sorted.slice(0,20).forEach(a=>all.push({...a,sourceName:src.name,typeTag:getTypeTag(a.type),desc:a.versionDescription||'暂无介绍'}));
         }
+        all.sort((a,b)=>(b.versionDate?new Date(b.versionDate).getTime():0)-(a.versionDate?new Date(a.versionDate).getTime():0));
+        let total=all.length, start=(page-1)*perPage;
+        return {total,data:all.slice(start,start+perPage),totalPages:Math.ceil(total/perPage)};
+    }
 
-        // 数据加载
-        async function loadAllData() {
-            const proms = dataSources.map(async (s, i) => {
-                try {
-                    const r = await fetch(s.url);
-                    if (!r.ok) throw new Error('status ' + r.status);
-                    const j = await r.json();
-                    const raw = j.apps || (Array.isArray(j) ? j : []);
-                    const apps = raw.map(a => ({
-                        name: a.name || '未命名',
-                        iconURL: a.iconURL || '',
-                        version: a.version || '最新',
-                        versionDescription: a.versionDescription || '',
-                        downloadURL: a.downloadURL || '',
-                        size: a.size || '0',
-                        versionDate: a.versionDate || '',
-                        lock: String(a.lock === undefined ? '0' : a.lock),
-                        type: a.type || 0,
-                        nameLower: (a.name || '').toLowerCase(),
-                        descLower: (a.versionDescription || '').toLowerCase()
-                    })).filter(a => a.downloadURL);
-                    return { name: s.name, idx: i, apps };
-                } catch (e) {
-                    console.warn(`加载 ${s.name} 失败`, e);
-                    return { name: s.name, idx: i, apps: [] };
-                }
-            });
-            allSourcesData = await Promise.all(proms);
-        }
+    function searchApps(kw) {
+        if(!kw.trim()) return [];
+        let k=kw.trim().toLowerCase(), res=[];
+        for(let src of allSourcesData)
+            for(let a of src.apps)
+                if((a.nameLower && a.nameLower.includes(k)) || (a.descLower && a.descLower.includes(k)))
+                    res.push({...a,sourceName:src.name,typeTag:getTypeTag(a.type),desc:a.versionDescription||'暂无介绍'});
+        return res;
+    }
 
-        // 搜索（名称优先）
-        function searchApps(kw) {
-            if (!kw.trim()) return [];
-            const k = kw.trim().toLowerCase();
-            const res = [];
-            for (const src of allSourcesData) {
-                for (const a of src.apps) {
-                    let score = 0;
-                    if (a.nameLower === k) score = 100;
-                    else if (a.nameLower.startsWith(k)) score = 80;
-                    else if (a.nameLower.includes(k)) score = 60;
-                    if (a.descLower && a.descLower.includes(k)) score = Math.max(score, 40);
-                    if (score > 0) res.push({ ...a, sourceName: src.name, score });
-                }
-            }
-            res.sort((a, b) => b.score - a.score);
-            return res;
-        }
-
-        // 类型标签
-        function getTypeTag(t) {
-            const map = {10:'⚡破解版',2:'🎮破解游戏',5:'🔓折扣',3:'💽视音应用',1:'🛠️应用工具',4:'🔧插件辅助'};
-            return `<span class="type-tag">${map[t] || '📦资源'}</span>`;
-        }
-
-        // 应用卡片HTML
-        function renderAppCard(app, showSource = true) {
-            const dl = cleanUrl(app.downloadURL);
-            return `
+    function renderAppCard(app, showSource = true) {
+        let cleanDl = cleanUrl(app.downloadURL);
+        return `
             <div class="app-card" data-url="${escapeHtml(app.downloadURL)}">
                 <img class="app-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
                 <div class="app-info">
-                    <div class="app-name">${escapeHtml(app.name)} ${getTypeTag(app.type)}</div>
-                    <div class="app-desc">${escapeHtml(app.versionDescription || '暂无介绍')}</div>
+                    <div class="app-name">${escapeHtml(app.name)} ${app.typeTag||''}</div>
+                    <div class="app-desc">${escapeHtml(app.desc||'')}</div>
                     <div class="app-meta">
                         ${showSource ? `<span class="source-badge">${escapeHtml(app.sourceName)}</span>` : ''}
-                        <span>📱 ${escapeHtml(app.version)}</span>
-                        <span>📅 ${app.versionDate || '未知'}</span>
-                        <span>💾 ${app.size || '?'}</span>
+                        <span>📱 版本 ${escapeHtml(app.version)}</span>
+                        <span>📅 ${formatDate(app.versionDate)}</span>
+                        <span>💾 ${formatSize(app.size)}</span>
                     </div>
                     <div class="btn-row">
-                        <button class="btn btn-download" data-url="${escapeHtml(dl)}" data-name="${escapeHtml(app.name)}">⚡下载</button>
-                        <button class="btn btn-copy-link" data-url="${escapeHtml(dl)}" data-name="${escapeHtml(app.name)}">📋复制</button>
+                        <button class="btn btn-download" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(app.name)}">⚡一键下载</button>
+                        <button class="btn btn-copy-link" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(app.name)}">📋复制链接</button>
                     </div>
                 </div>
             </div>`;
-        }
+    }
 
-        function bindCardButtons(container) {
-            container.querySelectorAll('.btn-download').forEach(b => {
-                b.addEventListener('click', () => quickDownload(b.dataset.url, b.dataset.name));
-            });
-            container.querySelectorAll('.btn-copy-link').forEach(b => {
-                b.addEventListener('click', () => copyLink(b.dataset.url, b.dataset.name));
-            });
-        }
+    function renderPagination(container,page,total,onPageChange) {
+        if(total<=1){ container.innerHTML=''; return; }
+        let h='';
+        h+=`<button ${page===1?'disabled':''} data-page="1">1</button>`;
+        h+=`<button ${page===1?'disabled':''} data-page="${page-1}">‹</button>`;
+        let s=Math.max(1,page-2), e=Math.min(total,page+2);
+        for(let i=s;i<=e;i++) h+=`<span class="page-num ${i===page?'active-page':''}" data-page="${i}">${i}</span>`;
+        h+=`<button ${page===total?'disabled':''} data-page="${page+1}">›</button>`;
+        h+=`<button ${page===total?'disabled':''} data-page="${total}">${total}</button>`;
+        h+=`<input class="goto-input" placeholder="页" min="1" max="${total}"><button class="goto-btn">跳</button>`;
+        container.innerHTML=h;
+        container.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>{
+            let p=parseInt(b.dataset.page);
+            if(p>=1&&p<=total) { onPageChange(p); window.scrollTo(0,0); }
+        }));
+        let gi=container.querySelector('.goto-input'), gb=container.querySelector('.goto-btn');
+        if(gi&&gb) gb.addEventListener('click',()=>{
+            let p=parseInt(gi.value);
+            if(p>=1&&p<=total) { onPageChange(p); window.scrollTo(0,0); }
+            else showToast(`1-${total}`);
+            gi.value='';
+        });
+    }
 
-        function setupDescToggles() {
-            document.querySelectorAll('.app-desc').forEach(desc => {
-                const toggle = desc.parentNode.querySelector('.app-desc-toggle');
-                if (toggle) toggle.remove();
-                desc.classList.remove('expanded');
-                if (desc.scrollHeight > desc.clientHeight + 2) {
-                    const t = document.createElement('span');
-                    t.className = 'app-desc-toggle';
-                    t.textContent = '...点击详情';
-                    t.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const isExpanded = desc.classList.toggle('expanded');
-                        t.textContent = isExpanded ? '收起' : '...点击详情';
-                    });
-                    desc.insertAdjacentElement('afterend', t);
+    function bindCardButtons(container) {
+        container.querySelectorAll('.btn-download').forEach(b => {
+            b.addEventListener('click', () => quickDownload(b.dataset.url, b.dataset.name));
+        });
+        container.querySelectorAll('.btn-copy-link').forEach(b => {
+            b.addEventListener('click', () => copyLink(b.dataset.url, b.dataset.name));
+        });
+    }
+
+    function setupDescToggles() {
+        document.querySelectorAll('.app-desc').forEach(desc => {
+            const existingToggle = desc.parentNode.querySelector('.app-desc-toggle');
+            if (existingToggle) existingToggle.remove();
+            desc.classList.remove('expanded');
+            if (desc.scrollHeight > desc.clientHeight + 2) {
+                const toggle = document.createElement('span');
+                toggle.className = 'app-desc-toggle';
+                toggle.textContent = '...点击详情';
+                toggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isExpanded = desc.classList.toggle('expanded');
+                    toggle.textContent = isExpanded ? '收起' : '...点击详情';
+                });
+                desc.insertAdjacentElement('afterend', toggle);
+            }
+        });
+    }
+
+    function setupSearchSuggestions(inputEl, doSearchFn) {
+        let suggestionBox = document.createElement('div');
+        suggestionBox.className = 'search-suggestions';
+        inputEl.parentNode.appendChild(suggestionBox);
+        let timer;
+        inputEl.addEventListener('input', () => {
+            clearTimeout(timer);
+            let val = inputEl.value.trim();
+            if (!val) {
+                suggestionBox.classList.remove('active');
+                return;
+            }
+            timer = setTimeout(() => {
+                let results = searchApps(val).slice(0, 8);
+                if (results.length === 0) {
+                    suggestionBox.classList.remove('active');
+                    return;
                 }
-            });
-        }
-
-        // 分页
-        function renderPagination(container, page, total, onPageChange) {
-            if (total <= 1) { container.innerHTML = ''; return; }
-            let h = `<button ${page===1?'disabled':''} data-page="1">1</button>`;
-            h += `<button ${page===1?'disabled':''} data-page="${page-1}">‹</button>`;
-            const s = Math.max(1, page-2), e = Math.min(total, page+2);
-            for (let i = s; i <= e; i++) h += `<span class="page-num ${i===page?'active-page':''}" data-page="${i}">${i}</span>`;
-            h += `<button ${page===total?'disabled':''} data-page="${page+1}">›</button>`;
-            h += `<button ${page===total?'disabled':''} data-page="${total}">${total}</button>`;
-            h += `<input class="goto-input" placeholder="页"><button class="goto-btn">跳</button>`;
-            container.innerHTML = h;
-            container.querySelectorAll('[data-page]').forEach(b => b.addEventListener('click', () => {
-                const p = parseInt(b.dataset.page);
-                if (p >= 1 && p <= total) onPageChange(p);
-            }));
-            const gi = container.querySelector('.goto-input');
-            container.querySelector('.goto-btn').addEventListener('click', () => {
-                const p = parseInt(gi.value);
-                if (p >= 1 && p <= total) onPageChange(p);
-                else showToast(`1-${total}`);
-                gi.value = '';
-            });
-        }
-
-        // 搜索建议
-        function setupSearchSuggestions(inputEl, doSearchFn) {
-            const box = document.createElement('div');
-            box.className = 'search-suggestions';
-            inputEl.parentNode.appendChild(box);
-            let timer;
-            inputEl.addEventListener('input', () => {
-                clearTimeout(timer);
-                const val = inputEl.value.trim();
-                if (!val) { box.classList.remove('active'); return; }
-                timer = setTimeout(() => {
-                    const results = searchApps(val).slice(0, 8);
-                    if (!results.length) { box.classList.remove('active'); return; }
-                    box.innerHTML = results.map(r => `<div class="suggestion-item">${escapeHtml(r.name)}</div>`).join('');
-                    box.classList.add('active');
-                    box.querySelectorAll('.suggestion-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            inputEl.value = item.textContent;
-                            box.classList.remove('active');
-                            doSearchFn(item.textContent);
-                        });
+                suggestionBox.innerHTML = results.map(r => `<div class="suggestion-item">${escapeHtml(r.name)}</div>`).join('');
+                suggestionBox.classList.add('active');
+                suggestionBox.querySelectorAll('.suggestion-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        inputEl.value = item.textContent;
+                        suggestionBox.classList.remove('active');
+                        doSearchFn(item.textContent);
                     });
-                }, 200);
-            });
-            inputEl.addEventListener('blur', () => setTimeout(() => box.classList.remove('active'), 200));
-        }
+                });
+            }, 300);
+        });
+        inputEl.addEventListener('blur', () => {
+            setTimeout(() => suggestionBox.classList.remove('active'), 200);
+        });
+    }
 
-        // 通用搜索栏
-        function renderSearchBar(defaultKeyword = '') {
-            return `
+    function renderHome(page=1) {
+        let {total,data,totalPages} = getRecentApps(page,10);
+        let srcHtml = '<div class="source-grid">';
+        dataSources.forEach((s,i)=>srcHtml+=`<div class="source-card" data-idx="${i}"><div class="source-icon">${sourceIcons[i]}</div><div class="source-name">${escapeHtml(s.name)}</div></div>`);
+        srcHtml+='</div>';
+
+        let searchHtml = `
             <div class="search-section">
                 <div class="search-input-wrapper">
-                    <input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off" value="${escapeHtml(defaultKeyword)}">
+                    <input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off">
                 </div>
                 <div class="search-actions">
                     <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
                     <button id="clearSearchBtn" class="clear-btn">清除</button>
                 </div>
             </div>`;
-        }
+        let listHtml = `
+            <div class="section-header"><div class="section-title"><i class="fas fa-clock"></i> 最近更新</div><div class="section-stats">共 ${total} 款</div></div>
+            <div class="app-list" id="appList">${data.map(app => renderAppCard(app, true)).join('')}</div>
+            <div class="pagination" id="pagination"></div>`;
+        mainContent.innerHTML = srcHtml + searchHtml + listHtml;
 
-        function bindSearchBarEvents(container) {
-            const si = container.querySelector('#searchInput');
-            const doBtn = container.querySelector('#doSearchBtn');
-            const clearBtn = container.querySelector('#clearSearchBtn');
-            if (si && doBtn) {
-                doBtn.addEventListener('click', () => { if(si.value.trim()) navigateToSearch(si.value.trim(), 1); });
-                si.addEventListener('keydown', e => { if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(), 1); });
-                setupSearchSuggestions(si, (kw) => navigateToSearch(kw, 1));
-            }
-            if (clearBtn) clearBtn.addEventListener('click', () => { si.value = ''; navigateToHome(); });
-        }
-
-        // ===== 页面渲染 =====
-        function renderHome(page = 1) {
-            try {
-                const perPage = 10;
-                let all = [];
-                for (const src of allSourcesData) {
-                    const sorted = [...src.apps].sort((a,b) => (b.versionDate || '').localeCompare(a.versionDate || ''));
-                    sorted.slice(0, 20).forEach(a => all.push({...a, sourceName: src.name}));
-                }
-                all.sort((a,b) => (b.versionDate || '').localeCompare(a.versionDate || ''));
-                const total = all.length;
-                const totalPages = Math.ceil(total / perPage) || 1;
-                const data = all.slice((page-1)*perPage, page*perPage);
-
-                let html = '<div class="source-grid">';
-                dataSources.forEach((s,i) => html += `<div class="source-card" data-idx="${i}"><div class="source-icon">${sourceIcons[i]}</div>${escapeHtml(s.name)}</div>`);
-                html += '</div>';
-                html += renderSearchBar();
-
-                if (total === 0) {
-                    html += '<div style="text-align:center;padding:40px;color:#64748b;">📭 数据源加载失败或暂无数据，请检查网络并点击“刷新”</div>';
-                } else {
-                    html += `<div class="section-header"><div class="section-title"><i class="fas fa-clock"></i> 最近更新</div><div class="section-stats">共 ${total} 款</div></div>`;
-                    html += '<div class="app-list">' + data.map(app => renderAppCard(app, true)).join('') + '</div>';
-                    html += '<div class="pagination" id="pagination"></div>';
-                }
-                mainContent.innerHTML = html;
-
-                document.querySelectorAll('.source-card').forEach(c => c.addEventListener('click', () => navigateToSource(parseInt(c.dataset.idx), 1)));
-                bindSearchBarEvents(mainContent);
-                bindCardButtons(mainContent);
-                setupDescToggles();
-                if (total > 0) renderPagination(document.getElementById('pagination'), page, totalPages, p => navigateToHome(p));
-            } catch (e) {
-                console.error('renderHome error', e);
-                mainContent.innerHTML = '<div style="text-align:center;padding:40px;">首页渲染出错，请刷新重试</div>';
-            }
-        }
-
-        function renderSourceDetail(idx, page = 1, scrollToUrl = null) {
-            try {
-                const src = allSourcesData[idx];
-                if (!src) { navigateToHome(); return; }
-                const apps = src.apps;
-                const perPage = 24;
-                const totalPages = Math.ceil(apps.length / perPage) || 1;
-                const data = apps.slice((page-1)*perPage, page*perPage);
-
-                let html = '<div class="detail-nav">';
-                dataSources.forEach((s, i) => {
-                    if (i === idx) html += `<button class="detail-nav-btn disabled-source" disabled>${escapeHtml(s.name)}</button>`;
-                    else html += `<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(s.name)}</button>`;
-                });
-                html += '</div>';
-                html += renderSearchBar();
-                html += `<div class="source-name-area"><h2>${escapeHtml(dataSources[idx].name)}</h2><div class="app-count-badge">共 ${apps.length} 款</div></div>`;
-                html += `<div class="source-banner">${escapeHtml(dataSources[idx].banner)}</div>`;
-                html += '<div class="app-list">';
-                data.forEach(a => {
-                    const tag = getTypeTag(a.type);
-                    const lock = a.lock === '1' ? '🔒' : '';
-                    html += `
-                    <div class="app-card" data-url="${escapeHtml(a.downloadURL)}">
-                        <img class="app-icon" src="${escapeHtml(a.iconURL)}" onerror="this.style.display='none'">
-                        <div class="app-info">
-                            <div class="app-name">${escapeHtml(a.name)} ${lock} ${tag}</div>
-                            <div class="app-desc">${escapeHtml(a.versionDescription || '暂无描述')}</div>
-                            <div class="app-meta">
-                                <span>📱 ${escapeHtml(a.version)}</span>
-                                <span>📅 ${a.versionDate || '未知'}</span>
-                                <span>💾 ${a.size || '?'}</span>
-                            </div>
-                            <div class="btn-row">
-                                <button class="btn btn-download" data-url="${escapeHtml(cleanUrl(a.downloadURL))}" data-name="${escapeHtml(a.name)}">⚡下载</button>
-                                <button class="btn btn-copy-link" data-url="${escapeHtml(cleanUrl(a.downloadURL))}" data-name="${escapeHtml(a.name)}">📋复制</button>
-                            </div>
-                        </div>
-                    </div>`;
-                });
-                html += '</div><div class="pagination" id="pagination"></div>';
-                mainContent.innerHTML = html;
-                bindSearchBarEvents(mainContent);
-
-                if (scrollToUrl) {
-                    // 使用安全的选择器
-                    const escapedUrl = scrollToUrl.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-                    const targetCard = document.querySelector(`.app-card[data-url="${escapedUrl}"]`);
-                    if (targetCard) {
-                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        targetCard.style.boxShadow = '0 0 0 3px #f59e0b';
-                        setTimeout(() => targetCard.style.boxShadow = '', 2000);
-                    }
-                }
-
-                document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(b => {
-                    b.addEventListener('click', () => navigateToSource(parseInt(b.dataset.idx), 1));
-                });
-                bindCardButtons(mainContent);
-                setupDescToggles();
-                renderPagination(document.getElementById('pagination'), page, totalPages, p => navigateToSource(idx, p));
-            } catch (e) {
-                console.error('renderSourceDetail error', e);
-                mainContent.innerHTML = '<div style="text-align:center;padding:40px;">源详情渲染出错，请返回</div>';
-            }
-        }
-
-        function renderSearchResults(keyword, page = 1) {
-            try {
-                const results = searchApps(keyword);
-                if (!results.length) {
-                    mainContent.innerHTML = renderSearchBar(keyword) + '<div style="text-align:center;padding:40px;">未找到相关应用</div>';
-                    bindSearchBarEvents(mainContent);
-                    return;
-                }
-                // 合并同名
-                const mergedMap = new Map();
-                results.forEach(app => {
-                    const key = app.name.toLowerCase();
-                    if (!mergedMap.has(key)) mergedMap.set(key, []);
-                    mergedMap.get(key).push(app);
-                });
-                const mergedList = [];
-                mergedMap.forEach(apps => {
-                    if (apps.length === 1) mergedList.push({ single: apps[0] });
-                    else {
-                        apps.sort((a,b) => (b.versionDate||'').localeCompare(a.versionDate||''));
-                        mergedList.push({ group: apps });
-                    }
-                });
-                const totalItems = mergedList.length;
-                const perPage = 12;
-                const totalPages = Math.ceil(totalItems / perPage);
-                const start = (page-1)*perPage;
-                const pageItems = mergedList.slice(start, start+perPage);
-
-                let html = renderSearchBar(keyword);
-                html += `<div class="section-header"><div class="section-title"><i class="fas fa-search"></i> 搜索结果 · ${keyword}</div><div class="section-stats">${totalItems} 条</div></div>`;
-                html += '<div class="app-list">';
-                pageItems.forEach(item => {
-                    if (item.single) {
-                        html += renderAppCard(item.single, true);
-                    } else {
-                        const group = item.group;
-                        html += renderAppCard(group[0], true);
-                        if (group.length > 1) {
-                            html += '<div class="merged-subs">';
-                            for (let i = 1; i < group.length; i++) {
-                                const app = group[i];
-                                const srcIdx = allSourcesData.findIndex(s => s.name === app.sourceName);
-                                if (srcIdx === -1) continue;
-                                const appIdx = allSourcesData[srcIdx].apps.findIndex(a => a.downloadURL === app.downloadURL);
-                                if (appIdx === -1) continue;
-                                const targetPage = Math.floor(appIdx / 24) + 1;
-                                html += `
-                                <div class="sub-card">
-                                    <img class="sub-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
-                                    <div class="sub-info">
-                                        <span class="sub-name">${escapeHtml(app.name)}</span>
-                                        <span class="sub-version">v${escapeHtml(app.version)}</span>
-                                        <span class="sub-source">${escapeHtml(app.sourceName)}</span>
-                                    </div>
-                                    <button class="sub-jump-btn" data-src="${srcIdx}" data-page="${targetPage}" data-target-url="${escapeHtml(app.downloadURL)}">👉 跳转</button>
-                                </div>`;
-                            }
-                            html += '</div>';
-                        }
-                    }
-                });
-                html += '</div><div class="pagination" id="pagination"></div>';
-                mainContent.innerHTML = html;
-                bindSearchBarEvents(mainContent);
-                document.querySelectorAll('.sub-jump-btn').forEach(b => {
-                    b.addEventListener('click', () => {
-                        navigateToSource(parseInt(b.dataset.src), parseInt(b.dataset.page), b.dataset.targetUrl);
-                    });
-                });
-                bindCardButtons(mainContent);
-                setupDescToggles();
-                renderPagination(document.getElementById('pagination'), page, totalPages, p => navigateToSearch(keyword, p));
-            } catch (e) {
-                console.error('renderSearchResults error', e);
-                mainContent.innerHTML = '<div style="text-align:center;padding:40px;">搜索出错，请重试</div>';
-            }
-        }
-
-        // 导航控制
-        function navigateToHome(page = 1) { pushState({ mode: 'home', page }); }
-        function navigateToSource(idx, page = 1, scrollToUrl = null) { pushState({ mode: 'source', idx, page, scrollToUrl }); }
-        function navigateToSearch(keyword, page = 1) { pushState({ mode: 'search', keyword, page }); }
-
-        function pushState(state) {
-            historyStack = historyStack.slice(0, currentStateIndex + 1);
-            historyStack.push(state);
-            currentStateIndex++;
-            updateNav();
-            applyState(state);
-            window.history.pushState(state, '', '?s=' + currentStateIndex);
-        }
-
-        function applyState(s) {
-            window.scrollTo(0, 0);
-            if (s.mode === 'home') renderHome(s.page || 1);
-            else if (s.mode === 'source') renderSourceDetail(s.idx, s.page || 1, s.scrollToUrl);
-            else if (s.mode === 'search') renderSearchResults(s.keyword, s.page || 1);
-        }
-
-        function updateNav() {
-            backBtn.disabled = currentStateIndex <= 0;
-            forwardBtn.disabled = currentStateIndex >= historyStack.length - 1;
-            backBtn.classList.toggle('disabled', backBtn.disabled);
-            forwardBtn.classList.toggle('disabled', forwardBtn.disabled);
-        }
-
-        // 导航栏透明逻辑（防抖）
-        let navTimer;
-        function resetNav() {
-            globalNav.classList.remove('transparent');
-            clearTimeout(navTimer);
-            navTimer = setTimeout(() => globalNav.classList.add('transparent'), 3000);
-        }
-        window.addEventListener('scroll', resetNav, { passive: true });
-        window.addEventListener('touchstart', resetNav, { passive: true });
-        // 初始透明
-        globalNav.classList.add('transparent');
-
-        // 刷新数据
-        async function refreshData() {
-            showToast('刷新中...');
-            allSourcesData = [];
-            await loadAllData();
-            applyState(historyStack[currentStateIndex] || { mode: 'home' });
-            showToast('刷新完成');
-        }
-
-        // 初始化入口
-        async function init() {
-            await loadAllData();
-            // 初始首页
-            const initState = { mode: 'home', page: 1 };
-            historyStack = [initState];
-            currentStateIndex = 0;
-            applyState(initState);
-            updateNav();
-
-            window.addEventListener('popstate', e => {
-                if (e.state) {
-                    const idx = historyStack.findIndex(s => JSON.stringify(s) === JSON.stringify(e.state));
-                    if (idx !== -1) {
-                        currentStateIndex = idx;
-                        applyState(e.state);
-                        updateNav();
-                    } else {
-                        historyStack.push(e.state);
-                        currentStateIndex = historyStack.length - 1;
-                        applyState(e.state);
-                        updateNav();
-                    }
-                } else {
-                    navigateToHome();
-                }
-            });
-
-            homeBtn.addEventListener('click', () => navigateToHome());
-            backBtn.addEventListener('click', () => {
-                if (currentStateIndex > 0) {
-                    currentStateIndex--;
-                    applyState(historyStack[currentStateIndex]);
-                    updateNav();
-                    window.history.back();
-                }
-            });
-            forwardBtn.addEventListener('click', () => {
-                if (currentStateIndex < historyStack.length - 1) {
-                    currentStateIndex++;
-                    applyState(historyStack[currentStateIndex]);
-                    updateNav();
-                    window.history.forward();
-                }
-            });
-            refreshBtn.addEventListener('click', refreshData);
-        }
-
-        init().catch(e => {
-            console.error('初始化失败', e);
-            mainContent.innerHTML = '<div style="text-align:center;padding:40px;">应用初始化失败，请检查网络并刷新</div>';
+        document.querySelectorAll('.source-card').forEach(c=>c.addEventListener('click',()=>navigateToSource(parseInt(c.dataset.idx),1)));
+        let si = document.getElementById('searchInput');
+        document.getElementById('doSearchBtn').addEventListener('click',()=>{
+            if(si.value.trim()) navigateToSearch(si.value.trim(),1);
         });
-    })();
+        document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; });
+        si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
+        setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
+
+        bindCardButtons(mainContent);
+        renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToHome(p));
+        setupDescToggles();
+    }
+
+    function renderSearchResults(keyword, page=1) {
+        let results = searchApps(keyword);
+        if(!results.length){ showToast('未找到相关应用'); navigateToHome(); return; }
+        let mergedMap = new Map();
+        results.forEach(app => {
+            let key = app.name.toLowerCase();
+            if(!mergedMap.has(key)) mergedMap.set(key, []);
+            mergedMap.get(key).push(app);
+        });
+        let mergedList = [];
+        mergedMap.forEach((apps) => {
+            if(apps.length === 1) mergedList.push({ single: apps[0] });
+            else {
+                apps.sort((a,b)=>(b.versionDate?new Date(b.versionDate).getTime():0)-(a.versionDate?new Date(a.versionDate).getTime():0));
+                mergedList.push({ group: apps });
+            }
+        });
+        let totalItems = mergedList.length;
+        let perPage = 12;
+        let totalPages = Math.ceil(totalItems / perPage);
+        let start = (page-1)*perPage;
+        let pageItems = mergedList.slice(start, start+perPage);
+
+        let backBtnHtml = `<button class="detail-nav-btn home-highlight" id="backToHomeBtn">🏠 返回首页</button>`;
+        let searchHeader = `
+            <div class="search-section">
+                <div class="search-input-wrapper">
+                    <input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off" value="${escapeHtml(keyword)}">
+                </div>
+                <div class="search-actions">
+                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
+                    <button id="clearSearchBtn" class="clear-btn">清除</button>
+                </div>
+            </div>`;
+        let statsHtml = `<div class="section-header"><div class="section-title"><i class="fas fa-search"></i> 搜索结果 · ${keyword}</div><div class="section-stats">${totalItems} 条</div></div>`;
+
+        let listHtml = '<div class="app-list">';
+        pageItems.forEach(item => {
+            if(item.single) {
+                listHtml += renderAppCard(item.single, true);
+            } else {
+                let group = item.group;
+                let latest = group[0];
+                listHtml += renderAppCard(latest, true);
+                if (group.length > 1) {
+                    let subHtml = '<div class="merged-subs">';
+                    for (let i = 1; i < group.length; i++) {
+                        let app = group[i];
+                        let srcIdx = allSourcesData.findIndex(s => s.name === app.sourceName);
+                        if (srcIdx === -1) continue;
+                        let appIdx = allSourcesData[srcIdx].apps.findIndex(a => a.downloadURL === app.downloadURL);
+                        if (appIdx === -1) continue;
+                        let pageSize = 24;
+                        let targetPage = Math.floor(appIdx / pageSize) + 1;
+                        subHtml += `
+                            <div class="sub-card">
+                                <img class="sub-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
+                                <div class="sub-info">
+                                    <span class="sub-name">${escapeHtml(app.name)}</span>
+                                    <span class="sub-version">v${escapeHtml(app.version)}</span>
+                                    <span class="sub-source">${escapeHtml(app.sourceName)}</span>
+                                </div>
+                                <button class="sub-jump-btn" data-src="${srcIdx}" data-page="${targetPage}" data-target-url="${escapeHtml(app.downloadURL)}">
+                                    👉 点击跳转
+                                </button>
+                            </div>`;
+                    }
+                    subHtml += '</div>';
+                    listHtml += subHtml;
+                }
+            }
+        });
+        listHtml += '</div><div class="pagination" id="pagination"></div>';
+
+        mainContent.innerHTML = backBtnHtml + searchHeader + statsHtml + listHtml;
+
+        document.getElementById('backToHomeBtn').addEventListener('click', ()=> navigateToHome());
+        let si = document.getElementById('searchInput');
+        document.getElementById('doSearchBtn').addEventListener('click',()=>{
+            if(si.value.trim()) navigateToSearch(si.value.trim(),1);
+        });
+        document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; navigateToHome(); });
+        si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
+        setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
+
+        document.querySelectorAll('.sub-jump-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let srcIdx = parseInt(btn.dataset.src);
+                let page = parseInt(btn.dataset.page);
+                let targetUrl = btn.dataset.targetUrl;
+                navigateToSource(srcIdx, page, targetUrl);
+            });
+        });
+
+        bindCardButtons(mainContent);
+        renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSearch(keyword,p));
+        setupDescToggles();
+    }
+
+    function renderSourceDetail(idx, page=1, scrollToUrl = null) {
+        let src = allSourcesData[idx];
+        if(!src) return;
+        let apps=src.apps, perPage=24, totalPages=Math.ceil(apps.length/perPage);
+        let data=apps.slice((page-1)*perPage,page*perPage);
+
+        let nav='<div class="detail-nav"><button class="detail-nav-btn home-highlight" data-action="home">🏠 首页</button>';
+        dataSources.forEach((s,i)=>{
+            if(i===idx) nav+=`<button class="detail-nav-btn disabled-source" disabled>${escapeHtml(s.name)}</button>`;
+            else nav+=`<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(s.name)}</button>`;
+        });
+        nav+='</div>';
+        let head=`<div class="source-name-area"><h2>${escapeHtml(dataSources[idx].name)}</h2><div class="app-count-badge"><i class="fas fa-layer-group"></i> 共 ${apps.length} 款</div></div>`;
+        let banner=`<div class="source-banner"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[idx].banner)}</div>`;
+        let list='<div class="app-list">';
+        data.forEach(a=>{
+            let icon=`<img class="app-icon" src="${escapeHtml(a.iconURL)}" onerror="this.style.display='none'">`;
+            let desc=a.versionDescription||'暂无描述';
+            let tag=getTypeTag(a.type);
+            let lock=a.lock==='1'?'🔒':'';
+            let cleanDl = cleanUrl(a.downloadURL);
+            list+=`
+                <div class="app-card" data-url="${escapeHtml(a.downloadURL)}">
+                    ${icon}
+                    <div class="app-info">
+                        <div class="app-name">${escapeHtml(a.name)} ${lock} ${tag}</div>
+                        <div class="app-desc">${escapeHtml(desc)}</div>
+                        <div class="app-meta">
+                            <span>📱 版本 ${escapeHtml(a.version)}</span>
+                            <span>📅 ${formatDate(a.versionDate)}</span>
+                            <span>💾 ${formatSize(a.size)}</span>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-download" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(a.name)}">⚡一键下载</button>
+                            <button class="btn btn-copy-link" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(a.name)}">📋复制链接</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        list+='</div><div class="pagination" id="pagination"></div>';
+        mainContent.innerHTML = nav+head+banner+list;
+
+        if (scrollToUrl) {
+            let targetCard = document.querySelector(`.app-card[data-url="${CSS.escape(scrollToUrl)}"]`);
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetCard.style.boxShadow = '0 0 0 3px #f59e0b';
+                setTimeout(() => targetCard.style.boxShadow = '', 2000);
+            }
+        }
+
+        document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(b=>{
+            if(b.dataset.action==='home') b.addEventListener('click',()=>navigateToHome());
+            else b.addEventListener('click',()=>navigateToSource(parseInt(b.dataset.idx),1));
+        });
+        bindCardButtons(mainContent);
+        renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSource(idx,p));
+        setupDescToggles();
+    }
+
+    function navigateToHome(page=1) { pushState({mode:'home',page}); }
+    function navigateToSource(idx,page=1, scrollToUrl=null) { pushState({mode:'source',idx,page,scrollToUrl}); }
+    function navigateToSearch(keyword,page=1) { pushState({mode:'search',keyword,page}); }
+
+    function pushState(s) {
+        historyStack = historyStack.slice(0,currentStateIndex+1);
+        historyStack.push(s);
+        currentStateIndex++;
+        updateNav();
+        applyState(s);
+        window.history.pushState(s,'','?s='+currentStateIndex);
+    }
+    function applyState(s) {
+        window.scrollTo(0,0);
+        if(s.mode==='home') renderHome(s.page||1);
+        else if(s.mode==='search') renderSearchResults(s.keyword,s.page||1);
+        else if(s.mode==='source') renderSourceDetail(s.idx,s.page||1, s.scrollToUrl);
+
+        if(!sessionStorage.getItem('modalShown')){
+            let m=document.getElementById('customModal');
+            if(m){
+                let st=window.pageYOffset||document.documentElement.scrollTop;
+                document.body.style.top=`-${st}px`;
+                m.classList.add('show');
+                document.getElementById('modalConfirmBtn').onclick=e=>{ e.preventDefault(); m.classList.remove('show'); document.body.style.top=''; window.scrollTo(0,st); };
+                sessionStorage.setItem('modalShown','1');
+            }
+        }
+    }
+    function updateNav() {
+        backBtn.disabled = currentStateIndex<=0;
+        forwardBtn.disabled = currentStateIndex>=historyStack.length-1;
+        backBtn.classList.toggle('disabled',backBtn.disabled);
+        forwardBtn.classList.toggle('disabled',forwardBtn.disabled);
+    }
+
+    let navTmr;
+    function resetNav(){ clearTimeout(navTmr); globalNav.classList.remove('transparent'); navTmr=setTimeout(()=>globalNav.classList.add('transparent'),3000); }
+    window.addEventListener('scroll',resetNav);
+    window.addEventListener('touchstart',resetNav);
+    resetNav();
+
+    async function refreshData() {
+        showToast('刷新中...');
+        isDataLoaded=false; allSourcesData=[];
+        await loadAllData();
+        if(currentStateIndex>=0) applyState(historyStack[currentStateIndex]);
+        showToast('刷新完成');
+    }
+
+    async function init() {
+        await loadAllData();
+        let initState = {mode:'home',page:1};
+        historyStack=[initState]; currentStateIndex=0;
+        applyState(initState); updateNav();
+        window.addEventListener('popstate',e=>{
+            if(e.state){
+                let idx=historyStack.findIndex(s=>JSON.stringify(s)===JSON.stringify(e.state));
+                if(idx!==-1){ currentStateIndex=idx; applyState(e.state); updateNav(); }
+                else{ historyStack.push(e.state); currentStateIndex=historyStack.length-1; applyState(e.state); updateNav(); }
+            } else navigateToHome();
+        });
+        backBtn.addEventListener('click',()=>{ if(currentStateIndex>0){ currentStateIndex--; applyState(historyStack[currentStateIndex]); updateNav(); window.history.back(); } });
+        forwardBtn.addEventListener('click',()=>{ if(currentStateIndex<historyStack.length-1){ currentStateIndex++; applyState(historyStack[currentStateIndex]); updateNav(); window.history.forward(); } });
+        refreshBtn.addEventListener('click',refreshData);
+    }
+    init();
 </script>
 </body>
 </html>
