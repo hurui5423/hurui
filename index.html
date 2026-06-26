@@ -10,455 +10,158 @@
     <meta name="apple-mobile-web-app-title" content="多源库">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body {
-            background: #f0f4f8;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            padding: 0.5rem;
-            color: #1a202c;
-            font-size: 14px;
-            padding-top: env(safe-area-inset-top, 12px);
-            line-height: 1.45;
+            background:#f0f4f8; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+            padding:0.5rem; color:#1a202c; font-size:14px; padding-top:env(safe-area-inset-top,12px); line-height:1.45;
         }
-        button, a, input, textarea { touch-action: manipulation; }
-        .container { max-width: 1200px; margin: 0 auto; }
+        button, a, input, textarea { touch-action:manipulation; }
+        .container { max-width:1200px; margin:0 auto; }
 
-        .app-header { text-align: center; margin-bottom: 18px; }
-        .app-header h1 {
-            font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;
-        }
-        .app-header h1 i { color: #f59e0b; }
-        .app-sub {
-            font-size: 0.75rem; color: #64748b;
-            background: rgba(255,255,255,0.8);
-            display: inline-block; padding: 4px 18px; border-radius: 20px; font-weight: 500;
-        }
+        .app-header { text-align:center; margin-bottom:18px; }
+        .app-header h1 { font-size:1.6rem; font-weight:700; color:#0f172a; margin-bottom:6px; }
+        .app-header h1 i { color:#f59e0b; }
+        .app-sub { font-size:0.75rem; color:#64748b; background:rgba(255,255,255,0.8); display:inline-block; padding:4px 18px; border-radius:20px; font-weight:500; }
 
+        /* 导航栏 */
         .global-nav {
-            position: sticky; top: env(safe-area-inset-top, 0); z-index: 100;
-            display: flex; gap: 6px; align-items: center;
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
-            border-radius: 22px; padding: 8px 10px; margin-bottom: 16px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-            transition: opacity 0.3s;
-            will-change: opacity;
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+            position:sticky; top:env(safe-area-inset-top,0); z-index:100;
+            display:flex; justify-content:space-between; align-items:center;
+            background:rgba(255,255,255,0.85); backdrop-filter:blur(16px);
+            border-radius:24px; padding:8px 12px; margin-bottom:16px;
+            box-shadow:0 1px 4px rgba(0,0,0,0.04); transition:opacity 0.25s, backdrop-filter 0.25s;
+            will-change:opacity; -webkit-backface-visibility:hidden;
         }
-        .global-nav.transparent { opacity: 0.25; pointer-events: none; }
+        .global-nav.transparent { opacity:0.25; pointer-events:none; backdrop-filter:none; }
         .nav-btn {
-            flex: 1;
-            border: none; border-radius: 18px;
-            padding: 12px 6px; color: white; font-weight: 700; font-size: 1rem;
-            cursor: pointer; transition: all 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            white-space: nowrap;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            border:none; border-radius:18px; padding:10px 16px; color:white; font-weight:600;
+            font-size:0.95rem; cursor:pointer; transition:all 0.15s;
+            box-shadow:0 2px 6px rgba(0,0,0,0.08); display:inline-flex; align-items:center; gap:6px;
         }
-        .nav-btn:active { transform: scale(0.96); opacity: 0.9; }
-        .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
-        .home-nav-btn { background: #f59e0b; }
-        .back-btn, .forward-btn { background: #334155; }
-        .refresh-btn { background: #3b82f6; }
+        .nav-btn:active { transform:scale(0.95); opacity:0.85; }
+        .nav-btn.disabled { opacity:0.3; pointer-events:none; }
+        .home-btn { background:#f59e0b; color:#fff; }
+        .refresh-btn { background:#2563eb; }
+        .back-btn, .forward-btn { background:#334155; width:44px; justify-content:center; padding:10px 0; }
 
-        .source-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 14px;
-            margin: 20px 0 24px;
-        }
-        @media (min-width: 600px) {
-            .source-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-        .source-card {
-            background: #fff; border-radius: 24px; padding: 16px 8px 14px;
-            text-align: center; font-size: 0.85rem; font-weight: 700; color: #1e293b;
-            cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid #f1f5f9;
-        }
-        .source-card:active { transform: scale(0.94); background: #fafbfc; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
-        .source-icon {
-            width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; color: white;
-        }
-        .source-card:nth-child(1) .source-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-        .source-card:nth-child(2) .source-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-        .source-card:nth-child(3) .source-icon { background: linear-gradient(135deg, #10b981, #34d399); }
-        .source-card:nth-child(4) .source-icon { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
-        .source-card:nth-child(5) .source-icon { background: linear-gradient(135deg, #ec4899, #f472b6); }
-        .source-card:nth-child(6) .source-icon { background: linear-gradient(135deg, #f97316, #fb923c); }
-        .source-card:nth-child(7) .source-icon { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-        .source-card:nth-child(8) .source-icon { background: linear-gradient(135deg, #84cc16, #a3e635); }
-        .source-card:nth-child(9) .source-icon { background: linear-gradient(135deg, #f43f5e, #fb7185); }
-        .source-card:nth-child(10) .source-icon { background: linear-gradient(135deg, #6366f1, #818cf8); }
-        .source-card:nth-child(11) .source-icon { background: linear-gradient(135deg, #14b8a6, #5eead4); }
+        .source-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:14px; margin:20px 0 24px; }
+        @media(min-width:600px){ .source-grid{ grid-template-columns:repeat(4,1fr); } }
+        .source-card { background:#fff; border-radius:24px; padding:16px 8px 14px; text-align:center; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #f1f5f9; }
+        .source-card:active { transform:scale(0.94); background:#fafbfc; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+        .source-icon { width:46px; height:46px; margin:0 auto 10px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:white; }
+        .source-card:nth-child(1) .source-icon{ background:linear-gradient(135deg,#f59e0b,#fbbf24); }
+        .source-card:nth-child(2) .source-icon{ background:linear-gradient(135deg,#3b82f6,#60a5fa); }
+        .source-card:nth-child(3) .source-icon{ background:linear-gradient(135deg,#10b981,#34d399); }
+        .source-card:nth-child(4) .source-icon{ background:linear-gradient(135deg,#8b5cf6,#a78bfa); }
+        .source-card:nth-child(5) .source-icon{ background:linear-gradient(135deg,#ec4899,#f472b6); }
+        .source-card:nth-child(6) .source-icon{ background:linear-gradient(135deg,#f97316,#fb923c); }
+        .source-card:nth-child(7) .source-icon{ background:linear-gradient(135deg,#06b6d4,#22d3ee); }
+        .source-card:nth-child(8) .source-icon{ background:linear-gradient(135deg,#84cc16,#a3e635); }
+        .source-card:nth-child(9) .source-icon{ background:linear-gradient(135deg,#f43f5e,#fb7185); }
+        .source-card:nth-child(10) .source-icon{ background:linear-gradient(135deg,#6366f1,#818cf8); }
+        .source-card:nth-child(11) .source-icon{ background:linear-gradient(135deg,#14b8a6,#5eead4); }
 
-        .search-section {
-            margin: 16px 0; background: #fff; border-radius: 22px;
-            padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-            position: relative;
-        }
-        .search-input-wrapper {
-            position: relative;
-            margin-bottom: 10px;
-        }
-        .search-input-wrapper input {
-            width: 100%;
-            border: 2px solid #e2e8f0;
-            background: #f8fafc;
-            border-radius: 18px;
-            padding: 12px 16px;
-            font-size: 1rem;
-            outline: none;
-            transition: border 0.2s, box-shadow 0.2s;
-        }
-        .search-input-wrapper input:focus {
-            border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-        }
-        .search-suggestions {
-            position: absolute;
-            top: 100%; left: 0; right: 0;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            z-index: 200;
-            display: none;
-            max-height: 280px;
-            overflow-y: auto;
-            margin-top: 4px;
-        }
-        .search-suggestions.active { display: block; }
-        .suggestion-item {
-            padding: 12px 16px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background 0.15s;
-        }
-        .suggestion-item:last-child { border-bottom: none; }
-        .suggestion-item:hover, .suggestion-item:active { background: #f8fafc; }
-        .search-actions {
-            display: flex; gap: 10px;
-        }
-        .search-btn, .clear-btn {
-            border: none; border-radius: 18px; padding: 10px 18px;
-            font-weight: 600; font-size: 0.9rem; cursor: pointer;
-            flex: 1; text-align: center; transition: all 0.15s;
-        }
-        .search-btn { background: #0f172a; color: white; }
-        .search-btn:active { background: #000; transform: scale(0.97); }
-        .clear-btn { background: #e2e8f0; color: #334155; }
-        .clear-btn:active { background: #cbd5e1; transform: scale(0.97); }
+        .search-section { margin:16px 0; background:#fff; border-radius:22px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.04); position:relative; }
+        .search-input-wrapper { position:relative; margin-bottom:12px; }
+        .search-input-wrapper input { width:100%; border:2px solid #e2e8f0; background:#f8fafc; border-radius:18px; padding:12px 16px; font-size:1rem; outline:none; transition:border 0.2s,box-shadow 0.2s; }
+        .search-input-wrapper input:focus { border-color:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,0.1); }
+        .search-suggestions { position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #e2e8f0; border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,0.08); z-index:200; display:none; max-height:280px; overflow-y:auto; margin-top:4px; }
+        .search-suggestions.active { display:block; }
+        .suggestion-item { padding:12px 16px; font-size:0.9rem; cursor:pointer; border-bottom:1px solid #f1f5f9; transition:background 0.15s; }
+        .suggestion-item:last-child { border-bottom:none; }
+        .suggestion-item:hover, .suggestion-item:active { background:#f8fafc; }
+        .search-actions { display:flex; gap:10px; }
+        .search-btn, .clear-btn { border:none; border-radius:18px; padding:10px 18px; font-weight:600; font-size:0.9rem; cursor:pointer; flex:1; text-align:center; transition:all 0.15s; }
+        .search-btn { background:#0f172a; color:white; }
+        .search-btn:active { background:#000; transform:scale(0.97); }
+        .clear-btn { background:#e2e8f0; color:#334155; }
+        .clear-btn:active { background:#cbd5e1; transform:scale(0.97); }
 
-        .section-header {
-            display: flex; justify-content: space-between; align-items: baseline;
-            margin: 20px 0 12px;
-        }
-        .section-title {
-            font-size: 1.2rem; font-weight: 700; color: #0f172a;
-            border-left: 4px solid #f59e0b; padding-left: 10px;
-        }
-        .section-stats {
-            font-size: 0.75rem; color: #64748b;
-            background: #f1f5f9; padding: 4px 12px; border-radius: 12px;
-        }
+        .section-header { display:flex; justify-content:space-between; align-items:baseline; margin:20px 0 12px; }
+        .section-title { font-size:1.2rem; font-weight:700; color:#0f172a; border-left:4px solid #f59e0b; padding-left:10px; }
+        .section-stats { font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:4px 12px; border-radius:12px; }
 
-        .app-list {
-            display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;
-        }
+        .app-list { display:flex; flex-direction:column; gap:12px; margin-bottom:16px; }
         .app-card {
-            display: flex; gap: 12px; background: #fff; border-radius: 22px;
-            padding: 14px; border: 1px solid #f1f5f9;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            align-items: flex-start; transition: transform 0.15s, box-shadow 0.15s;
+            display:flex; gap:12px; background:#fff; border-radius:22px;
+            padding:14px; border:1px solid #f1f5f9;
+            box-shadow:0 6px 16px rgba(0,0,0,0.06);
+            align-items:flex-start; transition:transform 0.15s,box-shadow 0.15s;
         }
-        .app-card:active { transform: scale(0.98); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-        .app-card .app-icon {
-            width: 56px; height: 56px; border-radius: 18px;
-            object-fit: cover; flex-shrink: 0; background: #f1f5f9;
-        }
-        .app-card .app-info {
-            flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;
-        }
-        .app-card .app-name {
-            font-weight: 700; font-size: 0.95rem; color: #0f172a;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .app-card .app-desc {
-            font-size: 0.7rem; color: #475569; line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 5;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 4px;
-        }
-        .app-card .app-desc.expanded {
-            -webkit-line-clamp: unset;
-            display: block;
-        }
-        .app-desc-toggle {
-            font-size: 0.7rem;
-            color: #2563eb;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-block;
-            margin-left: 4px;
-            white-space: nowrap;
-        }
-        .app-card .app-meta {
-            font-size: 0.65rem; color: #94a3b8;
-            display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-        }
-        .source-badge {
-            color: #f59e0b; font-weight: 600; background: #fef9c3;
-            padding: 1px 8px; border-radius: 8px; font-size: 0.6rem;
-        }
-        .type-tag {
-            background: #e2e8f0; border-radius: 8px; padding: 2px 8px;
-            font-size: 0.6rem; font-weight: 600; color: #334155;
-        }
-        .btn-row {
-            display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap;
-        }
-        .btn {
-            flex: 1; min-width: 60px; border: none; border-radius: 14px;
-            padding: 6px 8px; font-size: 0.7rem; font-weight: 600;
-            cursor: pointer; transition: all 0.15s;
-            text-align: center; white-space: nowrap;
-            display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-        }
-        .btn:active { transform: scale(0.95); }
-        .btn-download {
-            background: #7c3aed; color: white;
-        }
-        .btn-copy-link {
-            background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0;
-        }
+        .app-card:active { transform:scale(0.98); box-shadow:0 3px 10px rgba(0,0,0,0.1); }
+        .app-card .app-icon { width:56px; height:56px; border-radius:18px; object-fit:cover; flex-shrink:0; background:#f1f5f9; }
+        .app-card .app-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+        .app-card .app-name { font-weight:700; font-size:0.95rem; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .app-card .app-desc { font-size:0.7rem; color:#475569; line-height:1.4; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px; }
+        .app-card .app-desc.expanded { -webkit-line-clamp:unset; display:block; }
+        .app-desc-toggle { font-size:0.7rem; color:#2563eb; font-weight:600; cursor:pointer; display:inline-block; margin-left:4px; white-space:nowrap; }
+        .app-card .app-meta { font-size:0.65rem; color:#94a3b8; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+        .source-badge { color:#f59e0b; font-weight:600; background:#fef9c3; padding:1px 8px; border-radius:8px; font-size:0.6rem; }
+        .type-tag { background:#e2e8f0; border-radius:8px; padding:2px 8px; font-size:0.6rem; font-weight:600; color:#334155; }
+        .btn-row { display:flex; gap:8px; margin-top:4px; flex-wrap:wrap; }
+        .btn { flex:1; min-width:60px; border:none; border-radius:14px; padding:6px 8px; font-size:0.7rem; font-weight:600; cursor:pointer; transition:all 0.15s; text-align:center; white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; gap:4px; }
+        .btn:active { transform:scale(0.95); }
+        .btn-download { background:#7c3aed; color:white; }
+        .btn-copy-link { background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; }
 
-        .detail-nav {
-            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; justify-content: center;
-        }
+        .detail-nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; justify-content:center; }
         .detail-nav-btn {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
-            padding: 10px 18px; font-size: 0.95rem; font-weight: 700;
-            color: #1e293b; cursor: pointer;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background:#fff; border:1px solid #e2e8f0; border-radius:16px;
+            padding:8px 16px; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer;
+            transition:all 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.04);
         }
-        .detail-nav-btn:active { background: #f1f5f9; }
-        .detail-nav-btn.disabled-source {
-            background: #f1f5f9; color: #94a3b8; font-weight: 600;
-            font-size: 1.05rem; padding: 10px 22px;
-            border: 2px solid #f59e0b;
-        }
-        .source-name-area { text-align: center; margin: 12px 0 8px; }
-        .source-name-area h2 { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
-        .app-count-badge {
-            display: inline-block; background: #fef9c3; border-radius: 14px;
-            padding: 4px 16px; font-size: 0.8rem; font-weight: 600; color: #b45309; margin-top: 6px;
-        }
-        .source-banner {
-            text-align: center; margin: 8px 0 16px; font-size: 0.85rem;
-            color: #92400e; background: #fffbeb; padding: 6px 16px; border-radius: 14px;
-        }
+        .detail-nav-btn:active { background:#f1f5f9; transform:scale(0.96); }
+        .detail-nav-btn.disabled-source { background:#f1f5f9; color:#94a3b8; cursor:default; }
+        .source-name-area { text-align:center; margin:12px 0 8px; }
+        .source-name-area h2 { font-size:1.6rem; font-weight:700; color:#0f172a; }
+        .app-count-badge { display:inline-block; background:#fef9c3; border-radius:14px; padding:4px 16px; font-size:0.8rem; font-weight:600; color:#b45309; margin-top:6px; }
+        .source-banner { text-align:center; margin:8px 0 16px; font-size:0.85rem; color:#92400e; background:#fffbeb; padding:6px 16px; border-radius:14px; }
 
-        .merged-subs {
-            margin-top: -6px; margin-left: 14px; padding-left: 14px;
-            border-left: 2px solid #e2e8f0;
-            display: flex; flex-direction: column; gap: 8px;
-            margin-bottom: 10px;
-        }
-        .sub-card {
-            display: flex; align-items: center; gap: 8px;
-            background: #f8fafc; border-radius: 12px; padding: 8px 10px;
-            font-size: 0.75rem; transition: all 0.15s;
-        }
-        .sub-card:active { background: #f1f5f9; }
-        .sub-card .sub-icon {
-            width: 36px; height: 36px; border-radius: 10px;
-            object-fit: cover; background: #e2e8f0; flex-shrink: 0;
-        }
-        .sub-info {
-            flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px;
-        }
-        .sub-name {
-            font-weight: 700; color: #0f172a;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .sub-version { color: #64748b; font-weight: 500; }
-        .sub-source {
-            color: #f59e0b; font-weight: 600; background: #fef9c3;
-            padding: 0px 6px; border-radius: 6px; font-size: 0.65rem;
-        }
-        .sub-jump-btn {
-            color: #2563eb; font-weight: 600; cursor: pointer; white-space: nowrap;
-            display: inline-flex; align-items: center; gap: 4px;
-            border: none; background: transparent; font-size: 0.75rem;
-            padding: 4px 8px; border-radius: 8px; transition: background 0.15s;
-        }
-        .sub-jump-btn:active { background: #dbeafe; }
+        .merged-subs { margin-top:-6px; margin-left:14px; padding-left:14px; border-left:2px solid #e2e8f0; display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+        .sub-card { display:flex; align-items:center; gap:8px; background:#f8fafc; border-radius:12px; padding:8px 10px; font-size:0.75rem; transition:all 0.15s; }
+        .sub-card:active { background:#f1f5f9; }
+        .sub-card .sub-icon { width:36px; height:36px; border-radius:10px; object-fit:cover; background:#e2e8f0; flex-shrink:0; }
+        .sub-info { flex:1; min-width:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; }
+        .sub-name { font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .sub-version { color:#64748b; font-weight:500; }
+        .sub-source { color:#f59e0b; font-weight:600; background:#fef9c3; padding:0 6px; border-radius:6px; font-size:0.65rem; }
+        .sub-jump-btn { color:#2563eb; font-weight:600; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:4px; border:none; background:transparent; font-size:0.75rem; padding:4px 8px; border-radius:8px; transition:background 0.15s; }
+        .sub-jump-btn:active { background:#dbeafe; }
 
-        .pagination {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
-            margin: 16px 0; align-items: center;
-        }
-        .pagination button, .pagination .page-num {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 18px;
-            padding: 8px 16px; font-size: 0.85rem; cursor: pointer;
-            font-weight: 500; color: #334155; transition: all 0.15s;
-        }
-        .pagination button:active, .pagination .page-num:active {
-            background: #f1f5f9; transform: scale(0.96);
-        }
-        .pagination .active-page {
-            background: #0f172a; color: white; border-color: #0f172a;
-        }
-        .pagination .goto-input {
-            width: 55px; text-align: center; border-radius: 18px;
-            border: 1px solid #e2e8f0; font-size: 0.85rem; padding: 8px;
-        }
+        .pagination { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:16px 0; align-items:center; }
+        .pagination button, .pagination .page-num { background:#fff; border:1px solid #e2e8f0; border-radius:18px; padding:8px 16px; font-size:0.85rem; cursor:pointer; font-weight:500; color:#334155; transition:all 0.15s; }
+        .pagination button:active, .pagination .page-num:active { background:#f1f5f9; transform:scale(0.96); }
+        .pagination .active-page { background:#0f172a; color:white; border-color:#0f172a; }
+        .pagination .goto-input { width:55px; text-align:center; border-radius:18px; border:1px solid #e2e8f0; font-size:0.85rem; padding:8px; }
 
-        footer {
-            margin-top: 24px; text-align: center; font-size: 0.65rem;
-            color: #94a3b8; padding-bottom: 16px;
-        }
+        footer { margin-top:24px; text-align:center; font-size:0.65rem; color:#94a3b8; padding-bottom:16px; }
+        @media(max-width:640px){ .source-grid{ grid-template-columns:repeat(3,1fr); gap:10px; } }
 
-        @media (max-width: 640px) {
-            .source-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        }
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; opacity:0; transition:all 0.3s; }
+        .modal-overlay.show { visibility:visible; opacity:1; }
+        .modal-container { background:#fff; border-radius:28px; width:90%; max-width:380px; padding:28px 22px; text-align:center; box-shadow:0 30px 50px rgba(0,0,0,0.25); }
+        .modal-header i { font-size:2.8rem; background:linear-gradient(135deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .modal-header h3 { font-size:1.4rem; margin:10px 0 6px; color:#0f172a; }
+        .modal-body p { font-size:0.85rem; line-height:1.55; margin-bottom:14px; color:#475569; }
+        .modal-btn { background:#0f172a; color:white; border:none; border-radius:18px; padding:12px 28px; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.15s; margin-top:8px; }
+        .modal-btn:active { background:#000; transform:scale(0.96); }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; visibility: hidden; opacity: 0; transition: all 0.3s;
-        }
-        .modal-overlay.show { visibility: visible; opacity: 1; }
-        .modal-container {
-            background: #fff; border-radius: 28px; width: 90%; max-width: 380px;
-            padding: 28px 22px; text-align: center;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.25);
-        }
-        .modal-header i {
-            font-size: 2.8rem;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .modal-header h3 { font-size: 1.4rem; margin: 10px 0 6px; color: #0f172a; }
-        .modal-body p { font-size: 0.85rem; line-height: 1.55; margin-bottom: 14px; color: #475569; }
-        .modal-btn {
-            background: #0f172a; color: white; border: none; border-radius: 18px;
-            padding: 12px 28px; font-size: 0.95rem; font-weight: 600;
-            cursor: pointer; transition: all 0.15s; margin-top: 8px;
-        }
-        .modal-btn:active { background: #000; transform: scale(0.96); }
-
-        /* 下载选择弹窗 */
-        .download-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(14px);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; visibility: hidden; opacity: 0; transition: all 0.3s;
-        }
-        .download-modal-overlay.show { visibility: visible; opacity: 1; }
-        .download-modal {
-            background: rgba(255,255,255,0.98);
-            border-radius: 36px;
-            width: 92%;
-            max-width: 420px;
-            padding: 32px 24px 24px;
-            text-align: center;
-            box-shadow: 0 40px 60px rgba(0,0,0,0.3);
-            transform: scale(0.9);
-            transition: transform 0.3s;
-        }
-        .download-modal-overlay.show .download-modal {
-            transform: scale(1);
-        }
-        .download-modal-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 24px;
-        }
-        .download-option {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            border: none;
-            border-radius: 20px;
-            padding: 16px 20px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 16px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        .download-option::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0);
-            transition: background 0.2s;
-        }
-        .download-option:active::after {
-            background: rgba(255,255,255,0.2);
-        }
-        .download-option:active {
-            transform: scale(0.96);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .download-option i {
-            font-size: 1.3rem;
-        }
-        .browser-option {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-        .copy-link-option {
-            background: linear-gradient(135deg, #64748b, #475569);
-        }
-        .download-cancel {
-            display: block;
-            width: 100%;
-            border: none;
-            border-radius: 20px;
-            padding: 14px 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            background: #f1f5f9;
-            color: #64748b;
-            transition: all 0.2s;
-            margin-top: 4px;
-        }
-        .download-cancel:active {
-            background: #e2e8f0;
-            transform: scale(0.96);
-        }
-        .download-note {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #475569;
-            line-height: 1.6;
-            padding: 0 8px;
-            text-align: left;
-        }
-        .download-note p {
-            margin-bottom: 6px;
-        }
-        .download-note i {
-            color: #f59e0b;
-            margin-right: 4px;
-        }
+        .download-modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; opacity:0; transition:all 0.3s; }
+        .download-modal-overlay.show { visibility:visible; opacity:1; }
+        .download-modal { background:rgba(255,255,255,0.98); border-radius:36px; width:92%; max-width:420px; padding:32px 24px 24px; text-align:center; box-shadow:0 40px 60px rgba(0,0,0,0.3); transform:scale(0.9); transition:transform 0.3s; }
+        .download-modal-overlay.show .download-modal { transform:scale(1); }
+        .download-modal-title { font-size:1.4rem; font-weight:700; color:#0f172a; margin-bottom:24px; }
+        .download-option { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; border:none; border-radius:20px; padding:16px 20px; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.2s; margin-bottom:16px; text-align:center; color:white; box-shadow:0 6px 16px rgba(0,0,0,0.15); position:relative; overflow:hidden; }
+        .download-option::after { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0); transition:background 0.2s; }
+        .download-option:active::after { background:rgba(255,255,255,0.2); }
+        .download-option:active { transform:scale(0.96); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        .download-option i { font-size:1.3rem; }
+        .browser-option { background:linear-gradient(135deg,#3b82f6,#2563eb); }
+        .download-cancel { display:block; width:100%; border:none; border-radius:20px; padding:14px 20px; font-size:0.9rem; font-weight:600; cursor:pointer; background:#f1f5f9; color:#64748b; transition:all 0.2s; margin-top:4px; }
+        .download-cancel:active { background:#e2e8f0; transform:scale(0.96); }
+        .download-note { margin-top:20px; font-size:0.8rem; color:#475569; line-height:1.6; padding:0 8px; text-align:left; }
+        .download-note p { margin-bottom:6px; }
+        .download-note i { color:#f59e0b; margin-right:4px; }
     </style>
 </head>
 <body>
@@ -468,15 +171,16 @@
         <div class="app-sub">全局搜索 · 最新更新 · 独立源展示</div>
     </div>
 
+    <!-- 导航栏：首页 | 刷新 | 左箭头 | 右箭头 -->
     <div class="global-nav" id="globalNav">
-        <button id="homeBtn" class="nav-btn home-nav-btn"><i class="fas fa-home"></i> 首页</button>
-        <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
+        <button id="homeBtn" class="nav-btn home-btn"><i class="fas fa-home"></i> 首页</button>
         <button id="refreshBtn" class="nav-btn refresh-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
+        <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
         <button id="forwardBtn" class="nav-btn forward-btn"><i class="fas fa-arrow-right"></i></button>
     </div>
 
     <div id="mainContent"></div>
-    <footer>一键下载 · 复制链接 · 历史导航支持</footer>
+    <footer>⚡一键下载 · 📋复制链接 · 历史导航支持</footer>
 </div>
 
 <div id="customModal" class="modal-overlay">
@@ -494,20 +198,18 @@
     </div>
 </div>
 
-<!-- 下载选择弹窗（增强版） -->
+<!-- 下载弹窗 -->
 <div id="downloadModal" class="download-modal-overlay">
     <div class="download-modal">
         <div class="download-modal-title">选择下载方式</div>
         <button id="browserOption" class="download-option browser-option">
             <i class="fas fa-globe"></i> 跳转浏览器直接下载
         </button>
-        <button id="copyLinkOption" class="download-option copy-link-option">
-            <i class="fas fa-copy"></i> 复制链接到剪贴板
-        </button>
         <button id="cancelDownload" class="download-cancel">取消下载</button>
         <div class="download-note">
-            <p><i class="fas fa-info-circle"></i> 点击浏览器下载后，如页面空白可能正在后台下载，请留意顶部进度条</p>
-            <p><i class="fas fa-exclamation-triangle"></i> 如提示错误或无法下载，可使用“复制链接”后用其他工具下载</p>
+            <p><i class="fas fa-info-circle"></i> 点击后将打开浏览器下载页</p>
+            <p><i class="fas fa-exclamation-triangle"></i> 若页面空白，请留意顶部蓝色进度条，完成后点击右下角浏览器图标</p>
+            <p><i class="fas fa-copy"></i> 如遇到500错误，请返回使用卡片上的“复制链接”手动下载</p>
         </div>
     </div>
 </div>
@@ -517,16 +219,16 @@
         { name: "兮兮源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/xixiyuan.json", banner: "🎉 破解应用，每日更新" },
         { name: "弟弟源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/didiyuan.json", banner: "🍭应用合集" },
         { name: "虫虫源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/congcongyuan.json", banner: "🐞 精品小体积应用" },
-        { name: "天嘻源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/tianxiyuan.json", banner: "💡 旧源，老源有很多能用的" },
+        { name: "天月源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/ttyyuan.json", banner: "💨 旧源，新源多个组合" },
         { name: "绅士黄油源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/fulishenshiyuan.json", banner: "😍 色色的全都有" },
         { name: "卡子源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/kaziyuan.json", banner: "📀 破解资源" },
         { name: "利特源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/liteyuan.json", banner: "🔌 承诺更新快" },
         { name: "奔跑源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/speedyuan.json", banner: "🛞 更新下载快" },
         { name: "游戏源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/youxiyuan.json", banner: "🕹️游戏和手游：破解、内购、内置修改" },
-        { name: "外服游戏源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/youxiyuan2.json", banner: "🖲️国外破解游戏，外服手游内购资源" },
-        { name: "更新中……", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/wuxian.json", banner: "♾️ 海量应用合集" }
+        { name: "黑猫源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/heimao.json", banner: "🐈‍⬛ 精选稳定资源" },
+        { name: "无限源", url: "https://raw.githubusercontent.com/hurui5423/hurui/main/wuxian.json", banner: "♾️ 海量应用合集" }
     ];
-    const sourceIcons = ['🎉','🍭','🐞','💡','😍','📀','🔌','🛞','🕹️','🐈‍⬛','♾️'];
+    const sourceIcons = ['🎉','🍭','🐞','💨','😍','📀','🔌','🛞','🕹️','🐈‍⬛','♾️'];
 
     let allSourcesData = [];
     let isDataLoaded = false;
@@ -534,30 +236,27 @@
     let currentStateIndex = -1;
 
     const mainContent = document.getElementById('mainContent');
-    const homeBtn = document.getElementById('homeBtn');
     const backBtn = document.getElementById('backBtn');
     const forwardBtn = document.getElementById('forwardBtn');
     const refreshBtn = document.getElementById('refreshBtn');
+    const homeBtn = document.getElementById('homeBtn');
     const globalNav = document.getElementById('globalNav');
 
     const downloadModal = document.getElementById('downloadModal');
     const browserOption = document.getElementById('browserOption');
-    const copyLinkOption = document.getElementById('copyLinkOption');
     const cancelDownloadBtn = document.getElementById('cancelDownload');
     let currentDownloadUrl = '';
     let currentDownloadName = '';
 
-    function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'>'?'&gt;') : ''; }
-    
+    function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
     function cleanUrl(raw) {
         if (!raw) return '';
         let url = raw.trim();
         if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(url)) return url.replace(/\s+/g, '%20');
         url = url.replace(/\s+/g, '%20');
-        url = url.replace(/[^\x00-\x7F]/g, (char) => encodeURIComponent(char));
+        url = url.replace(/[^\x00-\x7F]/g, char => encodeURIComponent(char));
         return url;
     }
-
     function formatSize(b) {
         if(!b||b==='0') return '?';
         let n = parseInt(b);
@@ -601,7 +300,7 @@
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        showToast(`🧭 正在打开下载页，如空白请留意进度条`);
+        showToast(`🧭 正在打开下载页，如空白请留意顶部进度条`);
     }
 
     function showDownloadModal(url, name) {
@@ -609,21 +308,11 @@
         currentDownloadName = name;
         downloadModal.classList.add('show');
     }
-    function hideDownloadModal() {
-        downloadModal.classList.remove('show');
-    }
+    function hideDownloadModal() { downloadModal.classList.remove('show'); }
 
     browserOption.addEventListener('click', () => {
         hideDownloadModal();
-        if (currentDownloadUrl) {
-            openSafari(currentDownloadUrl, currentDownloadName);
-        }
-    });
-    copyLinkOption.addEventListener('click', async () => {
-        hideDownloadModal();
-        if (currentDownloadUrl) {
-            await copyLink(currentDownloadUrl, currentDownloadName);
-        }
+        if (currentDownloadUrl) openSafari(currentDownloadUrl, currentDownloadName);
     });
     cancelDownloadBtn.addEventListener('click', hideDownloadModal);
 
@@ -679,27 +368,25 @@
         return {total,data:all.slice(start,start+perPage),totalPages:Math.ceil(total/perPage)};
     }
 
+    // 搜索优化：名称优先
     function searchApps(kw) {
         if(!kw.trim()) return [];
-        let k = kw.trim().toLowerCase();
-        let res = [];
-        for(let src of allSourcesData) {
+        let k=kw.trim().toLowerCase();
+        let nameMatches=[], descMatches=[];
+        for(let src of allSourcesData)
             for(let a of src.apps) {
-                let score = 0;
-                if (a.nameLower === k) score = 100;
-                else if (a.nameLower.startsWith(k)) score = 80;
-                else if (a.nameLower.includes(k)) score = 60;
-                if (a.descLower && a.descLower.includes(k)) score = Math.max(score, 40);
-                if (score > 0) {
-                    res.push({...a, sourceName: src.name, typeTag: getTypeTag(a.type), desc: a.versionDescription||'暂无介绍', score});
-                }
+                let n = a.nameLower, d = a.descLower;
+                if(n && n.includes(k)) nameMatches.push({...a,sourceName:src.name,typeTag:getTypeTag(a.type),desc:a.versionDescription||'暂无介绍', matchType:'name'});
+                else if(d && d.includes(k)) descMatches.push({...a,sourceName:src.name,typeTag:getTypeTag(a.type),desc:a.versionDescription||'暂无介绍', matchType:'desc'});
             }
-        }
-        res.sort((a,b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return (b.versionDate?new Date(b.versionDate).getTime():0) - (a.versionDate?new Date(a.versionDate).getTime():0);
+        // 名称匹配按名称长度和匹配位置排序，描述匹配按日期倒序
+        nameMatches.sort((a,b)=> {
+            let ai = a.nameLower.indexOf(k), bi = b.nameLower.indexOf(k);
+            if(ai!==bi) return ai-bi;
+            return a.nameLower.length - b.nameLower.length;
         });
-        return res;
+        descMatches.sort((a,b)=>(b.versionDate?new Date(b.versionDate).getTime():0)-(a.versionDate?new Date(a.versionDate).getTime():0));
+        return [...nameMatches, ...descMatches];
     }
 
     function renderAppCard(app, showSource = true) {
@@ -784,16 +471,10 @@
         inputEl.addEventListener('input', () => {
             clearTimeout(timer);
             let val = inputEl.value.trim();
-            if (!val) {
-                suggestionBox.classList.remove('active');
-                return;
-            }
+            if (!val) { suggestionBox.classList.remove('active'); return; }
             timer = setTimeout(() => {
-                let results = searchApps(val).slice(0, 8);
-                if (results.length === 0) {
-                    suggestionBox.classList.remove('active');
-                    return;
-                }
+                let results = searchApps(val).filter(app => app.matchType==='name').slice(0,8); // 只显示名称匹配的
+                if (!results.length) { suggestionBox.classList.remove('active'); return; }
                 suggestionBox.innerHTML = results.map(r => `<div class="suggestion-item">${escapeHtml(r.name)}</div>`).join('');
                 suggestionBox.classList.add('active');
                 suggestionBox.querySelectorAll('.suggestion-item').forEach(item => {
@@ -803,54 +484,25 @@
                         doSearchFn(item.textContent);
                     });
                 });
-            }, 200);
+            }, 300);
         });
-        inputEl.addEventListener('blur', () => {
-            setTimeout(() => suggestionBox.classList.remove('active'), 200);
-        });
+        inputEl.addEventListener('blur', () => setTimeout(() => suggestionBox.classList.remove('active'), 200));
     }
 
-    function renderSearchBar(defaultKeyword = '') {
-        return `
-            <div class="search-section">
-                <div class="search-input-wrapper">
-                    <input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off" value="${escapeHtml(defaultKeyword)}">
-                </div>
-                <div class="search-actions">
-                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
-                    <button id="clearSearchBtn" class="clear-btn">清除</button>
-                </div>
-            </div>`;
-    }
-
-    function bindSearchBarEvents(container, keyword = '') {
-        const si = container.querySelector('#searchInput');
-        const doBtn = container.querySelector('#doSearchBtn');
-        const clearBtn = container.querySelector('#clearSearchBtn');
-        if (si && doBtn) {
-            doBtn.addEventListener('click', () => {
-                if (si.value.trim()) navigateToSearch(si.value.trim(), 1);
-            });
-            si.addEventListener('keydown', e => {
-                if (e.key === 'Enter' && si.value.trim()) navigateToSearch(si.value.trim(), 1);
-            });
-            setupSearchSuggestions(si, (kw) => navigateToSearch(kw, 1));
-        }
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                si.value = '';
-                navigateToHome();
-            });
-        }
-    }
-
+    // 渲染首页
     function renderHome(page=1) {
         let {total,data,totalPages} = getRecentApps(page,10);
         let srcHtml = '<div class="source-grid">';
         dataSources.forEach((s,i)=>srcHtml+=`<div class="source-card" data-idx="${i}"><div class="source-icon">${sourceIcons[i]}</div><div class="source-name">${escapeHtml(s.name)}</div></div>`);
         srcHtml+='</div>';
-
-        let searchHtml = renderSearchBar();
+        let searchHtml = `
+            <div class="search-section">
+                <div class="search-input-wrapper"><input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off"></div>
+                <div class="search-actions">
+                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
+                    <button id="clearSearchBtn" class="clear-btn">清除</button>
+                </div>
+            </div>`;
         let listHtml = `
             <div class="section-header"><div class="section-title"><i class="fas fa-clock"></i> 最近更新</div><div class="section-stats">共 ${total} 款</div></div>
             <div class="app-list" id="appList">${data.map(app => renderAppCard(app, true)).join('')}</div>
@@ -858,7 +510,12 @@
         mainContent.innerHTML = srcHtml + searchHtml + listHtml;
 
         document.querySelectorAll('.source-card').forEach(c=>c.addEventListener('click',()=>navigateToSource(parseInt(c.dataset.idx),1)));
-        bindSearchBarEvents(mainContent);
+        let si = document.getElementById('searchInput');
+        document.getElementById('doSearchBtn').addEventListener('click',()=>{ if(si.value.trim()) navigateToSearch(si.value.trim(),1); });
+        document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; });
+        si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
+        setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
+
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToHome(p));
         setupDescToggles();
@@ -867,6 +524,7 @@
     function renderSearchResults(keyword, page=1) {
         let results = searchApps(keyword);
         if(!results.length){ showToast('未找到相关应用'); navigateToHome(); return; }
+        // 合并同名应用
         let mergedMap = new Map();
         results.forEach(app => {
             let key = app.name.toLowerCase();
@@ -887,14 +545,21 @@
         let start = (page-1)*perPage;
         let pageItems = mergedList.slice(start, start+perPage);
 
-        let searchHeader = renderSearchBar(keyword);
+        let backBtnHtml = `<button class="detail-nav-btn home-highlight" id="backToHomeBtn">🏠 返回首页</button>`;
+        let searchHeader = `
+            <div class="search-section">
+                <div class="search-input-wrapper"><input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off" value="${escapeHtml(keyword)}"></div>
+                <div class="search-actions">
+                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
+                    <button id="clearSearchBtn" class="clear-btn">清除</button>
+                </div>
+            </div>`;
         let statsHtml = `<div class="section-header"><div class="section-title"><i class="fas fa-search"></i> 搜索结果 · ${keyword}</div><div class="section-stats">${totalItems} 条</div></div>`;
 
         let listHtml = '<div class="app-list">';
         pageItems.forEach(item => {
-            if(item.single) {
-                listHtml += renderAppCard(item.single, true);
-            } else {
+            if(item.single) listHtml += renderAppCard(item.single, true);
+            else {
                 let group = item.group;
                 let latest = group[0];
                 listHtml += renderAppCard(latest, true);
@@ -906,8 +571,7 @@
                         if (srcIdx === -1) continue;
                         let appIdx = allSourcesData[srcIdx].apps.findIndex(a => a.downloadURL === app.downloadURL);
                         if (appIdx === -1) continue;
-                        let pageSize = 24;
-                        let targetPage = Math.floor(appIdx / pageSize) + 1;
+                        let targetPage = Math.floor(appIdx / 24) + 1;
                         subHtml += `
                             <div class="sub-card">
                                 <img class="sub-icon" src="${escapeHtml(app.iconURL)}" onerror="this.style.display='none'">
@@ -916,9 +580,7 @@
                                     <span class="sub-version">v${escapeHtml(app.version)}</span>
                                     <span class="sub-source">${escapeHtml(app.sourceName)}</span>
                                 </div>
-                                <button class="sub-jump-btn" data-src="${srcIdx}" data-page="${targetPage}" data-target-url="${escapeHtml(app.downloadURL)}">
-                                    👉 点击跳转
-                                </button>
+                                <button class="sub-jump-btn" data-src="${srcIdx}" data-page="${targetPage}" data-target-url="${escapeHtml(app.downloadURL)}">👉 点击跳转</button>
                             </div>`;
                     }
                     subHtml += '</div>';
@@ -927,9 +589,15 @@
             }
         });
         listHtml += '</div><div class="pagination" id="pagination"></div>';
+        mainContent.innerHTML = backBtnHtml + searchHeader + statsHtml + listHtml;
 
-        mainContent.innerHTML = searchHeader + statsHtml + listHtml;
-        bindSearchBarEvents(mainContent, keyword);
+        document.getElementById('backToHomeBtn').addEventListener('click', ()=> navigateToHome());
+        let si = document.getElementById('searchInput');
+        document.getElementById('doSearchBtn').addEventListener('click',()=>{ if(si.value.trim()) navigateToSearch(si.value.trim(),1); });
+        document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; navigateToHome(); });
+        si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
+        setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
+
         document.querySelectorAll('.sub-jump-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 let srcIdx = parseInt(btn.dataset.src);
@@ -944,21 +612,31 @@
         setupDescToggles();
     }
 
+    // 源详情页（带搜索栏）
     function renderSourceDetail(idx, page=1, scrollToUrl = null) {
         let src = allSourcesData[idx];
         if(!src) return;
         let apps=src.apps, perPage=24, totalPages=Math.ceil(apps.length/perPage);
         let data=apps.slice((page-1)*perPage,page*perPage);
 
+        // 导航按钮：去掉首页选项卡，只保留源名称按钮
         let nav='<div class="detail-nav">';
         dataSources.forEach((s,i)=>{
             if(i===idx) nav+=`<button class="detail-nav-btn disabled-source" disabled>${escapeHtml(s.name)}</button>`;
             else nav+=`<button class="detail-nav-btn" data-idx="${i}">${escapeHtml(s.name)}</button>`;
         });
         nav+='</div>';
-        let searchHtml = renderSearchBar();
         let head=`<div class="source-name-area"><h2>${escapeHtml(dataSources[idx].name)}</h2><div class="app-count-badge"><i class="fas fa-layer-group"></i> 共 ${apps.length} 款</div></div>`;
         let banner=`<div class="source-banner"><i class="fas fa-info-circle"></i> ${escapeHtml(dataSources[idx].banner)}</div>`;
+        // 搜索栏
+        let searchHtml = `
+            <div class="search-section">
+                <div class="search-input-wrapper"><input id="searchInput" placeholder="在当前源内搜索..." autocomplete="off"></div>
+                <div class="search-actions">
+                    <button id="doSearchBtn" class="search-btn"><i class="fas fa-search"></i> 搜索</button>
+                    <button id="clearSearchBtn" class="clear-btn">清除</button>
+                </div>
+            </div>`;
         let list='<div class="app-list">';
         data.forEach(a=>{
             let icon=`<img class="app-icon" src="${escapeHtml(a.iconURL)}" onerror="this.style.display='none'">`;
@@ -985,26 +663,66 @@
                 </div>`;
         });
         list+='</div><div class="pagination" id="pagination"></div>';
-        mainContent.innerHTML = nav + searchHtml + head + banner + list;
-        bindSearchBarEvents(mainContent);
+        mainContent.innerHTML = nav+head+banner+searchHtml+list;
 
-        if (scrollToUrl) {
-            let targetCard = document.querySelector(`.app-card[data-url="${CSS.escape(scrollToUrl)}"]`);
-            if (targetCard) {
-                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                targetCard.style.boxShadow = '0 0 0 3px #f59e0b';
-                setTimeout(() => targetCard.style.boxShadow = '', 2000);
-            }
-        }
-
+        // 绑定源按钮
         document.querySelectorAll('.detail-nav-btn:not(.disabled-source)').forEach(b=>{
-            b.addEventListener('click',()=>navigateToSource(parseInt(b.dataset.idx),1));
+            b.addEventListener('click', ()=> navigateToSource(parseInt(b.dataset.idx),1));
         });
+        // 绑定当前源内搜索
+        let si = document.getElementById('searchInput');
+        document.getElementById('doSearchBtn').addEventListener('click',()=>{
+            if(si.value.trim()) {
+                // 在当前源内过滤
+                let kw = si.value.trim().toLowerCase();
+                let filtered = apps.filter(a => (a.nameLower && a.nameLower.includes(kw)) || (a.descLower && a.descLower.includes(kw)));
+                if(!filtered.length) showToast('未找到相关应用');
+                else {
+                    // 重新渲染当前源详情页，但只显示过滤后的结果
+                    let perPage=24, totalPages=Math.ceil(filtered.length/perPage);
+                    let page=1, data=filtered.slice(0,perPage);
+                    // 简单实现：直接替换列表
+                    let listHtml = '<div class="app-list">';
+                    data.forEach(a=>{
+                        let icon=`<img class="app-icon" src="${escapeHtml(a.iconURL)}" onerror="this.style.display='none'">`;
+                        let desc=a.versionDescription||'暂无描述';
+                        let tag=getTypeTag(a.type);
+                        let lock=a.lock==='1'?'🔒':'';
+                        let cleanDl = cleanUrl(a.downloadURL);
+                        listHtml+=`
+                            <div class="app-card" data-url="${escapeHtml(a.downloadURL)}">
+                                ${icon}
+                                <div class="app-info">
+                                    <div class="app-name">${escapeHtml(a.name)} ${lock} ${tag}</div>
+                                    <div class="app-desc">${escapeHtml(desc)}</div>
+                                    <div class="app-meta">
+                                        <span>📱 版本 ${escapeHtml(a.version)}</span>
+                                        <span>📅 ${formatDate(a.versionDate)}</span>
+                                        <span>💾 ${formatSize(a.size)}</span>
+                                    </div>
+                                    <div class="btn-row">
+                                        <button class="btn btn-download" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(a.name)}">⚡一键下载</button>
+                                        <button class="btn btn-copy-link" data-url="${escapeHtml(cleanDl)}" data-name="${escapeHtml(a.name)}">📋复制链接</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                    listHtml+='</div><div class="pagination" id="pagination"></div>';
+                    document.querySelector('.app-list').outerHTML = listHtml;
+                    document.getElementById('pagination').innerHTML = '';
+                    bindCardButtons(mainContent);
+                    setupDescToggles();
+                }
+            }
+        });
+        document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; renderSourceDetail(idx,page); });
+
         bindCardButtons(mainContent);
         renderPagination(document.getElementById('pagination'),page,totalPages,p=>navigateToSource(idx,p));
         setupDescToggles();
     }
 
+    // 导航函数
     function navigateToHome(page=1) { pushState({mode:'home',page}); }
     function navigateToSource(idx,page=1, scrollToUrl=null) { pushState({mode:'source',idx,page,scrollToUrl}); }
     function navigateToSearch(keyword,page=1) { pushState({mode:'search',keyword,page}); }
@@ -1041,20 +759,11 @@
         forwardBtn.classList.toggle('disabled',forwardBtn.disabled);
     }
 
-    let navTransparentTimer;
-    function resetNav() {
-        if (globalNav.classList.contains('transparent')) {
-            globalNav.classList.remove('transparent');
-        }
-        clearTimeout(navTransparentTimer);
-        navTransparentTimer = setTimeout(() => {
-            globalNav.classList.add('transparent');
-        }, 3000);
-    }
-    window.addEventListener('scroll', resetNav, {passive: true});
-    window.addEventListener('touchstart', resetNav, {passive: true});
-    // 初始设为透明
-    globalNav.classList.add('transparent');
+    let navTmr;
+    function resetNav(){ clearTimeout(navTmr); globalNav.classList.remove('transparent'); navTmr=setTimeout(()=>globalNav.classList.add('transparent'),3000); }
+    window.addEventListener('scroll',resetNav);
+    window.addEventListener('touchstart',resetNav);
+    resetNav();
 
     async function refreshData() {
         showToast('刷新中...');
