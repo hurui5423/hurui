@@ -274,12 +274,11 @@
     }
     function getTypeTag(t) {
         t = parseInt(t);
-        if(t===10) return '<span class="type-tag">⚡破解版</span>';
-        if(t===2) return '<span class="type-tag">🎮各种游戏</span>';
-        if(t===6) return '<span class="type-tag">🔓折扣</span>';
-        if(t===3) return '<span class="type-tag">💽影音娱乐</span>';
-        if(t===1) return '<span class="type-tag">🛠️应用工具</span>';
-        if(t===4 || t===5) return '<span class="type-tag">🔧插件辅助</span>';
+        if(t===8) return '<span class="type-tag">⚡破解版</span>';
+        if(t===2 || t===10) return '<span class="type-tag">🎮破解、内购各种手游</span>';
+        if(t===3) return '<span class="type-tag">💽影视、音、娱乐</span>';
+        if(t===1) return '<span class="type-tag">🛠️砸壳、破解应用</span>';
+        if(t===4 || t===5 || t===0) return '<span class="type-tag">🔧插件、辅助、修改器</span>';
         return '<span class="type-tag">📦资源</span>';
     }
     function showToast(msg) {
