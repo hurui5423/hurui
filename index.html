@@ -12,125 +12,61 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body {
-            background: #eef1f5; /* 稍带冷调 */
+            background: linear-gradient(145deg, #e8ecf1 0%, #dde2e8 100%);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             padding: 0.5rem; color: #1a202c; font-size: 14px;
             padding-top: env(safe-area-inset-top, 12px); line-height: 1.45;
+            min-height: 100vh;
         }
         button, a, input, textarea { touch-action: manipulation; }
         .container { max-width: 1200px; margin: 0 auto; }
 
-        /* 液态玻璃基础 */
+        /* 液态玻璃基础类 */
         .glass {
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
         }
         .glass-strong {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
         }
 
         .app-header { text-align: center; margin-bottom: 18px; }
         .app-header h1 { font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
         .app-header h1 i { color: #f59e0b; }
-        .app-sub { font-size: 0.75rem; color: #64748b; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); display: inline-block; padding: 4px 18px; border-radius: 20px; font-weight: 500; }
+        .app-sub { font-size: 0.75rem; color: #64748b; background: rgba(255,255,255,0.65); backdrop-filter: blur(10px); display: inline-block; padding: 4px 18px; border-radius: 20px; font-weight: 500; }
 
-        /* 导航栏 */
-        .global-nav {
-            position: sticky; top: env(safe-area-inset-top, 0); z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
-            border-radius: 24px; padding: 8px 12px; margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: opacity 0.25s, backdrop-filter 0.25s;
-            will-change: opacity; -webkit-backface-visibility: hidden;
-            /* 液态玻璃已由 .glass-strong 提供 */
+        /* 源抽屉与导航栏共同容器 */
+        .sticky-group {
+            position: sticky;
+            top: env(safe-area-inset-top, 0);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+            will-change: opacity;
+            transition: opacity 0.25s;
         }
-        .global-nav.transparent { opacity: 0.25; pointer-events: none; backdrop-filter: none; }
-        .nav-btn {
-            border: none; border-radius: 18px; padding: 10px 16px; color: white; font-weight: 600;
-            font-size: 0.95rem; cursor: pointer; transition: all 0.15s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;
+        .sticky-group.transparent {
+            opacity: 0.25;
+            pointer-events: none;
         }
-        .nav-btn:active { transform: scale(0.95); opacity: 0.85; }
-        .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
-        .home-btn { background: #f59e0b; color: #fff; }
-        .refresh-btn { background: #2563eb; }
-        .back-btn, .forward-btn { background: #334155; width: 44px; justify-content: center; padding: 10px 0; }
-
-        /* 搜索栏升级 - 液态玻璃 */
-        .home-search-section {
-            margin: 0 0 20px 0; border-radius: 28px; padding: 22px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255,255,255,0.6);
-        }
-        .home-search-section .search-input-wrapper input {
-            background: rgba(255,255,255,0.9);
-            border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-        }
-        .home-search-section .search-btn {
-            background: #0f172a; color: white; font-weight: 600;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        .sticky-group.transparent .global-nav,
+        .sticky-group.transparent .source-drawer {
+            backdrop-filter: none;
         }
 
-        /* 分类标签栏 */
-        .category-tabs {
-            display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 12px;
-            align-items: center;
-        }
-        .category-tab {
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.6);
-            border-radius: 20px; padding: 6px 14px;
-            font-size: 0.8rem; font-weight: 600; color: #334155;
-            cursor: pointer; transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .category-tab.active {
-            background: #0f172a; color: white; border-color: #0f172a;
-        }
-        .category-tab .count { font-size: 0.7rem; margin-left: 4px; opacity: 0.8; }
-
-        /* 应用卡片缩小 */
-        .home-cards .app-card {
-            padding: 10px 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        }
-        .home-cards .app-icon {
-            width: 44px; height: 44px;
-        }
-        .home-cards .app-name {
-            font-size: 0.85rem;
-        }
-        .home-cards .app-desc {
-            font-size: 0.65rem;
-            -webkit-line-clamp: 3;
-        }
-        .home-cards .app-meta {
-            font-size: 0.7rem;
-        }
-        .home-cards .btn {
-            font-size: 0.65rem; padding: 5px 6px;
-        }
-
-        /* 源抽屉 */
         .source-drawer {
-            margin: 20px 0 10px;
             border-radius: 24px;
             overflow: hidden;
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.25s;
         }
         .drawer-toggle {
             width: 100%; background: transparent; border: none;
@@ -145,27 +81,50 @@
         }
         .drawer-content.open { display: grid; }
         .mini-source-card {
-            background: rgba(255,255,255,0.8);
-            border-radius: 18px; padding: 10px 4px;
-            text-align: center; font-size: 0.7rem; font-weight: 600;
+            background: rgba(255,255,255,0.65);
+            backdrop-filter: blur(16px);
+            border-radius: 20px; padding: 12px 4px;
+            text-align: center; font-size: 0.75rem; font-weight: 600;
             color: #1e293b; cursor: pointer;
             transition: all 0.2s;
             border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         }
         .mini-source-card:active { transform: scale(0.95); background: #fff; }
-        .mini-source-icon {
-            font-size: 1.6rem; margin-bottom: 4px;
+        .mini-source-icon { font-size: 1.8rem; margin-bottom: 4px; }
+
+        /* 导航栏 */
+        .global-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            border-radius: 24px; padding: 8px 12px;
+            transition: opacity 0.25s;
+        }
+        .nav-btn {
+            border: none; border-radius: 18px; padding: 10px 16px; color: white; font-weight: 600;
+            font-size: 0.95rem; cursor: pointer; transition: all 0.15s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;
+        }
+        .nav-btn:active { transform: scale(0.95); opacity: 0.85; }
+        .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
+        .home-btn { background: #f59e0b; color: #fff; }
+        .refresh-btn { background: #2563eb; }
+        .back-btn, .forward-btn { background: #334155; width: 44px; justify-content: center; padding: 10px 0; }
+
+        /* 搜索栏 */
+        .home-search-section {
+            margin: 0 0 20px 0; border-radius: 30px; padding: 24px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.08);
+        }
+        .home-search-section .search-input-wrapper input {
+            background: rgba(255,255,255,0.95);
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .home-search-section .search-btn {
+            background: #0f172a; color: white; font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
         }
 
-        /* 通用卡片增加液态感 */
-        .app-card, .source-card, .pagination button, .detail-nav-btn, .modal-container, .download-modal {
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.6);
-        }
-
-        /* 保持原有样式，补全之前缺少的CSS */
         .search-section { margin:16px 0; background:rgba(255,255,255,0.7); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-radius:22px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.04); position:relative; }
         .search-input-wrapper { position:relative; margin-bottom:12px; }
         .search-input-wrapper input { width:100%; border:2px solid #e2e8f0; background:#f8fafc; border-radius:18px; padding:12px 16px; font-size:1rem; outline:none; transition:border 0.2s,box-shadow 0.2s; }
@@ -182,19 +141,59 @@
         .clear-btn { background:#e2e8f0; color:#334155; }
         .clear-btn:active { background:#cbd5e1; transform:scale(0.97); }
 
-        .section-header { display:flex; justify-content:space-between; align-items:baseline; margin:20px 0 12px; }
-        .section-title { font-size:1.2rem; font-weight:700; color:#0f172a; border-left:4px solid #f59e0b; padding-left:10px; }
-        .section-stats { font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:4px 12px; border-radius:12px; }
+        /* 分类标签 */
+        .category-section {
+            margin: 20px 0 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .category-main {
+            font-size: 1.1rem; font-weight: 700; color: #0f172a;
+            padding: 6px 20px; border-radius: 24px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .category-main.active {
+            background: #0f172a; color: white;
+        }
+        .category-row {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            justify-content: center;
+        }
+        .category-tab {
+            background: rgba(255,255,255,0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.7);
+            border-radius: 24px; padding: 8px 18px;
+            font-size: 0.85rem; font-weight: 600; color: #334155;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .category-tab.active {
+            background: #0f172a; color: white; border-color: #0f172a;
+        }
 
-        .app-list { display:flex; flex-direction:column; gap:12px; margin-bottom:16px; }
+        /* 应用卡片 */
+        .app-list { display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
         .app-card {
-            display:flex; gap:12px; border-radius:22px;
-            padding:14px; border:1px solid rgba(255,255,255,0.6);
-            box-shadow:0 6px 16px rgba(0,0,0,0.06);
+            display:flex; gap:14px; border-radius:24px;
+            padding:16px; border:1px solid rgba(255,255,255,0.7);
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
             align-items:flex-start; transition:transform 0.15s,box-shadow 0.15s;
         }
-        .app-card:active { transform:scale(0.98); box-shadow:0 3px 10px rgba(0,0,0,0.1); }
-        .app-card .app-icon { width:56px; height:56px; border-radius:18px; object-fit:cover; flex-shrink:0; background:#f1f5f9; }
+        .app-card:nth-child(even) {
+            background: rgba(245,248,255,0.8);
+            box-shadow: 0 8px 28px rgba(0,20,60,0.1);
+        }
+        .app-card:active { transform:scale(0.98); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+        .app-card .app-icon { width:52px; height:52px; border-radius:18px; object-fit:cover; flex-shrink:0; background:#f1f5f9; }
         .app-card .app-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
         .app-card .app-name {
             font-weight:700; font-size:0.95rem; color:#0f172a;
@@ -216,11 +215,7 @@
         .btn-copy-link { background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; }
 
         .detail-nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; justify-content:center; }
-        .detail-nav-btn {
-            border-radius:16px;
-            padding:8px 16px; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer;
-            transition:all 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.04);
-        }
+        .detail-nav-btn { border-radius:16px; padding:8px 16px; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer; transition:all 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
         .detail-nav-btn:active { background:#f1f5f9; transform:scale(0.96); }
         .detail-nav-btn.disabled-source { background:#f1f5f9; color:#94a3b8; cursor:default; }
         .source-name-area { text-align:center; margin:12px 0 8px; }
@@ -229,7 +224,7 @@
         .source-banner { text-align:center; margin:8px 0 16px; font-size:0.85rem; color:#92400e; background:#fffbeb; padding:6px 16px; border-radius:14px; }
 
         .merged-subs { margin-top:-6px; margin-left:14px; padding-left:14px; border-left:2px solid #e2e8f0; display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
-        .sub-card { display:flex; align-items:center; gap:8px; background:#f8fafc; border-radius:12px; padding:8px 10px; font-size:0.75rem; transition:all 0.15s; }
+        .sub-card { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.6); backdrop-filter:blur(12px); border-radius:12px; padding:8px 10px; font-size:0.75rem; transition:all 0.15s; }
         .sub-card:active { background:#f1f5f9; }
         .sub-card .sub-icon { width:36px; height:36px; border-radius:10px; object-fit:cover; background:#e2e8f0; flex-shrink:0; }
         .sub-info { flex:1; min-width:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; }
@@ -246,20 +241,35 @@
         .pagination .goto-input { width:55px; text-align:center; border-radius:18px; border:1px solid #e2e8f0; font-size:0.85rem; padding:8px; }
 
         footer { margin-top:24px; text-align:center; font-size:0.65rem; color:#94a3b8; padding-bottom:16px; }
-        @media(max-width:640px){ .source-grid{ grid-template-columns:repeat(3,1fr); gap:10px; } }
+        @media(max-width:640px){ .drawer-content{ grid-template-columns: repeat(3,1fr); } }
 
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; opacity:0; transition:all 0.3s; }
+        /* 弹窗 */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; opacity:0; transition:all 0.4s; }
         .modal-overlay.show { visibility:visible; opacity:1; }
-        .modal-container { border-radius:28px; width:90%; max-width:380px; padding:28px 22px; text-align:center; box-shadow:0 30px 50px rgba(0,0,0,0.25); }
+        .modal-container { border-radius:32px; width:90%; max-width:380px; padding:28px 22px; text-align:center; box-shadow:0 30px 50px rgba(0,0,0,0.25); }
         .modal-header i { font-size:2.8rem; background:linear-gradient(135deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
         .modal-header h3 { font-size:1.4rem; margin:10px 0 6px; color:#0f172a; }
         .modal-body p { font-size:0.85rem; line-height:1.55; margin-bottom:14px; color:#475569; }
-        .modal-btn { background:#0f172a; color:white; border:none; border-radius:18px; padding:12px 28px; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.15s; margin-top:8px; }
-        .modal-btn:active { background:#000; transform:scale(0.96); }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+        .modal-btn {
+            border: none; border-radius: 18px; padding: 12px 28px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: all 0.15s; min-width: 120px;
+        }
+        .modal-btn-primary { background:#0f172a; color:white; }
+        .modal-btn-primary:active { background:#000; transform:scale(0.96); }
+        .modal-btn-danger { background:#ef4444; color:white; }
+        .modal-btn-danger:active { background:#dc2626; transform:scale(0.96); }
+        .modal-btn:disabled {
+            opacity: 0.5; cursor: not-allowed; pointer-events: none;
+        }
+        .countdown-timer {
+            font-size: 1.5rem; font-weight: 700; color: #f59e0b; margin: 12px 0 8px;
+            font-variant-numeric: tabular-nums;
+        }
 
-        .download-modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; opacity:0; transition:all 0.3s; }
+        .download-modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; z-index:9999; visibility:hidden; opacity:0; transition:all 0.4s; }
         .download-modal-overlay.show { visibility:visible; opacity:1; }
-        .download-modal { border-radius:36px; width:92%; max-width:420px; padding:32px 24px 24px; text-align:center; box-shadow:0 40px 60px rgba(0,0,0,0.3); transform:scale(0.9); transition:transform 0.3s; }
+        .download-modal { border-radius:36px; width:92%; max-width:420px; padding:32px 24px 24px; text-align:center; box-shadow:0 40px 60px rgba(0,0,0,0.3); transform:scale(0.9); transition:transform 0.4s; }
         .download-modal-overlay.show .download-modal { transform:scale(1); }
         .download-modal-title { font-size:1.4rem; font-weight:700; color:#0f172a; margin-bottom:24px; }
         .download-option { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; border:none; border-radius:20px; padding:16px 20px; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.2s; margin-bottom:16px; text-align:center; color:white; box-shadow:0 6px 16px rgba(0,0,0,0.15); position:relative; overflow:hidden; }
@@ -282,11 +292,22 @@
         <div class="app-sub">全局搜索 · 最新更新 · 独立源展示</div>
     </div>
 
-    <div class="global-nav glass-strong" id="globalNav">
-        <button id="homeBtn" class="nav-btn home-btn"><i class="fas fa-home"></i> 首页</button>
-        <button id="refreshBtn" class="nav-btn refresh-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
-        <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
-        <button id="forwardBtn" class="nav-btn forward-btn"><i class="fas fa-arrow-right"></i></button>
+    <!-- 源抽屉与导航栏组合 -->
+    <div class="sticky-group" id="stickyGroup">
+        <div id="sourceDrawer" class="source-drawer glass" style="display:none;">
+            <button class="drawer-toggle" id="drawerToggle">
+                <span>📦 所有源</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="drawer-content" id="drawerContent"></div>
+        </div>
+
+        <div class="global-nav glass-strong" id="globalNav">
+            <button id="homeBtn" class="nav-btn home-btn"><i class="fas fa-home"></i> 首页</button>
+            <button id="refreshBtn" class="nav-btn refresh-btn"><i class="fas fa-sync-alt"></i> 刷新</button>
+            <button id="backBtn" class="nav-btn back-btn"><i class="fas fa-arrow-left"></i></button>
+            <button id="forwardBtn" class="nav-btn forward-btn"><i class="fas fa-arrow-right"></i></button>
+        </div>
     </div>
 
     <div id="mainContent"></div>
@@ -302,8 +323,10 @@
             <p>💾 各种破解源集合已有 <strong>9000+</strong> 资源，平均三天持续更新。</p>
             <p>⚠️ 用户须仔细甄别下载需求类型，使用过程中产生的一切后果由用户自行负责！</p>
         </div>
+        <div class="countdown-timer" id="countdownDisplay">2.500 秒</div>
         <div class="modal-buttons">
-            <button id="modalConfirmBtn" class="modal-btn">已明白，开始探索</button>
+            <button id="modalConfirmBtn" class="modal-btn modal-btn-primary" disabled>开始！继续探索首页！</button>
+            <button id="modalExitBtn" class="modal-btn modal-btn-danger" disabled>结束？点击退出。</button>
         </div>
     </div>
 </div>
@@ -343,20 +366,32 @@
     let isDataLoaded = false;
     let historyStack = [];
     let currentStateIndex = -1;
-    let currentHomeCategory = 'recent'; // 默认最新更新
+    let currentHomeCategory = 'recent';
 
     const mainContent = document.getElementById('mainContent');
     const backBtn = document.getElementById('backBtn');
     const forwardBtn = document.getElementById('forwardBtn');
     const refreshBtn = document.getElementById('refreshBtn');
     const homeBtn = document.getElementById('homeBtn');
+    const stickyGroup = document.getElementById('stickyGroup');
     const globalNav = document.getElementById('globalNav');
+    const sourceDrawer = document.getElementById('sourceDrawer');
+    const drawerContent = document.getElementById('drawerContent');
+    const drawerToggle = document.getElementById('drawerToggle');
 
     const downloadModal = document.getElementById('downloadModal');
     const browserOption = document.getElementById('browserOption');
     const cancelDownloadBtn = document.getElementById('cancelDownload');
     let currentDownloadUrl = '';
     let currentDownloadName = '';
+
+    // 弹窗元素
+    const customModal = document.getElementById('customModal');
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    const modalExitBtn = document.getElementById('modalExitBtn');
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    let countdownInterval = null;
+    let countdownSeconds = 2.5;
 
     function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
     function cleanUrl(raw) {
@@ -412,25 +447,15 @@
         document.body.removeChild(a);
         showToast(`🧭 正在打开下载页，如空白请留意顶部进度条`);
     }
-
     function showDownloadModal(url, name) {
         currentDownloadUrl = url;
         currentDownloadName = name;
         downloadModal.classList.add('show');
     }
     function hideDownloadModal() { downloadModal.classList.remove('show'); }
-
-    browserOption.addEventListener('click', () => {
-        hideDownloadModal();
-        if (currentDownloadUrl) openSafari(currentDownloadUrl, currentDownloadName);
-    });
+    browserOption.addEventListener('click', () => { hideDownloadModal(); if (currentDownloadUrl) openSafari(currentDownloadUrl, currentDownloadName); });
     cancelDownloadBtn.addEventListener('click', hideDownloadModal);
-
-    function quickDownload(url, name) {
-        if (!url) { showToast('⚠️ 无链接'); return; }
-        showDownloadModal(url, name);
-    }
-
+    function quickDownload(url, name) { if (!url) { showToast('⚠️ 无链接'); return; } showDownloadModal(url, name); }
     async function copyLink(url, name) {
         if(!url) { showToast('❌ 无链接'); return; }
         let clean = cleanUrl(url);
@@ -443,7 +468,7 @@
         }
     }
 
-    async function loadAllData() { /* 保持不变 */ 
+    async function loadAllData() {
         if(isDataLoaded) return;
         let proms = dataSources.map(async (s,i)=>{
             try {
@@ -478,7 +503,6 @@
         return {total,data:all.slice(start,start+perPage),totalPages:Math.ceil(total/perPage)};
     }
 
-    // 根据type数组获取分类应用
     function getCategoryApps(types, page=1, perPage=12) {
         let all=[];
         for(let src of allSourcesData) {
@@ -493,7 +517,7 @@
         return {total,data:all.slice(start,start+perPage),totalPages:Math.ceil(total/perPage)};
     }
 
-    function searchApps(kw) { /* 保持不变 */ 
+    function searchApps(kw) {
         if(!kw.trim()) return [];
         let k=kw.trim().toLowerCase();
         let nameMatches=[], descMatches=[];
@@ -559,12 +583,8 @@
     }
 
     function bindCardButtons(container) {
-        container.querySelectorAll('.btn-download').forEach(b => {
-            b.addEventListener('click', () => quickDownload(b.dataset.url, b.dataset.name));
-        });
-        container.querySelectorAll('.btn-copy-link').forEach(b => {
-            b.addEventListener('click', () => copyLink(b.dataset.url, b.dataset.name));
-        });
+        container.querySelectorAll('.btn-download').forEach(b => b.addEventListener('click', () => quickDownload(b.dataset.url, b.dataset.name)));
+        container.querySelectorAll('.btn-copy-link').forEach(b => b.addEventListener('click', () => copyLink(b.dataset.url, b.dataset.name)));
     }
 
     function setupDescToggles() {
@@ -612,7 +632,60 @@
         inputEl.addEventListener('blur', () => setTimeout(() => suggestionBox.classList.remove('active'), 200));
     }
 
-    // 更新首页列表（用于标签切换）
+    // 弹窗倒计时逻辑
+    function startCountdown() {
+        const totalMs = 2500;
+        const startTime = Date.now();
+        if (countdownInterval) clearInterval(countdownInterval);
+        modalConfirmBtn.disabled = true;
+        modalExitBtn.disabled = true;
+        countdownDisplay.textContent = `${(totalMs/1000).toFixed(3)} 秒`;
+        countdownInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, totalMs - elapsed);
+            const seconds = remaining / 1000;
+            countdownDisplay.textContent = `${seconds.toFixed(3)} 秒`;
+            if (remaining <= 0) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                countdownDisplay.textContent = "可以操作了";
+                modalConfirmBtn.disabled = false;
+                modalExitBtn.disabled = false;
+            }
+        }, 10);
+    }
+
+    function showModal() {
+        customModal.classList.add('show');
+        startCountdown();
+    }
+
+    function hideModal() {
+        customModal.classList.remove('show');
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+    }
+
+    // 确认按钮：进入首页
+    modalConfirmBtn.addEventListener('click', () => {
+        hideModal();
+        // 已经在首页了，无需跳转
+    });
+
+    // 退出按钮：尝试关闭页面
+    modalExitBtn.addEventListener('click', () => {
+        window.close();
+        // 如果 close 无效，提示用户
+        setTimeout(() => {
+            if (!document.hidden) {
+                showToast('请手动关闭页面或返回');
+            }
+        }, 200);
+        hideModal();
+    });
+
     function updateHomeList(category, page=1) {
         currentHomeCategory = category;
         let total, data, totalPages;
@@ -621,12 +694,10 @@
             total = res.total; data = res.data; totalPages = res.totalPages;
         } else {
             let types;
-            switch(category) {
-                case 'tools': types = [1]; break;
-                case 'games': types = [2,10]; break;
-                case 'media': types = [3]; break;
-                case 'plugins': types = [0,4,5]; break;
-            }
+            if(category === 'tools') types = [1];
+            else if(category === 'games') types = [2,10];
+            else if(category === 'media') types = [3];
+            else if(category === 'plugins') types = [0,4,5];
             let res = getCategoryApps(types, page, 12);
             total = res.total; data = res.data; totalPages = res.totalPages;
         }
@@ -640,27 +711,41 @@
         if(paginationContainer) {
             renderPagination(paginationContainer, page, totalPages, (newPage) => updateHomeList(category, newPage));
         }
-        // 更新标签激活状态和数量
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.classList.remove('active');
-            if(tab.dataset.category === category) tab.classList.add('active');
-        });
-        // 更新统计数字（仅最新更新显示）
-        const recentTab = document.querySelector('.category-tab[data-category="recent"] .count');
-        if(recentTab) {
-            let recentApps = getRecentApps(1,12);
-            recentTab.textContent = recentApps.total;
+        document.querySelectorAll('.category-main, .category-tab').forEach(t => t.classList.remove('active'));
+        if(category === 'recent') {
+            document.querySelector('.category-main').classList.add('active');
+        } else {
+            document.querySelector(`.category-tab[data-category="${category}"]`).classList.add('active');
         }
     }
 
-    // 渲染首页
+    function populateSourceDrawer() {
+        drawerContent.innerHTML = dataSources.map((s, idx) => `
+            <div class="mini-source-card" data-idx="${idx}">
+                <div class="mini-source-icon">${sourceIcons[idx]}</div>
+                <div>${escapeHtml(s.name)}</div>
+            </div>
+        `).join('');
+        document.querySelectorAll('.mini-source-card').forEach(card => {
+            card.addEventListener('click', () => {
+                let idx = parseInt(card.dataset.idx);
+                navigateToSource(idx, 1);
+            });
+        });
+        drawerToggle.addEventListener('click', () => {
+            drawerToggle.classList.toggle('open');
+            drawerContent.classList.toggle('open');
+        });
+    }
+
     function renderHome(page=1) {
         currentHomeCategory = 'recent';
         let {total,data,totalPages} = getRecentApps(page,12);
+        sourceDrawer.style.display = 'block';
+        populateSourceDrawer();
 
-        // 搜索栏
         let searchHtml = `
-            <div class="home-search-section">
+            <div class="home-search-section glass-strong">
                 <div class="search-input-wrapper"><input id="searchInput" placeholder="搜索应用名称或描述..." autocomplete="off"></div>
                 <div class="search-actions">
                     <button id="doSearchBtn" class="search-btn">🔍全局搜索</button>
@@ -668,70 +753,34 @@
                 </div>
             </div>`;
 
-        // 分类标签栏
         let tabsHtml = `
-            <div class="category-tabs">
-                <button class="category-tab active" data-category="recent">最新更新 <span class="count">${total}</span></button>
-                <button class="category-tab" data-category="tools">应用工具</button>
-                <button class="category-tab" data-category="games">手游集合</button>
-                <button class="category-tab" data-category="media">影音娱乐</button>
-                <button class="category-tab" data-category="plugins">插件辅助</button>
+            <div class="category-section">
+                <button class="category-main active" data-category="recent">最新更新</button>
+                <div class="category-row">
+                    <button class="category-tab" data-category="tools">应用工具</button>
+                    <button class="category-tab" data-category="games">手游集合</button>
+                    <button class="category-tab" data-category="media">影音娱乐</button>
+                    <button class="category-tab" data-category="plugins">插件辅助</button>
+                </div>
             </div>`;
 
-        // 应用列表
         let listHtml = `
             <div class="home-cards">
                 <div class="app-list" id="homeAppList">${data.map(app => renderAppCard(app, true)).join('')}</div>
                 <div class="pagination" id="homePagination"></div>
             </div>`;
 
-        // 源抽屉
-        let drawerHtml = `
-            <div class="source-drawer">
-                <button class="drawer-toggle" id="drawerToggle">
-                    <span>📦 所有源</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="drawer-content" id="drawerContent">
-                    ${dataSources.map((s, idx) => `
-                        <div class="mini-source-card" data-idx="${idx}">
-                            <div class="mini-source-icon">${sourceIcons[idx]}</div>
-                            <div>${escapeHtml(s.name)}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>`;
+        mainContent.innerHTML = searchHtml + tabsHtml + listHtml;
 
-        mainContent.innerHTML = searchHtml + tabsHtml + listHtml + drawerHtml;
-
-        // 绑定搜索
         let si = document.getElementById('searchInput');
         document.getElementById('doSearchBtn').addEventListener('click',()=>{ if(si.value.trim()) navigateToSearch(si.value.trim(),1); });
         document.getElementById('clearSearchBtn').addEventListener('click',()=>{ si.value=''; });
         si.addEventListener('keydown',e=>{ if(e.key==='Enter' && si.value.trim()) navigateToSearch(si.value.trim(),1); });
         setupSearchSuggestions(si, (kw) => navigateToSearch(kw,1));
 
-        // 绑定标签切换
+        document.querySelector('.category-main').addEventListener('click', () => updateHomeList('recent'));
         document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                updateHomeList(tab.dataset.category);
-            });
-        });
-
-        // 绑定抽屉
-        const drawerToggle = document.getElementById('drawerToggle');
-        const drawerContent = document.getElementById('drawerContent');
-        drawerToggle.addEventListener('click', () => {
-            drawerToggle.classList.toggle('open');
-            drawerContent.classList.toggle('open');
-        });
-
-        // 绑定源卡片
-        document.querySelectorAll('.mini-source-card').forEach(card => {
-            card.addEventListener('click', () => {
-                let idx = parseInt(card.dataset.idx);
-                navigateToSource(idx, 1);
-            });
+            tab.addEventListener('click', () => updateHomeList(tab.dataset.category));
         });
 
         bindCardButtons(mainContent);
@@ -739,10 +788,10 @@
         setupDescToggles();
     }
 
-    // 其他渲染函数保持不变
     function renderSearchResults(keyword, page=1) {
         let results = searchApps(keyword);
         if(!results.length){ showToast('未找到相关应用'); navigateToHome(); return; }
+        // 合并同名应用
         let mergedMap = new Map();
         results.forEach(app => {
             let key = app.name.toLowerCase();
@@ -831,6 +880,7 @@
     }
 
     function renderSourceDetail(idx, page=1, scrollToUrl = null) {
+        sourceDrawer.style.display = 'none';
         let src = allSourcesData[idx];
         if(!src) return;
         let apps=src.apps, perPage=24, totalPages=Math.ceil(apps.length/perPage);
@@ -890,10 +940,8 @@
                 let filtered = apps.filter(a => (a.nameLower && a.nameLower.includes(kw)) || (a.descLower && a.descLower.includes(kw)));
                 if(!filtered.length) showToast('未找到相关应用');
                 else {
-                    let perPage=24, totalPages=Math.ceil(filtered.length/perPage);
-                    let page=1, data=filtered.slice(0,perPage);
                     let listHtml = '<div class="app-list">';
-                    data.forEach(a=>{
+                    filtered.forEach(a=>{
                         let icon=`<img class="app-icon" src="${escapeHtml(a.iconURL)}" onerror="this.style.display='none'">`;
                         let desc=a.versionDescription||'暂无描述';
                         let tag=getTypeTag(a.type);
@@ -917,7 +965,7 @@
                                 </div>
                             </div>`;
                     });
-                    listHtml+='</div><div class="pagination" id="pagination"></div>';
+                    listHtml+='</div>';
                     document.querySelector('.app-list').outerHTML = listHtml;
                     document.getElementById('pagination').innerHTML = '';
                     bindCardButtons(mainContent);
@@ -949,16 +997,9 @@
         if(s.mode==='home') renderHome(s.page||1);
         else if(s.mode==='search') renderSearchResults(s.keyword,s.page||1);
         else if(s.mode==='source') renderSourceDetail(s.idx,s.page||1, s.scrollToUrl);
-
-        if(!sessionStorage.getItem('modalShown')){
-            let m=document.getElementById('customModal');
-            if(m){
-                let st=window.pageYOffset||document.documentElement.scrollTop;
-                document.body.style.top=`-${st}px`;
-                m.classList.add('show');
-                document.getElementById('modalConfirmBtn').onclick=e=>{ e.preventDefault(); m.classList.remove('show'); document.body.style.top=''; window.scrollTo(0,st); };
-                sessionStorage.setItem('modalShown','1');
-            }
+        // 每次进入首页展示弹窗
+        if(s.mode==='home'){
+            showModal();
         }
     }
     function updateNav() {
@@ -969,7 +1010,7 @@
     }
 
     let navTmr;
-    function resetNav(){ clearTimeout(navTmr); globalNav.classList.remove('transparent'); navTmr=setTimeout(()=>globalNav.classList.add('transparent'),3000); }
+    function resetNav(){ clearTimeout(navTmr); stickyGroup.classList.remove('transparent'); navTmr=setTimeout(()=>stickyGroup.classList.add('transparent'),3000); }
     window.addEventListener('scroll',resetNav);
     window.addEventListener('touchstart',resetNav);
     resetNav();
