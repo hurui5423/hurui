@@ -21,7 +21,7 @@
         button, a, input, textarea { touch-action: manipulation; }
         .container { max-width: 1200px; margin: 0 auto; }
 
-        /* 液态玻璃基础类（导航、抽屉、搜索栏等保持不变） */
+        /* 液态玻璃基础类 */
         .glass {
             background: rgba(255,255,255,0.55);
             backdrop-filter: blur(28px);
@@ -177,7 +177,7 @@
             background: #0f172a; color: white; border-color: #0f172a;
         }
 
-        /* ===== 应用卡片全新透明风格 ===== */
+        /* 应用卡片 */
         .app-list { display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
         .app-card {
             display:flex; gap:14px;
@@ -262,8 +262,6 @@
         }
         .modal-btn-primary { background:#0f172a; color:white; }
         .modal-btn-primary:active { background:#000; transform:scale(0.96); }
-        .modal-btn-danger { background:#ef4444; color:white; }
-        .modal-btn-danger:active { background:#dc2626; transform:scale(0.96); }
         .modal-btn:disabled {
             opacity: 0.5; cursor: not-allowed; pointer-events: none;
         }
@@ -331,7 +329,6 @@
         <div class="countdown-timer" id="countdownDisplay">2.500 秒</div>
         <div class="modal-buttons">
             <button id="modalConfirmBtn" class="modal-btn modal-btn-primary" disabled>开始！继续探索首页！</button>
-            <button id="modalExitBtn" class="modal-btn modal-btn-danger" disabled>结束？点击退出。</button>
         </div>
     </div>
 </div>
@@ -393,10 +390,8 @@
     // 弹窗元素
     const customModal = document.getElementById('customModal');
     const modalConfirmBtn = document.getElementById('modalConfirmBtn');
-    const modalExitBtn = document.getElementById('modalExitBtn');
     const countdownDisplay = document.getElementById('countdownDisplay');
     let countdownInterval = null;
-    let countdownSeconds = 2.5;
 
     function escapeHtml(s) { return s ? s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;') : ''; }
     function cleanUrl(raw) {
@@ -637,13 +632,12 @@
         inputEl.addEventListener('blur', () => setTimeout(() => suggestionBox.classList.remove('active'), 200));
     }
 
-    // 弹窗倒计时逻辑
+    // 弹窗倒计时
     function startCountdown() {
         const totalMs = 2500;
         const startTime = Date.now();
         if (countdownInterval) clearInterval(countdownInterval);
         modalConfirmBtn.disabled = true;
-        modalExitBtn.disabled = true;
         countdownDisplay.textContent = `${(totalMs/1000).toFixed(3)} 秒`;
         countdownInterval = setInterval(() => {
             const elapsed = Date.now() - startTime;
@@ -655,7 +649,6 @@
                 countdownInterval = null;
                 countdownDisplay.textContent = "可以操作了";
                 modalConfirmBtn.disabled = false;
-                modalExitBtn.disabled = false;
             }
         }, 10);
     }
@@ -673,19 +666,8 @@
         }
     }
 
-    // 确认按钮：进入首页
+    // 确认按钮
     modalConfirmBtn.addEventListener('click', () => {
-        hideModal();
-    });
-
-    // 退出按钮：尝试关闭页面
-    modalExitBtn.addEventListener('click', () => {
-        window.close();
-        setTimeout(() => {
-            if (!document.hidden) {
-                showToast('请手动关闭页面或返回');
-            }
-        }, 200);
         hideModal();
     });
 
@@ -735,8 +717,13 @@
                 navigateToSource(idx, 1);
             });
         });
-        drawerToggle.addEventListener('click', () => {
-            drawerToggle.classList.toggle('open');
+        // 关键修复：用新元素替换旧元素，彻底清除旧事件
+        const newToggle = drawerToggle.cloneNode(true);
+        drawerToggle.parentNode.replaceChild(newToggle, drawerToggle);
+        // 更新全局引用
+        window.drawerToggle = newToggle;
+        newToggle.addEventListener('click', () => {
+            newToggle.classList.toggle('open');
             drawerContent.classList.toggle('open');
         });
     }
