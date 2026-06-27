@@ -21,7 +21,7 @@
         button, a, input, textarea { touch-action: manipulation; }
         .container { max-width: 1200px; margin: 0 auto; }
 
-        /* 液态玻璃基础类 */
+        /* 液态玻璃基础类（导航、抽屉、搜索栏等保持不变） */
         .glass {
             background: rgba(255,255,255,0.55);
             backdrop-filter: blur(28px);
@@ -177,45 +177,50 @@
             background: #0f172a; color: white; border-color: #0f172a;
         }
 
-        /* 应用卡片 */
+        /* ===== 应用卡片全新透明风格 ===== */
         .app-list { display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
         .app-card {
-            display:flex; gap:14px; border-radius:24px;
-            padding:16px; border:1px solid rgba(255,255,255,0.7);
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            align-items:flex-start; transition:transform 0.15s,box-shadow 0.15s;
-        }
-        .app-card:nth-child(even) {
-            background: rgba(245,248,255,0.8);
-            box-shadow: 0 8px 28px rgba(0,20,60,0.1);
+            display:flex; gap:14px;
+            background: rgba(255,255,255,0.35);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 28px;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+            align-items:flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         .app-card:active { transform:scale(0.98); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
-        .app-card .app-icon { width:52px; height:52px; border-radius:18px; object-fit:cover; flex-shrink:0; background:#f1f5f9; }
+        .app-card .app-icon {
+            width: 54px; height: 54px;
+            border-radius: 20px;
+            object-fit: cover; flex-shrink:0;
+            background: rgba(255,255,255,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
         .app-card .app-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
         .app-card .app-name {
-            font-weight:700; font-size:0.95rem; color:#0f172a;
+            font-weight:700; font-size:1rem; color:#0f172a;
             display:flex; flex-wrap:wrap; align-items:baseline; gap:4px; line-height:1.3;
         }
-        .app-card .app-desc { font-size:0.7rem; color:#475569; line-height:1.4; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px; }
+        .app-card .app-desc { font-size:0.75rem; color:#334155; line-height:1.4; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px; }
         .app-card .app-desc.expanded { -webkit-line-clamp:unset; display:block; }
         .app-desc-toggle { font-size:0.7rem; color:#2563eb; font-weight:600; cursor:pointer; display:inline-block; margin-left:4px; white-space:nowrap; }
         .app-card .app-meta {
             font-size:0.75rem; color:#1e293b;
             display:flex; flex-wrap:wrap; gap:8px; align-items:center;
         }
-        .source-badge { color:#f59e0b; font-weight:600; background:#fef9c3; padding:1px 8px; border-radius:8px; font-size:0.6rem; }
-        .type-tag { background:#e2e8f0; border-radius:8px; padding:2px 8px; font-size:0.6rem; font-weight:600; color:#334155; }
+        .source-badge { color:#f59e0b; font-weight:600; background:#fef9c3; padding:1px 8px; border-radius:8px; font-size:0.65rem; }
+        .type-tag { background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); border-radius:8px; padding:2px 8px; font-size:0.6rem; font-weight:600; color:#334155; border:1px solid rgba(255,255,255,0.8); }
         .btn-row { display:flex; gap:8px; margin-top:4px; flex-wrap:wrap; }
         .btn { flex:1; min-width:60px; border:none; border-radius:14px; padding:6px 8px; font-size:0.7rem; font-weight:600; cursor:pointer; transition:all 0.15s; text-align:center; white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; gap:4px; }
         .btn:active { transform:scale(0.95); }
         .btn-download { background:#7c3aed; color:white; }
-        .btn-copy-link { background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; }
+        .btn-copy-link { background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); color:#334155; border:1px solid rgba(255,255,255,0.8); }
 
         .detail-nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; justify-content:center; }
-        .detail-nav-btn { border-radius:16px; padding:8px 16px; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer; transition:all 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+        .detail-nav-btn { border-radius:16px; padding:8px 16px; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer; transition:all 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.04); background:rgba(255,255,255,0.7); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.8); }
         .detail-nav-btn:active { background:#f1f5f9; transform:scale(0.96); }
         .detail-nav-btn.disabled-source { background:#f1f5f9; color:#94a3b8; cursor:default; }
         .source-name-area { text-align:center; margin:12px 0 8px; }
@@ -224,7 +229,7 @@
         .source-banner { text-align:center; margin:8px 0 16px; font-size:0.85rem; color:#92400e; background:#fffbeb; padding:6px 16px; border-radius:14px; }
 
         .merged-subs { margin-top:-6px; margin-left:14px; padding-left:14px; border-left:2px solid #e2e8f0; display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
-        .sub-card { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.6); backdrop-filter:blur(12px); border-radius:12px; padding:8px 10px; font-size:0.75rem; transition:all 0.15s; }
+        .sub-card { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.5); backdrop-filter:blur(12px); border-radius:12px; padding:8px 10px; font-size:0.75rem; transition:all 0.15s; }
         .sub-card:active { background:#f1f5f9; }
         .sub-card .sub-icon { width:36px; height:36px; border-radius:10px; object-fit:cover; background:#e2e8f0; flex-shrink:0; }
         .sub-info { flex:1; min-width:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; }
@@ -235,10 +240,10 @@
         .sub-jump-btn:active { background:#dbeafe; }
 
         .pagination { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:16px 0; align-items:center; }
-        .pagination button, .pagination .page-num { border-radius:18px; padding:8px 16px; font-size:0.85rem; cursor:pointer; font-weight:500; color:#334155; transition:all 0.15s; }
+        .pagination button, .pagination .page-num { border-radius:18px; padding:8px 16px; font-size:0.85rem; cursor:pointer; font-weight:500; color:#334155; transition:all 0.15s; background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.8); }
         .pagination button:active, .pagination .page-num:active { background:#f1f5f9; transform:scale(0.96); }
         .pagination .active-page { background:#0f172a; color:white; border-color:#0f172a; }
-        .pagination .goto-input { width:55px; text-align:center; border-radius:18px; border:1px solid #e2e8f0; font-size:0.85rem; padding:8px; }
+        .pagination .goto-input { width:55px; text-align:center; border-radius:18px; border:1px solid #e2e8f0; font-size:0.85rem; padding:8px; background:rgba(255,255,255,0.7); backdrop-filter:blur(8px); }
 
         footer { margin-top:24px; text-align:center; font-size:0.65rem; color:#94a3b8; padding-bottom:16px; }
         @media(max-width:640px){ .drawer-content{ grid-template-columns: repeat(3,1fr); } }
@@ -671,13 +676,11 @@
     // 确认按钮：进入首页
     modalConfirmBtn.addEventListener('click', () => {
         hideModal();
-        // 已经在首页了，无需跳转
     });
 
     // 退出按钮：尝试关闭页面
     modalExitBtn.addEventListener('click', () => {
         window.close();
-        // 如果 close 无效，提示用户
         setTimeout(() => {
             if (!document.hidden) {
                 showToast('请手动关闭页面或返回');
@@ -765,10 +768,8 @@
             </div>`;
 
         let listHtml = `
-            <div class="home-cards">
-                <div class="app-list" id="homeAppList">${data.map(app => renderAppCard(app, true)).join('')}</div>
-                <div class="pagination" id="homePagination"></div>
-            </div>`;
+            <div class="app-list" id="homeAppList">${data.map(app => renderAppCard(app, true)).join('')}</div>
+            <div class="pagination" id="homePagination"></div>`;
 
         mainContent.innerHTML = searchHtml + tabsHtml + listHtml;
 
@@ -791,7 +792,6 @@
     function renderSearchResults(keyword, page=1) {
         let results = searchApps(keyword);
         if(!results.length){ showToast('未找到相关应用'); navigateToHome(); return; }
-        // 合并同名应用
         let mergedMap = new Map();
         results.forEach(app => {
             let key = app.name.toLowerCase();
@@ -997,9 +997,11 @@
         if(s.mode==='home') renderHome(s.page||1);
         else if(s.mode==='search') renderSearchResults(s.keyword,s.page||1);
         else if(s.mode==='source') renderSourceDetail(s.idx,s.page||1, s.scrollToUrl);
-        // 每次进入首页展示弹窗
-        if(s.mode==='home'){
+
+        // 弹窗仅在首次进入时弹出
+        if(s.mode==='home' && !sessionStorage.getItem('modalShown')){
             showModal();
+            sessionStorage.setItem('modalShown', '1');
         }
     }
     function updateNav() {
